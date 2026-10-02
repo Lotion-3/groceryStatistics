@@ -97,3 +97,30 @@ non-grocery national brands; after the Target block, pause and resume at ≥ 5 s
   `items.csv`.
 - Locate pass → redraw the sample → snapshot 1 (Target at 5 s ≈ 20 h for 250 stores; may
   need ~150 stores).
+
+## Night of Day 2 → Day 3 (2026-10-02, owner asleep)
+
+**Done**
+- **Census key works.** ACS 2023 5-year data for 33,772 ZCTAs downloaded.
+  `fetch_external` now reads `.env` itself.
+- **Kroger.** The official-API wrapper and parser are written and tested (UPC conversion
+  verified against Target), and `--chains kroger` is wired in as an optional chain. The
+  supplied credentials work only on the certification host (production returns 401).
+  That catalog is a small test subset: **only 10 of 58 items** get a good priced match,
+  even with short search terms. So Kroger is **off by default** (DECISIONS #30); production
+  keys would enable it.
+- **Module C** (shrinkage and factor model) implemented and unit-tested. The regularised
+  horseshoe converges (0 divergences after raising `target_accept`).
+- **Module B** (hierarchical spatial model) implemented and validated on simulated data
+  (`simulation/validate_module_b.py`). The first version had an unidentified direction
+  (R-hat 1.11); fixed (#32). All three models now converge.
+- **Module D** (basket optimisation, MILP vs greedy) implemented and tested against brute
+  force.
+- The store sample is now written in a seeded random visit order (#31). Without it, a
+  blocked run would have covered whole regions only.
+- Installed NumPyro/JAX (PyMC sampler) and HiGHS (MILP solver), and added both to
+  `requirements.txt` (#33).
+
+**Scheduled / in progress**
+- 04:13: resume Target and Walmart at 5 s per request (resolution searches → product-page
+  UPCs → locate pass), stopping at the first block.
