@@ -2,4 +2,4 @@
 # Snapshot 1 is the Day-1 smoke test plus the item-resolution searches
 # (2 stores, never part of the analysis). Fill in the ids of the full runs
 # once they exist; the first listed is the primary cross-section.
-main_snapshots: []
+main_snapshots: [2]

@@ -145,6 +145,8 @@ def main(argv=None) -> int:
     ap.add_argument("--items", default="")
     ap.add_argument("--chains", default="walmart,target,costco,trader_joes")
     ap.add_argument("--fetch-upc", action="store_true")
+    ap.add_argument("--fetch-chains", default="walmart,target",
+                    help="chains whose product pages --fetch-upc may request (e.g. leave out a blocked chain)")
     a = ap.parse_args(argv)
     with (ROOT / "config" / "items.csv").open(newline="", encoding="utf-8") as f:
         items = list(csv.DictReader(f))
@@ -162,7 +164,8 @@ def main(argv=None) -> int:
                 continue
             best = dict(cs[0])
             best["upc_source"] = "search" if best.get("upc") else None
-            if a.fetch_upc and ch in ("walmart", "target") and not best.get("upc") and ch not in blocked:
+            if (a.fetch_upc and ch in ("walmart", "target") and ch in a.fetch_chains.split(",")
+                    and not best.get("upc") and ch not in blocked):
                 try:
                     best["upc"], raw = fetch_upc(ch, best["chain_product_id"], sessions)
                     best["upc_source"] = f"product_page:{raw}" if best["upc"] else f"not_found:{raw}"

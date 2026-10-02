@@ -1,10 +1,170 @@
-item_id,chain,chain_product_id,product_name,score,size_match,n_stores,example_price,upc,upc_source,upc_match_walmart_target
-cer_cheerios_18,walmart,363183524,"Cheerios, Heart Healthy Gluten Free Breakfast Cereal, Family Size, 18 oz",1.0,1,2,4.97,016000170032,product_page:data/raw/snapitems/walmart/product_pages/363183524__pdp__20261002T030608_81696d63.json.gz,0
-cer_cheerios_18,target,81875238,General Mills Family Size Cheerios Cereal - 18oz,2.0,1,2,5.29,016000169159,product_page:data/raw/snapitems/target/product_pages/81875238__pdp__20261002T030616_38c0c1a6.json.gz,0
-cer_cheerios_18,costco,items_11019-31899,"General Mills, Cheerios Cereal, 20.35 oz, 2-count",0.5,0,1,8.45,,,0
-pas_barilla_spaghetti_16,walmart,10309153,"Barilla Classic Non-GMO, Kosher Certified Spaghetti Pasta, 16 oz",2.0,1,2,1.88,076808280081,product_page:data/raw/snapitems/walmart/product_pages/10309153__pdp__20261002T030617_9058242e.json.gz,1
-pas_barilla_spaghetti_16,target,13156213,Barilla Spaghetti Pasta - 16oz,2.0,1,2,1.89,076808280081,product_page:data/raw/snapitems/target/product_pages/13156213__pdp__20261002T030618_2441fd16.json.gz,1
-pas_barilla_spaghetti_16,costco,items_11019-111123751,"Kirkland Signature Granulated Garlic, 15.5 oz",0.0,0,1,9.57,,,1
-sod_coke_12pk,walmart,12166733,"Coca-Cola Soda Pop Fridge Pack Cans, 12 fl oz, 12 Pack",2.0,1,2,7.12,049000028904,product_page:data/raw/snapitems/walmart/product_pages/12166733__pdp__20261002T030621_355bbe68.json.gz,1
-sod_coke_12pk,target,12953464,Coca-Cola Soda - 12pk/12 fl oz Cans,2.0,1,2,8.89,049000028904,product_page:data/raw/snapitems/target/product_pages/12953464__pdp__20261002T030621_40c1fe46.json.gz,1
-sod_coke_12pk,costco,items_11019-2736842,"Coca-Cola Classic, 12 fl oz, 35-count",0.667,0,1,25.49,,,1
+item_id,chain,chain_product_id,product_name,score,size_match,n_stores,example_price,upc,upc_source,upc_match_walmart_target,needs_review
+cer_cheerios_18,walmart,363183524,"Cheerios, Heart Healthy Gluten Free Breakfast Cereal, Family Size, 18 oz",1.0,1,3,4.97,016000170032,product_page:data/raw/snapitems/walmart/product_pages/363183524__pdp__20261002T081938_7dadbb89.json.gz,0,1
+cer_cheerios_18,target,81875238,General Mills Family Size Cheerios Cereal - 18oz,2.0,1,2,5.29,,,0,1
+cer_cheerios_18,costco,items_11019-31899,"General Mills, Cheerios Cereal, 20.35 oz, 2-count",0.5,0,1,8.45,,,,1
+cer_honeynut_cheerios_15_4,walmart,17948264265,Cheerios Granola Honey Nut Breakfast Cereal 10.5 oz,1.0,0,1,4.44,016000233935,product_page:data/raw/snapitems/walmart/product_pages/17948264265__pdp__20261002T081944_e47a95b3.json.gz,0,1
+cer_honeynut_cheerios_15_4,target,94629337,General Mills Cheerios 2 Pack/27.2oz Each Honey Nut Breakfast Cereal,1.0,0,1,11.76,,,0,1
+cer_honeynut_cheerios_15_4,costco,items_7035-22023966,"Post, Honey Bunches of Oats with Almonds Cereal, 50 oz",0.5,0,1,9.82,,,,1
+cer_frosted_flakes_13_5,walmart,225137644,"Kellogg's Frosted Flakes Breakfast Cereal, Kids Cereal, Family Breakfast, Original, 13.5oz Box (1 Box)",2.0,1,1,3.98,038000199042,product_page:data/raw/snapitems/walmart/product_pages/225137644__pdp__20261002T081950_9364978d.json.gz,0,1
+cer_frosted_flakes_13_5,target,94279317,Kellogg's Frosted Flakes Cookies and Creme Breakfast Cereal - 21.9oz,1.0,0,1,5.29,,,0,1
+cer_frosted_flakes_13_5,costco,items_7035-2720731,"Kellogg's Frosted Flakes Cereal, 30.95 oz, 2-count",0.5,0,1,10.93,,,,1
+cer_quaker_oats_42,walmart,10312442,"Quaker, Quick 1 Minute Oats, Oatmeal, Quick Cook Oatmeal, 42 oz Canister Dry Oats",1.5,1,1,5.24,030000012000,product_page:data/raw/snapitems/walmart/product_pages/10312442__pdp__20261002T081957_cca5f51f.json.gz,0,1
+cer_quaker_oats_42,target,13331320,Quaker Oats Old Fashioned Oats - 42oz,2.0,1,1,5.49,,,0,1
+cer_quaker_oats_42,costco,items_7035-31896,"Quaker Oats Old Fashioned Rolled Oats, 10 lbs",1.0,0,1,9.82,,,,1
+cof_folgers_classic_25_9,walmart,15718510504,"Folgers Classic Roast Ground Coffee, Medium Roast Coffee, 25.9 Ounce Canister",1.5,1,1,20.99,363756425894,product_page:data/raw/snapitems/walmart/product_pages/15718510504__pdp__20261002T082003_4ae5bab8.json.gz,0,1
+cof_folgers_classic_25_9,target,13397813,Folgers Classic Medium Roast Ground Coffee - 25.9oz,1.5,1,1,16.69,,,0,1
+cof_folgers_classic_25_9,costco,items_7035-74277300,"Starbucks Pike Place Roast Coffee, Medum Roast, Ground, 32 oz",0.75,0,1,24.87,,,,1
+cof_maxwell_house_original_30_6,walmart,21268048,"Maxwell House Original Roast Ground Coffee, 30.6 oz. Canister",2.0,1,1,33.61,043000046487,product_page:data/raw/snapitems/walmart/product_pages/21268048__pdp__20261002T082010_fcc1617c.json.gz,0,1
+cof_maxwell_house_original_30_6,target,12954155,Maxwell House Original Medium Roast Ground Coffee - 27.5oz,0.5,0,1,11.99,,,0,1
+cof_maxwell_house_original_30_6,costco,items_7035-56573933,"Maxwell House Original Original Roast Coffee, 43.1 oz",0.8,0,1,21.14,,,,1
+cof_starbucks_pike_12,walmart,12090663001,Starbucks Medium Roast Pike Place Roast Ground Coffee 12 oz,1.5,1,1,,100143692329,product_page:data/raw/snapitems/walmart/product_pages/12090663001__pdp__20261002T082016_7e743b87.json.gz,0,1
+cof_starbucks_pike_12,target,12954046,Starbucks Dark Roast Ground Coffee — Caffè Verona — 100% Arabica — 1 bag (12 oz,1.167,1,1,12.79,,,0,1
+cof_starbucks_pike_12,costco,items_7035-74277300,"Starbucks Pike Place Roast Coffee, Medum Roast, Ground, 32 oz",1.0,0,1,24.87,,,,1
+pas_barilla_spaghetti_16,walmart,10309153,"Barilla Classic Non-GMO, Kosher Certified Spaghetti Pasta, 16 oz",2.0,1,3,1.88,076808280081,product_page:data/raw/snapitems/walmart/product_pages/10309153__pdp__20261002T082022_54acd709.json.gz,0,1
+pas_barilla_spaghetti_16,target,13156213,Barilla Spaghetti Pasta - 16oz,2.0,1,2,1.89,,,0,1
+pas_barilla_spaghetti_16,costco,items_11019-111123751,"Kirkland Signature Granulated Garlic, 15.5 oz",0.0,0,1,9.57,,,,1
+pas_prego_traditional_24,walmart,10308233,"Prego Traditional Pasta Sauce, 24 oz Jar",2.0,1,1,2.53,051000025494,product_page:data/raw/snapitems/walmart/product_pages/10308233__pdp__20261002T082029_6a32c06d.json.gz,0,1
+pas_prego_traditional_24,target,14836478,Prego Pasta Sauce Italian Tomato Sauce with Roasted Garlic & Herbs - 24oz,1.75,1,1,2.69,,,0,1
+pas_prego_traditional_24,costco,items_7035-41183010,"Rao's Calabrian Chili Marinara Sauce, 22 oz, 2-pack",0.25,0,1,19.89,,,,1
+pas_raos_marinara_24,walmart,15179850080,"Rao's Homemade Creamy Marinara with Mascarpone Sauce, 24 oz Jar",2.0,1,1,7.58,747479101967,product_page:data/raw/snapitems/walmart/product_pages/15179850080__pdp__20261002T082035_8e1b7a78.json.gz,0,1
+pas_raos_marinara_24,target,1010575295,Rao's 24oz Homemade Premium Marinara Sauce + 15oz Homemade Alfredo Sauce,2.0,1,1,14.42,,,0,1
+pas_raos_marinara_24,costco,items_7035-41183010,"Rao's Calabrian Chili Marinara Sauce, 22 oz, 2-pack",0.75,0,1,19.89,,,,1
+pas_kraft_mac_7_25,walmart,10295742,"Kraft Mac and Cheese, 1 Box, for Easy Dinner or Dinner Sides, Thick 'n Creamy, No Artificial Flavors, Preservatives or Dyes, 7.25 oz",1.75,1,1,1.24,021000653713,product_page:data/raw/snapitems/walmart/product_pages/10295742__pdp__20261002T082041_52cf4f3c.json.gz,0,1
+pas_kraft_mac_7_25,target,1012361652,Kraft Original Mac and Cheese Dinner - 7.25oz + Kraft Power Mac Original Mac and Cheese - 7.25oz,1.75,1,1,3.79,,,0,1
+pas_kraft_mac_7_25,costco,items_7035-2724388,"Kraft, Macaroni & Cheese Dinner, 7.25 oz, 18-Count",1.5,1,1,17.78,,,,0
+can_campbells_chicken_noodle_10_75,walmart,10321674,"Campbell’s Condensed Chicken Noodle Soup, 10.75 oz Can",1.8,1,1,1.53,051000012517,product_page:data/raw/snapitems/walmart/product_pages/10321674__pdp__20261002T082048_76e73039.json.gz,0,1
+can_campbells_chicken_noodle_10_75,target,14767632,Campbell's Condensed Healthy Request Chicken Noodle Soup - 10.75oz,2.0,1,1,2.19,,,0,1
+can_campbells_chicken_noodle_10_75,costco,items_7035-22362953,"Kirkland Signature Rotisserie Chicken Noodle Soup, 2.8 lb Average Weight",0.6,0,1,19.54,,,,1
+can_bushs_baked_beans_28,walmart,10306767,"Bush's Homestyle Baked Beans, Canned Beans, 28 oz Can",2.0,1,1,2.82,039400015949,product_page:data/raw/snapitems/walmart/product_pages/10306767__pdp__20261002T082054_d76794ed.json.gz,0,1
+can_bushs_baked_beans_28,target,13599080,Bush's Original Baked Beans - 28oz,2.0,1,1,2.79,,,0,1
+can_bushs_baked_beans_28,costco,items_7035-17682351,Kirkland Signature Seasoned St. Louis Ribs,0.0,0,1,28.08,,,,1
+can_delmonte_green_beans_14_5,walmart,10295200,"Del Monte Cut Green Beans, Canned Vegetables, 14.5 oz Can",2.0,1,1,1.72,024000162865,product_page:data/raw/snapitems/walmart/product_pages/10295200__pdp__20261002T082101_75360eef.json.gz,0,1
+can_delmonte_green_beans_14_5,target,12935414,Del Monte Fresh Cut Green Beans - 14.5oz,2.0,1,1,1.69,,,0,1
+can_delmonte_green_beans_14_5,costco,items_7035-22695140,"Libby's Cut Green Beans, 14.5 oz, 12-count",1.1,1,1,12.43,,,,1
+can_starkist_tuna_water_5,walmart,222301528,StarKist Chunk White Albacore Tuna in Water - 5 oz Can (4-Pack),1.833,1,1,4.78,080000520265,product_page:data/raw/snapitems/walmart/product_pages/222301528__pdp__20261002T082109_4bb5cbe9.json.gz,0,1
+can_starkist_tuna_water_5,target,13525952,StarKist Chunk Light Tuna in Water Can - 5oz,2.0,1,1,1.29,,,0,1
+can_starkist_tuna_water_5,costco,items_7035-2902833,"Chicken of the Sea, Chunk Light Premium Tuna in Water, 7 oz, 12-Count",0.333,0,1,20.76,,,,1
+can_swanson_chicken_broth_32,walmart,10449227,"Swanson Chicken Broth, 32 oz Carton",2.0,1,1,1.98,051000121141,product_page:data/raw/snapitems/walmart/product_pages/10449227__pdp__20261002T082116_919c6334.json.gz,0,1
+can_swanson_chicken_broth_32,target,54540599,Swanson Sipping Chicken Bone Broth - 10.75oz,1.0,0,1,2.59,,,0,1
+can_swanson_chicken_broth_32,costco,items_7035-3397491,"Swanson Chicken Broth, 32 oz, 6-count",1.5,1,1,12.43,,,,0
+sod_coke_12pk,walmart,12166733,"Coca-Cola Soda Pop Fridge Pack Cans, 12 fl oz, 12 Pack",2.0,1,3,7.12,049000028904,product_page:data/raw/snapitems/walmart/product_pages/12166733__pdp__20261002T082122_8f2b8004.json.gz,0,1
+sod_coke_12pk,target,12953464,Coca-Cola Soda - 12pk/12 fl oz Cans,2.0,1,2,8.89,,,0,1
+sod_coke_12pk,costco,items_11019-2736842,"Coca-Cola Classic, 12 fl oz, 35-count",0.667,0,1,25.49,,,,1
+sod_pepsi_12pk,walmart,16785027,"Pepsi Cola Soda Pop, 12 fl oz, 12 pack Cans",2.0,1,1,7.77,012000809941,product_page:data/raw/snapitems/walmart/product_pages/16785027__pdp__20261002T082128_ded57010.json.gz,0,1
+sod_pepsi_12pk,target,13044177,Pepsi Cola Soda - 12pk/12 fl oz Cans,2.0,1,1,8.39,,,0,1
+sod_pepsi_12pk,costco,items_7035-130902681,"Poppi Prebiotic Soda Cranberry Fizz Cans, 12 fl oz, 18-count",0.5,0,1,24.87,,,,1
+sod_sprite_2l,walmart,13424325,"Pepsi Cola Soda Pop, 2 Liter Bottle",0.667,0,1,2.48,012000002304,product_page:data/raw/snapitems/walmart/product_pages/13424325__pdp__20261002T082134_2aaf2e44.json.gz,0,1
+sod_sprite_2l,target,12959572,Sprite Soda - 2 L Bottle,0.667,0,1,2.99,,,0,1
+sod_sprite_2l,costco,items_7035-28523319,"Tide Ultra Concentrated Liquid Laundry Detergent, Original, 152 Loads, 170 fl oz",0.0,0,1,31.09,,,,1
+sod_gatorade_lemon_lime_28,walmart,13147406133,"Gatorade Thirst Quencher Mashup Cool Blue Fruit Punch, 28 fl oz, 1 Count",1.6,1,1,1.78,052000063400,product_page:data/raw/snapitems/walmart/product_pages/13147406133__pdp__20261002T082141_880b7011.json.gz,0,1
+sod_gatorade_lemon_lime_28,target,84931894,Gatorade Lemon Lime Sports Drink - 28 fl oz Bottle: Non-Caffeinated,1.1,1,1,1.89,,,0,1
+sod_gatorade_lemon_lime_28,costco,items_7035-25815733,"Gatorade Thirst Quencher, Turf Variety Pack, 12 fl oz, 28-count",0.1,0,1,15.54,,,,1
+snk_lays_classic,walmart,13256356799,Lays All Dressed Potato Chips 7.75 oz Bag,1.0,0,1,2.97,028400759014,product_page:data/raw/snapitems/walmart/product_pages/13256356799__pdp__20261002T082148_19df8798.json.gz,0,1
+snk_lays_classic,target,13319566,"Lay's Kettle Cooked Jalapeño Flavored Potato Chips - 8oz: No Artificial Flavors, No Preservatives",1.0,0,1,3.19,,,0,1
+snk_lays_classic,costco,items_7035-107482865,"Boulder Canyon Beef Tallow Classic Sea Salt Potato Chips, 22 oz",0.667,0,1,9.94,,,,1
+snk_doritos_nacho,walmart,164047382,"Doritos Nacho Cheese Tortilla Chips, Party Size, 15 oz Bag",1.0,0,1,14.99,028400643061,product_page:data/raw/snapitems/walmart/product_pages/164047382__pdp__20261002T082154_56e2f2c4.json.gz,0,1
+snk_doritos_nacho,target,13319564,Doritos Nacho Cheese Flavored Party Size Tortilla Chips - 14.5oz,1.0,0,1,6.69,,,0,1
+snk_doritos_nacho,costco,items_7035-18533456,"Doritos Tortilla Chips, Nacho Cheese, 30 oz",0.833,0,1,8.7,,,,1
+snk_oreo_13_29,walmart,1052966595,"OREO Chocolate Sandwich Cookies, 13.29 oz",2.0,1,1,3.96,044000060114,product_page:data/raw/snapitems/walmart/product_pages/1052966595__pdp__20261002T082200_62ebd752.json.gz,0,1
+snk_oreo_13_29,target,87471268,Oreo Chocolate Sandwich Cookies - 13.29oz,2.0,1,1,4.19,,,0,1
+snk_oreo_13_29,costco,items_7035-27352531,"OREO Chocolate Sandwich Cookies, Stay Fresh Packs, 12-count",0.5,0,1,13.67,,,,1
+snk_ritz_13_7,walmart,25822520,"RITZ Hint of Salt Crackers, Snacks for Kids and Adults, Lunch Snacks, 13.7 oz",2.0,1,1,3.97,044000031190,product_page:data/raw/snapitems/walmart/product_pages/25822520__pdp__20261002T082207_09cf7202.json.gz,0,1
+snk_ritz_13_7,target,12958804,RITZ Original Crackers Lunch Snacks - 13.7oz,2.0,1,1,3.99,,,0,1
+snk_ritz_13_7,costco,items_7035-16604106,"Keebler Club Snack Stack Crackers, 50 oz",0.5,0,1,11.18,,,,1
+snk_cheezit_12_4,walmart,18859357404,"Cheez-It Original Baked Snack Crackers, Jimmy Butler Limited Edition Box, 12.4 oz",2.0,1,1,6.95,024100128938,product_page:data/raw/snapitems/walmart/product_pages/18859357404__pdp__20261002T082213_f288f74f.json.gz,0,1
+snk_cheezit_12_4,target,13009781,Cheez-It Original Baked Snack Crackers - 12.4oz,2.0,1,1,3.99,,,0,1
+snk_cheezit_12_4,costco,items_7035-58223,"Cheez-It Crackers, Cheddar, 3 lbs",0.5,0,1,12.43,,,,1
+snk_nature_valley_oats_honey_12ct,walmart,10311392,"Nature Valley Crunchy Granola Bars, Oats 'n Honey, 12 Count, 8.94 oz (6 Pouches)",2.0,1,1,2.97,016000264601,product_page:data/raw/snapitems/walmart/product_pages/10311392__pdp__20261002T082220_222852a5.json.gz,0,1
+snk_nature_valley_oats_honey_12ct,target,12935981,Nature Valley Crunchy Oats 'N Honey Granola Snack Bars - 8.94oz/12ct,2.0,1,1,3.19,,,0,1
+snk_nature_valley_oats_honey_12ct,costco,items_7035-135317,"Nature Valley Crunchy Granola Bar, Oats 'n Honey, 1.49 oz, 49-count",0.875,0,1,18.65,,,,1
+oil_crisco_vegetable_48,walmart,10308191,"Crisco Pure Vegetable Oil, 48-Fluid Ounce",1.0,0,1,4.97,051500253625,product_page:data/raw/snapitems/walmart/product_pages/10308191__pdp__20261002T082227_e856e88e.json.gz,0,1
+oil_crisco_vegetable_48,target,86095661,Crisco Vegetable Oil - 40 fl oz,0.75,0,1,5.19,,,0,1
+oil_crisco_vegetable_48,costco,items_7035-16206836,"Mazola, Corn Oil, 2.5 gal",0.25,0,1,38.55,,,,1
+oil_crisco_canola_48,walmart,10450988,"Great Value Canola Oil, Heart Healthy, High Smoke Point, 48 fl oz Bottle",1.0,1,1,3.97,078742431673,product_page:data/raw/snapitems/walmart/product_pages/10450988__pdp__20261002T082233_beffd7ee.json.gz,0,1
+oil_crisco_canola_48,target,86095661,Crisco Vegetable Oil - 40 fl oz,0.5,0,1,5.19,,,0,1
+oil_crisco_canola_48,costco,items_7035-131974114,"Casa Aragao Caretos Podence Premium Extra Virgin Olive Oil, 22.8 fl oz",0.25,0,1,35.94,,,,1
+oil_bertolli_evoo_16_9,walmart,19364562449,"Bertolli Sustainably Sourced Extra Virgin Olive Oil, 16.9 fl oz",2.0,1,1,,690781830998,product_page:data/raw/snapitems/walmart/product_pages/19364562449__pdp__20261002T082241_cbff04af.json.gz,0,1
+oil_bertolli_evoo_16_9,target,15274135,Bertolli Extra Virgin Olive Oil Rich Taste - 25.4 fl oz,1.0,0,1,10.99,,,0,1
+oil_bertolli_evoo_16_9,costco,items_7035-128573429,"Pompeian Single Origin Extra Virgin Olive Oil, 2 L",0.8,0,1,19.89,,,,1
+cnd_heinz_ketchup_32,walmart,406608510,"Great Value Real Sugar Tomato Ketchup, 32 oz",1.167,1,2,2.48,078742008066,product_page:data/raw/snapitems/walmart/product_pages/406608510__pdp__20261002T082247_5a87e138.json.gz,0,1
+cnd_heinz_ketchup_32,target,14651428,Heinz Tomato Ketchup 32oz,2.0,1,1,4.99,,,0,1
+cnd_heinz_ketchup_32,costco,items_7035-18263453,"Heinz Simply Tomato Ketchup, 44 oz, 3-count",0.5,0,1,17.4,,,,1
+cnd_hellmanns_mayo_30,walmart,10312980,"Hellmann's Real Mayonnaise, Sandwich Spread Condiments, 30 fl oz Jar",2.0,1,1,6.52,048001213487,product_page:data/raw/snapitems/walmart/product_pages/10312980__pdp__20261002T082254_e1a8f482.json.gz,0,1
+cnd_hellmanns_mayo_30,target,93710894,Hellmann's Avocado Oil Mayonnaise - 30 fl oz,1.667,1,1,6.99,,,0,1
+cnd_hellmanns_mayo_30,costco,items_7035-151042,"Hellmann's, Real Mayonnaise, 64 oz",1.0,0,1,11.81,,,,1
+cnd_frenchs_mustard_14,walmart,18994965541,"1x French's Classic Yellow Mustard, 14 oz",2.0,1,1,,671145577384,product_page:data/raw/snapitems/walmart/product_pages/18994965541__pdp__20261002T082300_163f5861.json.gz,0,1
+cnd_frenchs_mustard_14,target,13347661,Yellow Mustard - 14oz - Market Pantry,1.667,1,1,0.79,,,0,1
+cnd_frenchs_mustard_14,costco,items_7035-156407,"French's, Classic Yellow Mustard, 30 oz, 2-count",0.5,0,1,6.83,,,,1
+cnd_jif_creamy_16,walmart,777839120,"Jif Creamy Peanut Butter, 16 oz Jar",2.0,1,1,2.98,051500255162,product_page:data/raw/snapitems/walmart/product_pages/777839120__pdp__20261002T082306_0e1e9708.json.gz,0,1
+cnd_jif_creamy_16,target,13260977,Jif Reduced Fat Creamy Peanut Butter - 16oz,1.5,1,1,2.99,,,0,1
+cnd_jif_creamy_16,costco,items_7035-2720904,"Jif Creamy Peanut Butter 48 oz, 2-Count",0.5,0,1,13.67,,,,1
+cnd_smuckers_strawberry_18,walmart,10308113,"Smucker's Seedless Strawberry Jam, 18 oz",2.0,1,1,3.54,051500012291,product_page:data/raw/snapitems/walmart/product_pages/10308113__pdp__20261002T082313_1a6ff674.json.gz,0,1
+cnd_smuckers_strawberry_18,target,13276012,Smucker's Seedless Strawberry Jam - 18oz,2.0,1,1,4.79,,,0,1
+cnd_smuckers_strawberry_18,costco,items_7035-105916681,"That's It Strawberry Fruitola, 14 oz",0.333,0,1,16.16,,,,1
+bak_domino_sugar_4lb,walmart,10291746,"Domino: Pure Cane Granulated Sugar, 4 Lb",2.0,1,1,6.22,049200045701,product_page:data/raw/snapitems/walmart/product_pages/10291746__pdp__20261002T082320_6fb2da50.json.gz,0,1
+bak_domino_sugar_4lb,target,13379072,Domino Premium Pure Cane Granulated Sugar 4 lb,2.0,1,1,4.89,,,0,1
+bak_domino_sugar_4lb,costco,items_7035-1124142,"Pioneer Granulated Beet Sugar, 10 lbs",0.667,0,1,7.45,,,,1
+bak_gold_medal_flour_5lb,walmart,10311311,"Gold Medal All Purpose Flour, Baking Flour, 5 lb Bag",2.0,1,1,3.97,016000106109,product_page:data/raw/snapitems/walmart/product_pages/10311311__pdp__20261002T082327_343b9d3d.json.gz,0,1
+bak_gold_medal_flour_5lb,target,13016243,"Gold Medal All Purpose Flour - 2lbs: No Artificial Preservatives, No Added Sugar",0.5,0,1,3.39,,,0,1
+bak_gold_medal_flour_5lb,costco,items_7035-16595510,"Ardent Mills, Harvest Hotel & Restaurant, All-Purpose Flour, 25 lbs",0.6,0,1,11.81,,,,1
+bev_lipton_black_tea_100ct,walmart,15177516255,"Lipton Black Tea Bags, 100 Count",2.0,1,1,4.97,794522004423,product_page:data/raw/snapitems/walmart/product_pages/15177516255__pdp__20261002T082333_6726591f.json.gz,0,1
+bev_lipton_black_tea_100ct,target,13010225,"Lipton Black Tea Bags - 100ct: Caffeinated, Rainforest Alliance Certified",2.0,1,1,4.99,,,0,1
+bev_lipton_black_tea_100ct,costco,items_7035-17677005,"Kirkland Signature Green Tea Bags, 1.5 g, 100-count",1.5,1,1,14.92,,,,0
+hh_tide_original_92,walmart,13851303125,"Tide Laundry Detergent Liquid with Ultra Oxi Boost, Advanced Stain Remover, 92 fl oz, 65 Loads",2.0,1,1,15.94,030772175200,product_page:data/raw/snapitems/walmart/product_pages/13851303125__pdp__20261002T082340_5ede3b18.json.gz,0,1
+hh_tide_original_92,target,84114511,Tide Ultra Sport HE Deep Cleaning Concentrated Liquid Laundry Detergent 65 Loads - 92 fl oz,2.0,1,1,15.99,,,0,1
+hh_tide_original_92,costco,items_7035-28523319,"Tide Ultra Concentrated Liquid Laundry Detergent, Original, 152 Loads, 170 fl oz",1.0,0,1,31.09,,,,1
+hh_dawn_original_19_4,walmart,1265445355,Dawn Ultra Original Dish Soap Liquid 15.5 oz,1.0,0,1,8.99,030772000922,product_page:data/raw/snapitems/walmart/product_pages/1265445355__pdp__20261002T082346_15d328d1.json.gz,0,1
+hh_dawn_original_19_4,target,87877055,Dawn Ultra Dishwashing Liquid Dish Soap - Original - 18 fl oz,1.0,0,1,2.99,,,0,1
+hh_dawn_original_19_4,costco,items_7035-18475137,"Palmolive Ultra Strength Liquid Dish Soap, 102 fl oz",0.75,0,1,7.82,,,,1
+hh_clorox_wipes_75,walmart,12443828,"Clorox Disinfecting Wipes, Fresh Scent, 75 Count",2.0,1,1,5.52,044600016566,product_page:data/raw/snapitems/walmart/product_pages/12443828__pdp__20261002T082353_c2941f92.json.gz,0,1
+hh_clorox_wipes_75,target,53133307,Clorox Fresh Scent Cleaning & Disinfecting Wipes - 75ct,2.0,1,1,5.49,,,0,1
+hh_clorox_wipes_75,costco,items_7035-20964424,"Clorox Disinfecting Wipes, Variety Pack, 85-count, 5-pack",0.6,0,1,23.37,,,,1
+hh_glad_tall_kitchen_40,walmart,5586651182,"Glad ForceFlex Tall Kitchen Drawstring Trash Bags, Fresh Clean, 13 Gal, 40 Ct (Package May Vary)",1.889,1,1,18.96,100140451981,product_page:data/raw/snapitems/walmart/product_pages/5586651182__pdp__20261002T082359_a774cc69.json.gz,0,1
+hh_glad_tall_kitchen_40,target,1010587698,Glad ForceFlex MaxStrength Tall Kitchen Drawstring Trash Bags,0.778,0,1,13.59,,,0,1
+hh_glad_tall_kitchen_40,costco,items_7035-20113625,"Kirkland Signature Flex-Tech 13-Gallon Scented Kitchen Trash Bags, 200-count",0.444,0,1,24.87,,,,1
+pc_colgate_cavity_6,walmart,20259219055,"(2 pack) Colgate Cavity Protection Fluoride Toothpaste, Great Regular Mint Flavor, 6 oz",2.0,1,1,3.94,467326082743,product_page:data/raw/snapitems/walmart/product_pages/20259219055__pdp__20261002T082405_a8be6e9b.json.gz,0,1
+pc_colgate_cavity_6,target,75563127,Colgate Cavity Protection Toothpaste with Fluoride - 6oz/3pk,2.0,1,1,4.99,,,0,1
+pc_colgate_cavity_6,costco,items_7035-24505868,"Crest + Scope Cavity Protection Toothpaste, 8.2 oz, 5-pack",0.75,0,1,18.65,,,,1
+pc_dove_bar_4pk,walmart,3114374915,"Dove Beauty Bar Soap For Rebalanced Skin, Rebalancing White Peach & Rice Milk, With Moisturizing Cream to Nourish Skin, 3.75 oz 4 Count",1.3,1,1,8.97,011111048973,product_page:data/raw/snapitems/walmart/product_pages/3114374915__pdp__20261002T082411_d39e66bc.json.gz,0,1
+pc_dove_bar_4pk,target,89550663,Dove Beauty Peach Bar Soap - 4ct,1.6,1,1,8.99,,,0,1
+pc_dove_bar_4pk,costco,items_7035-21722508,"Dove Moisturizing Beauty Bar Soap Sensitive Skin, 3.75 oz, 16 Bars",0.6,0,1,23.0,,,,1
+pc_head_shoulders_classic_12_5,walmart,967508351,"Head and Shoulders 2 in 1 Dandruff Shampoo and Conditioner, Classic Clean, 12.5 fl oz",2.0,1,2,6.97,030772062807,product_page:data/raw/snapitems/walmart/product_pages/967508351__pdp__20261002T082418_72872a3a.json.gz,0,1
+pc_head_shoulders_classic_12_5,target,76556234,Head & Shoulders Dandruff Treatment/Dandruff Shampoo and Conditioner with Tea Tree Oil - 12.5 fl oz,1.75,1,1,6.99,,,0,1
+pc_head_shoulders_classic_12_5,costco,items_7035-44196956,"Head & Shoulders 2-in-1 Dandruff Shampoo and Conditioner Advanced Scalp Care, 40 fl oz",0.75,0,1,18.65,,,,1
+pc_listerine_cool_mint_1l,walmart,871622,"Listerine Cool Mint Antiseptic Mouthwash for Bad Breath and Plaque, Intense Mint, 33.8 fl oz/1 L",2.0,1,1,6.98,312547427357,product_page:data/raw/snapitems/walmart/product_pages/871622__pdp__20261002T082425_6d3bdac3.json.gz,0,1
+pc_listerine_cool_mint_1l,target,14772815,Listerine Antiseptic Intense Mouthwash for Bad Breath - Cool Mint - 1L,1.833,1,1,6.99,,,0,1
+pc_listerine_cool_mint_1l,costco,items_7035-30153413,"Crest Pro-Health Advanced Mouthwash, 33.8 fl oz, 3-pack",0.167,0,1,14.92,,,,1
+otc_advil_200mg_100,walmart,15359411481,"Advil Pain and Headache Reliever Ibuprofen, 200 Mg Coated Tablets, 2X100 Count",2.0,1,1,17.98,305736559748,product_page:data/raw/snapitems/walmart/product_pages/15359411481__pdp__20261002T082431_fabed16b.json.gz,0,1
+otc_advil_200mg_100,target,1005931932,Advil Allergy and Congestion Relief 50 Coated Tablets,0.6,0,1,34.99,,,0,1
+otc_advil_200mg_100,costco,items_7035-32268,"Advil Ibuprofen 200 mg., Pain Reliever/Fever Reducer 360 Tablets",0.8,0,1,19.27,,,,1
+otc_tylenol_es_100,walmart,1158930565,"Tylenol PM Extra Strength Nighttime Pain Reliever & Sleep Aid Caplets, 500 mg Acetaminophen & 25 mg Diphenhydramine HCl, Relief for Nighttime Aches & Pains, Non-Habit Forming, 100 ct",2.0,1,1,22.95,749569309789,product_page:data/raw/snapitems/walmart/product_pages/1158930565__pdp__20261002T082438_bc4d3706.json.gz,0,1
+otc_tylenol_es_100,target,89635836,Tylenol Extra Strength Acetaminophen - Easy to Swallow Pain Reliever Caplets - 100 ct,1.8,1,1,13.29,,,0,1
+otc_tylenol_es_100,costco,items_7035-111542156,"Tylenol Extra Strength Caplets, Fever Reducer & Pain Reliever, 500 mg, 320 ct.",1.0,0,1,19.89,,,,1
+otc_zyrtec_10mg_30,walmart,10452571,"Zyrtec 24 Hour Allergy Medicine Tablets, 10 mg Cetirizine HCl Antihistamine, 30 Count",2.0,1,1,19.97,312547204361,product_page:data/raw/snapitems/walmart/product_pages/10452571__pdp__20261002T082444_0274d038.json.gz,0,1
+otc_zyrtec_10mg_30,target,10823475,Zyrtec 24 Hour Allergy Relief Tablets - Cetirizine HCl - 30ct,1.8,1,1,19.99,,,0,1
+otc_zyrtec_10mg_30,costco,items_7035-21771349,"Zyrtec 24 Hour Allergy Relief Antihistamine Cetirizine HCl 10 mg, 120 Tablets",1.0,0,1,49.75,,,,1
+baby_johnsons_shampoo_13_6,walmart,15273514666,"Johnson's Head-to-Toe Gentle Baby Moisture Wash & Shampoo, 13.6 fl. oz",2.0,1,1,4.27,381372025823,product_page:data/raw/snapitems/walmart/product_pages/15273514666__pdp__20261002T082451_d024ced1.json.gz,0,1
+baby_johnsons_shampoo_13_6,target,53382799,Johnson's Baby Shampoo for Delicate Scalp & Skin - 13.6 fl oz,2.0,1,1,4.99,,,0,1
+baby_johnsons_shampoo_13_6,costco,items_7035-107760514,"Nexxus Advanced Hydration Therappe Humectress Shampoo & Conditioner, 32 fl oz each",0.333,0,1,43.53,,,,1
+baby_desitin_max_4,walmart,411311358,3 PACK - Desitin Maximum Strength Paste Zinc Oxide Diaper Rush 4 Oz. each,1.833,1,1,24.99,686010932311,product_page:data/raw/snapitems/walmart/product_pages/411311358__pdp__20261002T082457_3467011d.json.gz,0,1
+baby_desitin_max_4,target,13682481,Desitin Maximum Strength Baby Diaper Rash Cream with Zinc Oxide - 4oz,1.333,1,1,6.99,,,0,1
+baby_desitin_max_4,costco,items_7035-58186,"Pepcid AC Maximum Strength 20 mg, 100 Tablets",0.333,0,1,31.09,,,,1
+pet_purina_one_chicken_8lb,walmart,18909051373,"Purina ONE PlusWhole BodySupport With Chicken Dry Dog Food, 8 lb.",1.857,1,1,16.68,017800103329,product_page:data/raw/snapitems/walmart/product_pages/18909051373__pdp__20261002T082504_5a456d58.json.gz,0,1
+pet_purina_one_chicken_8lb,target,94636503,"Purina ONE Plus Seafood, Fish and Salmon Flavor Skin and Coat Dry Dog Food - 8lbs",1.714,1,1,16.99,,,0,1
+pet_purina_one_chicken_8lb,costco,items_7035-19942957,"Blue Buffalo Life Protection Formula Chicken and Brown Rice Recipe Dog Food, 38 lbs",0.571,0,1,77.99,,,,1
+pet_friskies_pate_mixed_grill_5_5,walmart,10535019,"Purina Friskies Pate, Mixed Grill, Wet Cat Food, 5.5 oz Can",2.0,1,1,0.84,050000421541,product_page:data/raw/snapitems/walmart/product_pages/10535019__pdp__20261002T082511_7ef704f1.json.gz,0,1
+pet_friskies_pate_mixed_grill_5_5,target,14910514,Purina Friskies Paté Chicken Flavor Wet Cat Food Mixed Grill - 5.5oz,1.75,1,1,0.89,,,0,1
+pet_friskies_pate_mixed_grill_5_5,costco,items_7035-104928180,"Purina Friskies Pate Wet Cat Food Variety Pack, 5.5 oz, 60-count",1.125,1,1,53.48,,,,1
+per_eggs_large_12,walmart,145051970,"Great Value Large White Eggs, 12 Count",1.5,1,2,1.67,078742127071,product_page:data/raw/snapitems/walmart/product_pages/145051970__pdp__20261002T082517_e920d6af.json.gz,0,1
+per_eggs_large_12,target,83880304,Eggland's Best Large Cage Free White Eggs - 12ct,1.0,1,1,4.79,,,0,1
+per_eggs_large_12,costco,items_7035-19232662,"Kirkland Signature Eggs, Large, 5 dozen-count",0.5,0,1,11.18,,,,1
+per_milk_whole_gal,walmart,10450114,"Great Value Whole Vitamin D Milk, Gallon",0.6,0,2,2.72,078742351865,product_page:data/raw/snapitems/walmart/product_pages/10450114__pdp__20261002T082523_47cafc7d.json.gz,0,1
+per_milk_whole_gal,costco,items_7035-16902650,"Kirkland Signature Whole Milk, 1 gal",0.4,0,1,2.72,,,,1
+per_bread_white_20,walmart,10315752,"Great Value White Sandwich Bread, 20 oz",1.6,1,2,1.52,078742012285,product_page:data/raw/snapitems/walmart/product_pages/10315752__pdp__20261002T082530_254a90f0.json.gz,0,1
+per_bread_white_20,costco,items_7035-22554643,"Motor City Pizza 5 Cheese Bread, 2-Pack",0.2,0,1,12.43,,,,1
+per_bananas_lb,walmart,14336395,"Great Value Sliced Bananas, 16 oz Bag",1.0,0,1,2.47,078742146294,product_page:data/raw/snapitems/walmart/product_pages/14336395__pdp__20261002T082537_2b9b2c1b.json.gz,0,1
+per_bananas_lb,costco,items_7035-18848204,"Bananas, 3 lbs",1.0,0,1,1.85,,,,1
+per_butter_salted_16,walmart,10291058,"Land O Lakes Salted Stick Butter, 16 oz box, 4 Sticks",1.5,1,1,4.46,034500151368,product_page:data/raw/snapitems/walmart/product_pages/10291058__pdp__20261002T082543_eb2de160.json.gz,0,1
+per_butter_salted_16,costco,items_7035-19232560,"Kirkland Signature Salted Sweet Cream Butter, 16 oz, 4-count",0.5,1,1,11.81,,,,1
+per_cheddar_shredded_8,walmart,10452431,"Great Value Sharp Cheddar Finely Shredded Cheese, 8 oz Bag",1.6,1,2,1.97,078742099453,product_page:data/raw/snapitems/walmart/product_pages/10452431__pdp__20261002T082550_1df55a4c.json.gz,0,1
+per_cheddar_shredded_8,costco,items_7035-18284951,"Kirkland Signature Shredded Sharp Cheddar Cheese, 2.5 lbs, 2 count",0.6,0,1,17.4,,,,1

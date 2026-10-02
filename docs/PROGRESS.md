@@ -124,3 +124,23 @@ non-grocery national brands; after the Target block, pause and resume at ≥ 5 s
 **Scheduled / in progress**
 - 04:13: resume Target and Walmart at 5 s per request (resolution searches → product-page
   UPCs → locate pass), stopping at the first block.
+- **04:13 resume.**
+  - Target probe (3 items) clean. Then Target 435 again after ~47 searches at 5 s; the
+    circuit breaker stopped it after 6 failed attempts. Target is stopped for now.
+  - Walmart finished its 3 remaining items.
+  - `resolve_items` with Walmart product pages: UPCs for all 58 Walmart candidates, but
+    many top picks are the wrong variant (see the summary in chat). Target has candidates
+    for 53 items but **no UPCs** (its product pages are blocked).
+  - Locate pass **skipped**. Sample redrawn: 14 stores at true addresses, 236 at checked
+    directory coordinates (the approved fallback).
+  - **Snapshot 2 started at 04:26 for Walmart + Costco** (`config/analysis.yaml` →
+    `main_snapshots: [2]`). Target is pending.
+
+**Needs the owner (morning)**
+1. **Target scope.** It blocks after ~50–115 requests, so 250 × 58 (~14,500) is not
+   feasible. Options: drop Target from snapshot 2 and keep it Walmart vs Costco; a small
+   Target panel (e.g. 40 stores × 20 items ≈ 800 requests, spread over several days in
+   short sessions); or wait days and re-test.
+2. **Review `config/items_resolved.csv`** (and `item_candidates.csv`), then copy the
+   confirmed `walmart_id` / `target_tcin` / `upc` into `config/items.csv`.
+3. Kroger production keys, if you want Kroger.
