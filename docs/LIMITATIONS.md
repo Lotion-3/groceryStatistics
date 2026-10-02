@@ -42,3 +42,12 @@
 - **Tail estimation at n ≈ 250 per chain** is noisy. Simulation shows RMSE of α̂ around
   0.7–1.1 at n = 250 even for well-behaved tails, and poor interval coverage when the tail
   is only asymptotically Pareto.
+- **Spatial model.** In simulation (`simulation/validate_module_b.py`, one replication),
+  pointwise PSIS-LOO hardly separated the spatial from the non-spatial model (ΔELPD 3 ± 1.8)
+  even when the truth was strongly spatial. So LOO is not evidence for or against spatial
+  structure here. We report the posterior spatial share instead, which was recovered within
+  about 0.1 but tended to be slightly low.
+- **Store coordinates are mostly ZIP centroids,** which blurs spatial structure below
+  roughly the ZIP scale.
+- **Kroger.** The supplied credentials work only on the certification (test) host, whose
+  catalog covers about 10 of the 58 items. Kroger is therefore not in the main analysis.
