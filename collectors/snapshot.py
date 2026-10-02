@@ -47,7 +47,7 @@ from collectors.common import (ROOT, ChainBlocked, TransientError, end_snapshot,
 from db.init_db import DEFAULT_DB, connect, load_items
 from sampling.geo import osm_coords, zip_from_address, zip_info
 
-ALL_CHAINS = ("target", "walmart", "costco", "trader_joes")
+ALL_CHAINS = ("target", "walmart", "costco", "trader_joes", "kroger")
 # Trader Joe's is dropped from the study (HTTP 403; national price only): DECISIONS #24.
 DEFAULT_CHAINS = ("target", "walmart", "costco")
 
@@ -80,6 +80,7 @@ class Run:
         self.active = set(chains)
         self.sessions: dict = {}
         self.costco_done: set[str] = set()
+        self.kroger_done: set[str] = set()
 
     # -- bookkeeping -------------------------------------------------------
     def done(self, store_pk: int, item_id: str) -> bool:
@@ -217,6 +218,39 @@ class Run:
                           lambda it: C.search(it["search_term"], shop_id, zone, srow["zip"], sess),
                           meta={"shop_id": shop_id, "zone_id": zone, "zip": srow["zip"]})
 
+    def kroger(self, srow: dict, items: list[dict]):
+        """Nearest Kroger-family store (official API) to the anchor; optional
+        chain, not in DEFAULT_CHAINS (see DECISIONS: certification catalog
+        covers ~10 of 58 items)."""
+        from collectors import kroger as K
+        if "ksess" not in self.sessions:
+            self.sessions["ksess"] = K.Session()
+        sess = self.sessions["ksess"]
+        try:
+            st, raw = with_backoff(K.nearest_store, float(srow["lat"]), float(srow["lon"]), sess)
+        except ChainBlocked as e:
+            return self.block("kroger", None, None, e)
+        except TransientError as e:
+            return self.fail("kroger", None, None, f"store lookup zip={srow['zip']}: {e}")
+        save_raw(self.snap, "kroger", f"zip{srow['zip']}", "_locations", raw, {"zip": srow["zip"]}, kind="locations")
+        if not st:
+            return self.fail("kroger", None, None, f"no Kroger-family store within 15 mi of zip={srow['zip']}")
+        loc = str(st["locationId"])
+        if loc in self.kroger_done:
+            return
+        self.kroger_done.add(loc)
+        a, g = st.get("address") or {}, st.get("geolocation") or {}
+        zc = (a.get("zipCode") or srow["zip"])[:5]
+        z = zip_info(zc)
+        store = {"chain": "kroger", "store_id": loc, "name": f"{st.get('chain')} {st.get('name')}",
+                 "lat": g.get("latitude") or z["lat"], "lon": g.get("longitude") or z["lon"], "zip": zc,
+                 "state": z["state"] or a.get("state"), "region": z["region"], "urbanicity": z["urbanicity"],
+                 "ruca": z["ruca"], "source": K.SOURCE, "anchor_zip": srow["zip"],
+                 "coord_quality": "api_geolocation" if g.get("latitude") else "zip_centroid",
+                 "address": f"{a.get('addressLine1')}, {a.get('city')}, {a.get('state')} {a.get('zipCode')}"}
+        store_pk = upsert_store(self.con, store)
+        self._query_items("kroger", store, store_pk, items, lambda it: K.search_item(it, loc, sess))
+
     def trader_joes(self, items: list[dict]):
         from collectors import trader_joes as TJ
         store = {"chain": "trader_joes", "store_id": "national",
@@ -238,7 +272,7 @@ def run(chains: list[str], stores: list[dict], items: list[dict], db_path=DEFAUL
             r.trader_joes(items)
         for i, s in enumerate(stores, 1):
             print(f"[{i}/{len(stores)}] anchor Target #{s['store_id']} zip={s['zip']} {s['state']}", flush=True)
-            for ch in ("target", "walmart", "costco"):
+            for ch in ("target", "walmart", "costco", "kroger"):
                 if ch in r.active:
                     try:
                         getattr(r, ch)(s, items)

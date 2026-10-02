@@ -24,6 +24,12 @@ import requests
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "data" / "external"
 
+try:  # CENSUS_API_KEY may live in .env
+    from dotenv import load_dotenv
+    load_dotenv(ROOT / ".env")
+except Exception:
+    pass
+
 ZCTA_URL = "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2024_Gazetteer/2024_Gaz_zcta_national.zip"
 RUCA_URL = "https://www.ers.usda.gov/media/5444/2020-rural-urban-commuting-area-codes-zip-codes.csv?v=18641"
 

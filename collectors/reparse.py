@@ -28,7 +28,8 @@ from collectors.snapshot import build_rows, specificity_rule
 from db.init_db import connect, load_items
 from sampling.geo import osm_coords, zip_from_address, zip_info
 
-SOURCE = {"target": "direct", "walmart": "direct", "costco": "instacart", "trader_joes": "national"}
+SOURCE = {"target": "direct", "walmart": "direct", "costco": "instacart", "trader_joes": "national",
+          "kroger": "kroger_ce"}
 
 
 def _legacy_store(chain: str, env: dict, path: Path) -> dict:

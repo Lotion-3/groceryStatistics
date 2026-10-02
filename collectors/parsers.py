@@ -397,7 +397,61 @@ def parse_trader_joes(body: str) -> list[dict]:
     return rows
 
 
+# ---------------------------------------------------------------------------
+# Kroger Public API  (body = {"location_id", "term", "status", "response": <API JSON>},
+# written by collectors/kroger.search)
+# ---------------------------------------------------------------------------
+
+def kroger_upc(raw: Any) -> Optional[str]:
+    """Kroger sends 13 digits WITHOUT the check digit ('0007680828008').
+    UPC-A = the last 11 digits + the computed check digit ('076808280081').
+    VERIFIED: equals Target's product-page UPC for Barilla Spaghetti 16 oz."""
+    d = re.sub(r"\D", "", str(raw or ""))
+    if len(d) != 13:
+        return None
+    body = [int(c) for c in d[-11:]]
+    chk = (10 - (3 * sum(body[0::2]) + sum(body[1::2])) % 10) % 10
+    return normalize_upc(d[-11:] + str(chk))
+
+
+def parse_kroger(body: str) -> list[dict]:
+    env = json.loads(body) if isinstance(body, str) else body
+    loc = str(env.get("location_id") or "")
+    rows = []
+    for i, p in enumerate(_get(env, "response", "data") or []):
+        if not p.get("productId") or not p.get("description"):
+            continue
+        it = (p.get("items") or [{}])[0]
+        pr = it.get("price") or {}
+        # VERIFIED (certification env, 2026-10-02): items[].price = {regular,
+        # promo, effectiveDate, expirationDate}; promo absent or 0 or equal to
+        # regular when there is no promotion; many products carry no price.
+        regular = money(pr.get("regular"))
+        promo = money(pr.get("promo"))
+        price = promo if (promo and regular and promo < regular) else regular
+        stock = _get(it, "inventory", "stockLevel")
+        rows.append({
+            "chain_product_id": str(p["productId"]),
+            "product_name": p.get("description"),
+            "brand": p.get("brand") or None,
+            "upc": kroger_upc(p.get("upc")),
+            **_promo_fields(price, regular),
+            "unit_price": None, "unit_price_unit": None,
+            "pack_size": it.get("size"),
+            "in_stock": None if stock is None else int(stock != "TEMPORARILY_OUT_OF_STOCK"),
+            # A price is returned only when filter.locationId is given, so it
+            # is that store's price.
+            "priced_store_id": loc if price is not None else None,
+            "search_rank": i,
+            "extra": {"stock_level": stock, "price_effective": _get(pr, "effectiveDate", "value"),
+                      "fulfillment": it.get("fulfillment"), "sold_by": it.get("soldBy"),
+                      "term": env.get("term"), "http_status": env.get("status")},
+        })
+    return rows
+
+
 PARSERS = {
+    "kroger": parse_kroger,
     "walmart": parse_walmart,
     "target": parse_target,
     "costco": parse_instacart,

@@ -135,3 +135,28 @@ def test_trader_joes_shape():
         "total_count": 1}}}
     rows = P.parse_trader_joes(json.dumps(raw))
     assert rows[0]["price"] == 2.99 and rows[0]["pack_size"] == "15 oz" and rows[0]["is_promo"] == 0
+
+
+# --- Kroger (Public API, certification env; fixtures are live responses) ---
+
+def test_kroger_upc_conversion():
+    from collectors.parsers import kroger_upc
+    # Barilla Spaghetti 16 oz: Kroger id vs the UPC on Target's product page
+    assert kroger_upc("0007680828008") == "076808280081"
+    assert kroger_upc("123") is None
+
+
+def test_kroger_priced_row_is_store_specific():
+    from collectors.parsers import parse_kroger
+    rows = parse_kroger((FIX / "kroger_search_coke_promo.json").read_text(encoding="utf-8"))
+    priced = [r for r in rows if r["price"] is not None]
+    assert priced and all(r["priced_store_id"] == "01600942" for r in priced)
+    assert all(r["upc"] and len(r["upc"]) == 12 for r in rows)
+    # promo equal to regular is not a promotion
+    assert all(r["is_promo"] == 0 for r in priced if r["price"] == r["regular_price"])
+
+
+def test_kroger_unpriced_rows_kept_but_not_store_specific():
+    from collectors.parsers import parse_kroger
+    rows = parse_kroger((FIX / "kroger_search_bread_unpriced.json").read_text(encoding="utf-8"))
+    assert rows and all(r["price"] is None and r["priced_store_id"] is None for r in rows)
