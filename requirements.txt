@@ -19,7 +19,8 @@ arviz
 # NUTS backend for PyMC: no C++ compiler is needed (Windows), and it is much faster
 numpyro
 jax
-pulp
+pulp>=4
+highspy
 libpysal
 esda
 pyyaml

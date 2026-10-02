@@ -4,8 +4,8 @@ The question: for identical products (matched by UPC), how are prices distribute
 stores and chains, how heavy-tailed are the deviations, and what geographic and latent
 structure lies behind them?
 
-**Status:** setup complete, plus a tiny live test. No full snapshot has been collected yet,
-so every result below this line will be preliminary. See `docs/PROGRESS.md`.
+**Status:** collection and analysis code complete for Modules A-D; no full snapshot has
+been collected yet, so every result will be preliminary. See `docs/PROGRESS.md`.
 
 ## Layout
 
@@ -19,7 +19,7 @@ db/           schema.sql, init_db.py
 sampling/     fetch_external.py, fetch_osm.py, build_frame.py, locate_target_stores.py, geo.py
 data/         raw/ (gzipped responses, gitignored), processed/, external/ (gitignored)
 analysis/     estimators.py, common.py, module_a … module_e
-simulation/   SYNTHETIC-data checks of the estimators (clearly labelled)
+simulation/   SYNTHETIC-data checks of the estimators and of Module B (clearly labelled)
 figures/ tables/  outputs
 docs/         REPO_NOTES, SAMPLING, DECISIONS, LIMITATIONS, PROGRESS
 tests/        pytest suite; fixtures are trimmed live responses
@@ -31,7 +31,7 @@ tests/        pytest suite; fixtures are trimmed live responses
 py -3.12 -m venv C:\Users\<you>\.venvs\groceryStatistics      # keep the venv out of OneDrive
 C:\Users\<you>\.venvs\groceryStatistics\Scripts\activate
 pip install -r requirements.txt
-copy .env.example .env                                          # optional settings
+copy .env.example .env      # CENSUS_API_KEY needed for the ACS covariates; Kroger keys optional
 python db/init_db.py --load-items
 python -m sampling.fetch_external && python -m sampling.fetch_osm && python -m sampling.build_frame
 pytest
@@ -54,8 +54,15 @@ observation row records the raw file it came from.
 ```
 python -m sampling.locate_target_stores           # true Target store addresses (~1,900 requests)
 python -m collectors.resolve_items --fetch-upc    # one product page per item per chain
-python -m collectors.snapshot --notes "snapshot 1"   # resumable: --snapshot-id N
+.\scripts\run_snapshot_parallel.ps1 -Notes "snapshot 1"   # one process per chain; resume with -SnapshotId N
 ```
+
+Then list the snapshot id under `main_snapshots` in `config/analysis.yaml` so the analysis
+uses it.
+
+Kroger (official Kroger Public API, `collectors/kroger.py`) is an optional chain:
+`--chains kroger`. The certification host covers only ~10 of the 58 items, so it is off by
+default. With production credentials, set `KROGER_BASE_URL=https://api.kroger.com/v1`.
 
 The first run of a chain mints a session with a local headless browser (CloakBrowser), which
 can take a minute. Walmart needs one browser launch per store to set it as the pickup store.
@@ -70,9 +77,13 @@ can take a minute. Walmart needs one browser launch per store to set it as the p
   requests over HTTP. No new mechanisms for getting past access controls were written for
   this project.
 - **Rate limits.** Collection is deliberately slow: one request at a time per site, at
-  least 2 seconds apart, with backoff on errors.
-- **Blocks.** If a site serves a block or captcha, collection for that chain stops for the
-  run and the event is logged. It is never retried around.
+  least 2 seconds apart (5 seconds for Target and Walmart after both pushed back on day 2),
+  with backoff on errors. Chains run in parallel only because they are different sites.
+- **Blocks.** If a site serves a block or captcha, or fails 6 times in a row, collection
+  for that chain stops for the run and the event is logged. It is never retried around,
+  and sessions are not re-created to get past a block.
+- **Kroger** is accessed only through its official, credentialed developer API, within its
+  published daily limits.
 - **Secrets.** Session cookies are stored only locally, in gitignored files, and are never
   committed.
 - **Raw data.** Raw responses stay in the local archive, which is not published. Shared test
@@ -82,4 +93,5 @@ can take a minute. Walmart needs one browser launch per store to set it as the p
 
 - U.S. Census Bureau, 2024 ZCTA Gazetteer.
 - USDA ERS, 2020 Rural-Urban Commuting Area codes (ZIP).
+- U.S. Census Bureau, American Community Survey 2019-2023 5-year estimates by ZCTA (Census API).
 - OpenStreetMap contributors (ODbL), store locations by brand via Overpass.
