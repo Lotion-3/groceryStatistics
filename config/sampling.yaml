@@ -1,0 +1,26 @@
+# Store sampling configuration (see docs/SAMPLING.md).
+seed: 20261001
+
+# Number of Target stores to draw from the 1,893-store directory.
+# Walmart and Costco stores are then anchored to each sampled store's ZIP,
+# so the total is roughly 2-3x this (Costco covers fewer ZIPs).
+n_target: 250
+
+# Strata: Census region x urbanicity class, proportional allocation
+# (largest-remainder rounding).
+strata: [region, urbanicity]
+
+# RUCA (2020, ZIP-level, USDA ERS) -> urbanicity class.
+urbanicity_from_ruca:
+  urban: [1]            # metropolitan core
+  suburban: [2, 3]      # metropolitan high/low commuting
+  rural: [4, 5, 6, 7, 8, 9, 10]   # micropolitan, small town and rural
+
+# Exclude stores whose nearest ZCTA centroid is farther than this (km); such
+# matches usually mean a bad slug geocode.
+max_zcta_distance_km: 25
+
+# Public reference files (downloaded by sampling/fetch_external.py).
+external:
+  zcta_gazetteer: data/external/2024_Gaz_zcta_national.txt
+  ruca_zip: data/external/ruca2020_zip.csv

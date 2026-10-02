@@ -1,0 +1,10 @@
+item_id,chain,chain_product_id,product_name,score,size_match,n_stores,example_price,upc,upc_source,upc_match_walmart_target
+cer_cheerios_18,walmart,363183524,"Cheerios, Heart Healthy Gluten Free Breakfast Cereal, Family Size, 18 oz",1.0,1,2,4.97,016000170032,product_page:data/raw/snapitems/walmart/product_pages/363183524__pdp__20261002T030608_81696d63.json.gz,0
+cer_cheerios_18,target,81875238,General Mills Family Size Cheerios Cereal - 18oz,2.0,1,2,5.29,016000169159,product_page:data/raw/snapitems/target/product_pages/81875238__pdp__20261002T030616_38c0c1a6.json.gz,0
+cer_cheerios_18,costco,items_11019-31899,"General Mills, Cheerios Cereal, 20.35 oz, 2-count",0.5,0,1,8.45,,,0
+pas_barilla_spaghetti_16,walmart,10309153,"Barilla Classic Non-GMO, Kosher Certified Spaghetti Pasta, 16 oz",2.0,1,2,1.88,076808280081,product_page:data/raw/snapitems/walmart/product_pages/10309153__pdp__20261002T030617_9058242e.json.gz,1
+pas_barilla_spaghetti_16,target,13156213,Barilla Spaghetti Pasta - 16oz,2.0,1,2,1.89,076808280081,product_page:data/raw/snapitems/target/product_pages/13156213__pdp__20261002T030618_2441fd16.json.gz,1
+pas_barilla_spaghetti_16,costco,items_11019-111123751,"Kirkland Signature Granulated Garlic, 15.5 oz",0.0,0,1,9.57,,,1
+sod_coke_12pk,walmart,12166733,"Coca-Cola Soda Pop Fridge Pack Cans, 12 fl oz, 12 Pack",2.0,1,2,7.12,049000028904,product_page:data/raw/snapitems/walmart/product_pages/12166733__pdp__20261002T030621_355bbe68.json.gz,1
+sod_coke_12pk,target,12953464,Coca-Cola Soda - 12pk/12 fl oz Cans,2.0,1,2,8.89,049000028904,product_page:data/raw/snapitems/target/product_pages/12953464__pdp__20261002T030621_40c1fe46.json.gz,1
+sod_coke_12pk,costco,items_11019-2736842,"Coca-Cola Classic, 12 fl oz, 35-count",0.667,0,1,25.49,,,1
