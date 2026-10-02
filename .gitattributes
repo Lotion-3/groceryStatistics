@@ -1,0 +1,5 @@
+* text=auto eol=lf
+# Vendored collectors are kept byte-identical to upstream (checksums in VENDORED.md)
+collectors/vendor/** -text
+*.png binary
+*.gz binary

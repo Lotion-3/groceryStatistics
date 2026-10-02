@@ -1,0 +1,795 @@
+"""
+ALDI pricing pipeline — mirrors kroger_async.py structure.
+
+Flow:
+  1. Load cached session (cookies + x-ic-qp + zoneId) from disk, or bootstrap with Playwright.
+  2. Find nearest ALDI store via DefaultShop GraphQL.
+  3. For each ingredient, try get_all_terms() fallbacks through SearchResultsPlacements + Items.
+  4. Convert ALDI product dicts to Kroger-like format; reuse find_best_purchase() for unit math.
+
+Entry point:
+    store_name, store_id, prices = price_all_aldi(ingredients, lat, lon)
+
+prices format (same as kroger_async):
+    {ingredient_name: {"total_cost": float, "description": str, "size_str": str, ...}}
+"""
+from __future__ import annotations
+
+import json
+import os
+import re
+import threading
+import time
+import uuid
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
+from typing import Optional
+
+import requests
+
+from kroger_pricing import find_best_purchase, _kw_matches
+from kroger_search_map import get_all_terms
+
+# ---------------------------------------------------------------------------
+# Constants
+# ---------------------------------------------------------------------------
+ALDI_BANNERS: set[str] = {"aldi"}
+
+# Same reasoning as target_pricing.py / walmart_pricing.py: on Render, never
+# launch a live CloakBrowser (real OOM risk on 512MB — see the 2026-09-12
+# incident that motivated ALLOW_BROWSER_WARM there) and never age-reject a
+# cached session either (checking one costs nothing; a genuinely dead session
+# fails naturally on the next real request instead of needing a guessed TTL).
+# Both auto-detected via `RENDER`, no config needed; both still overridable.
+_ON_RENDER = bool(os.environ.get("RENDER"))
+_allow_warm_override = os.environ.get("ALLOW_BROWSER_WARM")
+if _allow_warm_override is not None:
+    _ALLOW_BROWSER_WARM = _allow_warm_override.strip().lower() not in ("0", "false", "no")
+else:
+    _ALLOW_BROWSER_WARM = not _ON_RENDER
+_env_ttl = os.environ.get("ALDI_SESSION_TTL")
+SESSION_TTL = float(_env_ttl) if _env_ttl is not None else (float("inf") if _ON_RENDER else 30 * 24 * 3600)
+
+BASE_GQL = "https://www.aldi.us/graphql"
+_SESSION_CACHE = Path(__file__).parent / ".aldi_session.json"
+
+HASHES = {
+    "DefaultShop":             "d389a8d33d63801f1ce5c4929fb181dd10c57b49c3a2dcb6a6baa44212e8e069",
+    "SearchResultsPlacements": "387535ff634b5f783192dc1464d1253e514ff092876a1747486d90d83beb4dfd",
+    "Items":                   "0362f9eaea7f55c17c95266a64f8c37a10b55d265318f85c761c59c382d96074",
+}
+
+BASE_HEADERS = {
+    "accept": "*/*",
+    "accept-language": "en-US",
+    "content-type": "application/json",
+    "x-client-identifier": "web",
+    "x-ic-view-layer": "true",
+    "user-agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    ),
+    "referer": "https://www.aldi.us/store/aldi/s?query=",
+}
+
+
+# ---------------------------------------------------------------------------
+# Store detection
+# ---------------------------------------------------------------------------
+
+def is_aldi_store(store_name: str) -> bool:
+    """Return True if the store name is an ALDI banner."""
+    lower = store_name.lower()
+    return any(b in lower for b in ALDI_BANNERS)
+
+
+# ---------------------------------------------------------------------------
+# Session management (disk cache + Playwright bootstrap)
+# ---------------------------------------------------------------------------
+
+# In-process cache so we only hit disk once per server run
+_mem_cache: dict = {}
+_session: Optional[requests.Session] = None
+
+
+def _load_disk_session() -> dict:
+    try:
+        data = json.loads(_SESSION_CACHE.read_text())
+        if data.get("expires_at", 0) > time.time():
+            return data
+    except Exception:
+        pass
+    return {}
+
+
+def _save_disk_session(cookies: dict, qp: str, zone_id: str, shop_id: str = "") -> None:
+    try:
+        _SESSION_CACHE.write_text(json.dumps({
+            "cookies": cookies,
+            "qp": qp,
+            "zone_id": zone_id,
+            "shop_id": shop_id,
+            "expires_at": time.time() + SESSION_TTL,
+        }))
+    except Exception:
+        pass
+
+
+def _automint_sid() -> dict:
+    """Mint a fresh __Host-instacart_sid via CloakBrowser — aldi.us issues it to
+    ANY visit, anonymous, no login/account needed (verified 2026-07-25: a brand
+    new headless session gets one automatically, ~30-day expiry). Returns the
+    full cookie jar from that visit, or {} on any failure (caller falls back
+    to the manually-pasted ALDI_INSTACART_SID)."""
+    try:
+        from browser_gate import launch  # gated: 1 browser at a time + low-mem flags (was cloakbrowser.launch)
+        browser = launch(headless=True)
+        try:
+            ctx = browser.new_context()
+            page = ctx.new_page()
+            page.goto("https://www.aldi.us/store/aldi/s?query=eggs",
+                      wait_until="domcontentloaded", timeout=45000)
+            time.sleep(2)
+            cookies = {c["name"]: c["value"] for c in ctx.cookies()}
+        finally:
+            browser.close()
+        if "__Host-instacart_sid" in cookies:
+            print("[ALDI] Auto-minted a fresh __Host-instacart_sid via CloakBrowser.", flush=True)
+            return cookies
+        print("[ALDI] Auto-mint didn't get a __Host-instacart_sid cookie.", flush=True)
+    except Exception as e:
+        print(f"[ALDI] Auto-mint failed ({repr(e)[:100]}) — falling back to config.env SID.", flush=True)
+    return {}
+
+
+def _bootstrap() -> tuple[dict, str, str, str]:
+    """Bootstrap ALDI session.
+
+    Primary: auto-mint a fresh session (incl. the SID) via CloakBrowser — no
+    manual DevTools capture needed, and it's never stale since it's minted new
+    every time the disk cache (SESSION_TTL) expires.
+
+    Fallback: ALDI_INSTACART_SID/ALDI_SHOP_ID from config.env, for when
+    CloakBrowser is unavailable or the auto-mint fails for some reason.
+
+    NOTE: the SID is REQUIRED. Verified against the live API — with the SID the
+    SearchResultsPlacements/Items queries return the correct ALDI in-store price
+    (e.g. green onions $0.95); without it the search returns ZERO products and
+    ALDI pricing fails entirely. The SID does NOT introduce a delivery markup.
+    """
+    import os
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).parent.parent / "config.env")
+    manual_sid = os.getenv("ALDI_INSTACART_SID", "")
+    shop_id = os.getenv("ALDI_SHOP_ID", "")
+
+    print("[ALDI] Bootstrapping session...", flush=True)
+    cookies = _automint_sid()
+
+    if "__Host-instacart_sid" not in cookies:
+        # Auto-mint unavailable/failed — same behavior as before this change.
+        s = requests.Session()
+        s.headers.update(BASE_HEADERS)
+        try:
+            s.get("https://www.aldi.us/store/aldi/s?query=eggs", timeout=15)
+        except Exception as e:
+            print(f"[ALDI] Bootstrap GET failed: {e}", flush=True)
+        cookies = dict(s.cookies)
+        if manual_sid:
+            cookies["__Host-instacart_sid"] = manual_sid
+            print("[ALDI] Using ALDI_INSTACART_SID from config.env (fallback).", flush=True)
+        else:
+            print("[ALDI] WARNING: no auto-minted or config.env SID — search will return no products.", flush=True)
+
+    if shop_id:
+        print(f"[ALDI] Using hardcoded ALDI_SHOP_ID={shop_id!r} from config.env", flush=True)
+    else:
+        print("[ALDI] WARNING: ALDI_SHOP_ID not set — will use DefaultShop (may be wrong).", flush=True)
+
+    qp = str(uuid.uuid4())
+    zone_id = "713"
+    return cookies, qp, zone_id, shop_id
+
+
+def _load_remote_session() -> dict:
+    """Off-box session from Supabase (published by mint_sessions.py on GitHub
+    Actions, which mints it on a 7GB runner). {} if unavailable/stale — caller
+    falls back to disk/bootstrap, so this is a pure speedup, never a hard
+    dependency. ALDI's SID is good for ~30 days, so a generous max_age is fine:
+    the mint job only re-publishes when it actually changes (see mint_sessions.py)."""
+    try:
+        import session_store
+        remote = session_store.load("aldi", max_age_seconds=SESSION_TTL)
+        if not remote or "__Host-instacart_sid" not in (remote.get("cookies") or {}):
+            return {}
+        extra = remote.get("extra") or {}
+        return {
+            "cookies": remote["cookies"],
+            "qp": extra.get("qp", ""),
+            "zone_id": extra.get("zone_id", ""),
+            "shop_id": remote.get("store_id") or extra.get("shop_id", ""),
+        }
+    except Exception:
+        return {}
+
+
+_pool_idx = 0  # cursor into _cookie_pool; persists for process lifetime
+
+
+def _load_cookie_pool() -> list[dict]:
+    """Long-lived, never-pruned Supabase pool (session_store.load_pool,
+    newest-first — see mint_pool_refresh.py). No local-file precedent for
+    ALDI (unlike Target/Walmart) — Supabase is the only source. Empty on any
+    failure; _get_session() then falls straight through to the single
+    legacy remote session / bootstrap, exactly as before this pool existed."""
+    try:
+        import session_store
+        pool = session_store.load_pool("aldi")
+        print(f"[ALDI] Loaded {len(pool)} Supabase-pool session(s).", flush=True)
+        return pool
+    except Exception as e:
+        print(f"[ALDI] Supabase pool unavailable ({repr(e)[:100]}).", flush=True)
+        return []
+
+
+_cookie_pool: list[dict] = _load_cookie_pool()
+
+
+# ALDI's SearchResultsPlacements schema types postalCode as String! (non-
+# nullable) — "postalCode": None (fine in normal use, where a real postal
+# always comes from _get_postal first) 400s here with "invalid value"
+# instead of a clean auth failure. Any real US zip works for a liveness
+# check; this one's arbitrary (Indianapolis, matches instacart_pricing's
+# validator's anchor for the same reason).
+_VALIDATE_POSTAL = "46201"
+_VALIDATE_COORDS = (39.7684, -86.1581)  # Indianapolis, inside 46201's area
+
+
+def _validate_pool_entry(cookies: dict, qp: str, zone_id: str, shop_id: str) -> bool:
+    """Cheap liveness check (no browser): does a real search return real data
+    with this exact cookie? Deliberately does NOT call _gql() (that
+    invalidates the ACTIVE _mem_cache/_session on a 401/403 — exactly wrong
+    here, this is testing an unrelated POOL CANDIDATE, not the session in
+    use) — hand-rolled requests instead, same mechanics, no shared-state
+    side effects. Mirrors walmart_pricing._validate_http_session /
+    target_pricing's equivalent.
+
+    A pooled session's shop_id is usually empty (it's only set from
+    ALDI_SHOP_ID; pricing re-resolves the nearest shop per request anyway),
+    so the shop to search is resolved with DefaultShop at the validation
+    postal code first — the same lookup pricing does."""
+    if not cookies.get("__Host-instacart_sid"):
+        return False
+    s = requests.Session()
+    s.cookies.update(cookies)
+    if qp:
+        s.headers.update({"x-ic-qp": qp})
+
+    def _query(op: str, variables: dict) -> Optional[dict]:
+        params = {
+            "operationName": op,
+            "variables": json.dumps(variables, separators=(",", ":")),
+            "extensions": json.dumps(
+                {"persistedQuery": {"version": 1, "sha256Hash": HASHES[op]}}, separators=(",", ":")),
+        }
+        try:
+            r = s.get(BASE_GQL, params=params,
+                      headers={**BASE_HEADERS, "x-page-view-id": str(uuid.uuid4())}, timeout=12)
+            if r.status_code != 200:
+                return None
+            data = r.json()
+        except Exception:
+            return None
+        return None if "errors" in data else (data.get("data") or None)
+
+    if not shop_id:
+        lat, lon = _VALIDATE_COORDS
+        shop = (_query("DefaultShop", {
+            "postalCode": _VALIDATE_POSTAL, "coordinates": {"latitude": lat, "longitude": lon},
+            "addressId": None,
+        }) or {}).get("defaultShop") or {}
+        shop_id = shop.get("id", "")
+        zone_id = zone_id or shop.get("zoneId") or ""
+        if not shop_id:
+            return False
+
+    return _query("SearchResultsPlacements", {
+        "action": None, "query": "milk", "pageViewId": str(uuid.uuid4()),
+        "elevatedProductId": None, "searchSource": "search", "filters": [],
+        "disableReformulation": False, "disableLlm": False, "forceInspiration": False,
+        "orderBy": "bestMatch", "clusterId": None, "includeDebugInfo": False,
+        "clusteringStrategy": None, "contentManagementSearchParams": {"itemGridColumnCount": 6},
+        "shopId": shop_id, "postalCode": _VALIDATE_POSTAL, "zoneId": zone_id or None, "first": 1,
+    }) is not None
+
+
+def _next_pool_session() -> Optional[dict]:
+    """Return the next pool entry that passes a live validate, or None once
+    every remaining candidate has been tried this process — a light scan
+    (like walmart_pricing/target_pricing's _next_pool_session), not a blind
+    grab. Never re-offers one already tried; a block during actual use still
+    calls _invalidate_session() on the ACTIVE session as before, independent
+    of this scan."""
+    global _pool_idx
+    while _pool_idx < len(_cookie_pool):
+        entry = _cookie_pool[_pool_idx]
+        cookies = entry.get("cookies") or {}
+        qp = (entry.get("extra") or {}).get("qp", "")
+        zone_id = (entry.get("extra") or {}).get("zone_id", "")
+        shop_id = entry.get("store_id") or (entry.get("extra") or {}).get("shop_id", "")
+        idx = _pool_idx
+        _pool_idx += 1
+        if _validate_pool_entry(cookies, qp, zone_id, shop_id):
+            print(f"[ALDI] Pool entry #{idx + 1}/{len(_cookie_pool)} validated live.", flush=True)
+            return {"cookies": cookies, "qp": qp, "zone_id": zone_id, "shop_id": shop_id}
+        print(f"[ALDI] Pool entry #{idx + 1}/{len(_cookie_pool)} is dead — advancing.", flush=True)
+    return None
+
+
+def _get_session() -> tuple[requests.Session, str, str]:
+    """Return (session, zone_id, shop_id), using disk cache, the never-pruned
+    Supabase pool, the single legacy remote session, or re-bootstrapping
+    (browser) as a last resort."""
+    with _session_lock:
+        return _get_session_locked()
+
+
+# Serializes session setup — without it, concurrent callers each walked the
+# pool / launched a bootstrap browser (Instacart's module already locks this).
+_session_lock = threading.Lock()
+
+
+def _get_session_locked() -> tuple[requests.Session, str, str]:
+    global _mem_cache, _session
+
+    if not _mem_cache:
+        _mem_cache = _load_disk_session()
+
+    if not _mem_cache:
+        # Never-pruned Supabase pool first (many chances, see
+        # mint_pool_refresh.py), then the single legacy remote session, then
+        # disk (already checked above), then bootstrap here as the last
+        # resort — all so the 512MB server skips launching a browser as long
+        # as ANY cached session anywhere still works.
+        pool_session = _next_pool_session()
+        if pool_session:
+            cookies, qp, zone_id, shop_id = (
+                pool_session["cookies"], pool_session["qp"], pool_session["zone_id"], pool_session["shop_id"])
+            print(f"[ALDI] Reused pool session #{_pool_idx}/{len(_cookie_pool)} "
+                  "(Supabase, no browser).", flush=True)
+        elif (remote := _load_remote_session()):
+            cookies, qp, zone_id, shop_id = (
+                remote["cookies"], remote["qp"], remote["zone_id"], remote["shop_id"])
+            print("[ALDI] Reused off-box session (Supabase, no browser).", flush=True)
+        elif not _ALLOW_BROWSER_WARM:
+            raise RuntimeError("ALDI: no cached session available and ALLOW_BROWSER_WARM=0 "
+                                "on this host — refusing to launch CloakBrowser here.")
+        else:
+            cookies, qp, zone_id, shop_id = _bootstrap()
+        _mem_cache = {"cookies": cookies, "qp": qp, "zone_id": zone_id, "shop_id": shop_id,
+                      "expires_at": time.time() + SESSION_TTL}
+        _save_disk_session(cookies, qp, zone_id, shop_id)
+        _session = None  # force rebuild
+
+    if _session is None:
+        _session = requests.Session()
+        _session.cookies.update(_mem_cache["cookies"])
+        if _mem_cache.get("qp"):
+            _session.headers.update({"x-ic-qp": _mem_cache["qp"]})
+
+    return _session, _mem_cache.get("zone_id", ""), _mem_cache.get("shop_id", "")
+
+
+def _invalidate_session() -> None:
+    """Clear cached session so the next call re-bootstraps."""
+    global _mem_cache, _session
+    _mem_cache = {}
+    _session = None
+    try:
+        _SESSION_CACHE.unlink(missing_ok=True)
+    except Exception:
+        pass
+
+
+# ---------------------------------------------------------------------------
+# GraphQL helper
+# ---------------------------------------------------------------------------
+
+def _log_block(category: str, detail: str = "") -> None:
+    """Best-effort: publish a block/failure event to Supabase for later
+    analysis (see session_store.log_block_event / walmart_pricing._Blocked for
+    the category scheme). Never raises. ALDI has no proxy pool or per-request
+    IP rotation (see _get_session — one long-lived session, re-bootstrapped
+    wholesale via _invalidate_session on a real block, not per-request-rotated
+    the way Walmart/Target are), so this only ever categorizes and logs — it
+    doesn't drive a retry loop the way the other chains' does."""
+    try:
+        import session_store
+        session_store.log_block_event("aldi", category, detail)
+    except Exception:
+        pass
+
+
+def _gql(op: str, variables: dict, session: requests.Session) -> dict:
+    """Returns {} on ANY failure (unchanged contract — callers were never
+    written to catch an exception here, so this stays a silent-empty return
+    rather than raising). What's new is WHY it failed is now categorized and
+    logged instead of being indistinguishable noise:
+      "explicit"  — 401/403 (also invalidates the session so the next call
+                    re-bootstraps rather than repeating the same dead one).
+      "soft"      — a non-401/403 HTTP error, unparseable JSON, or a GraphQL
+                    "errors" payload — something's wrong, cause less certain.
+      "transport" — the request never got a response at all (timeout/DNS/
+                    connection failure) — not a WAF signal."""
+    params = {
+        "operationName": op,
+        "variables": json.dumps(variables, separators=(",", ":")),
+        "extensions": json.dumps(
+            {"persistedQuery": {"version": 1, "sha256Hash": HASHES[op]}},
+            separators=(",", ":"),
+        ),
+    }
+    headers = {**BASE_HEADERS, "x-page-view-id": str(uuid.uuid4())}
+    try:
+        r = session.get(BASE_GQL, params=params, headers=headers, timeout=12)
+    except Exception as e:
+        _log_block("transport", f"{op}: {repr(e)[:80]}")
+        return {}
+    if r.status_code in (401, 403):
+        _invalidate_session()
+        _log_block("explicit", f"{op}: http {r.status_code}")
+        return {}
+    if r.status_code != 200:
+        _log_block("soft", f"{op}: http {r.status_code}")
+        return {}
+    try:
+        data = r.json()
+    except Exception as e:
+        _log_block("soft", f"{op}: bad json ({repr(e)[:60]})")
+        return {}
+    if "errors" in data:
+        _log_block("soft", f"{op}: graphql errors {str(data['errors'])[:100]}")
+        return {}
+    return data.get("data") or {}
+
+
+# ---------------------------------------------------------------------------
+# Postal code lookup (needed by DefaultShop)
+# ---------------------------------------------------------------------------
+
+_postal_cache: dict[tuple[float, float], str] = {}
+
+def _get_postal(lat: float, lon: float) -> str:
+    """Reverse-geocode lat/lon to postal code; cached in memory."""
+    key = (round(lat, 3), round(lon, 3))
+    if key in _postal_cache:
+        return _postal_cache[key]
+    try:
+        from geopy.geocoders import Nominatim
+        geo = Nominatim(user_agent="basket_buddy_aldi")
+        loc = geo.reverse(f"{lat},{lon}", language="en", timeout=5)
+        postal = (loc.raw.get("address", {}).get("postcode") or "") if loc else ""
+    except Exception:
+        postal = ""
+    _postal_cache[key] = postal
+    return postal
+
+
+# ---------------------------------------------------------------------------
+# Store discovery
+# ---------------------------------------------------------------------------
+
+def find_nearest_aldi_store(
+    lat: float,
+    lon: float,
+    session: requests.Session,
+    zone_id: str,
+    cached_shop_id: str = "",
+) -> Optional[tuple[str, str, str]]:
+    """
+    Find the nearest ALDI store.
+    Returns (shopId, zoneId, display_name) or None if nothing found within range.
+
+    If cached_shop_id is set (from ALDI_SHOP_ID in config.env), skips DefaultShop
+    entirely and uses the hardcoded value so geolocation can never return the wrong store.
+    """
+    if cached_shop_id:
+        print(f"[ALDI] Using hardcoded shopId={cached_shop_id!r} — skipping DefaultShop", flush=True)
+        return cached_shop_id, zone_id, "ALDI"
+
+    postal = _get_postal(lat, lon)
+    data = _gql("DefaultShop", {
+        "postalCode": postal or None,
+        "coordinates": {"latitude": lat, "longitude": lon},
+        "addressId": None,
+    }, session)
+    shop = data.get("defaultShop") or {}
+    shop_id = shop.get("id", "")
+
+    if not shop_id:
+        return None
+
+    print(f"[ALDI] shopId from DefaultShop={shop_id!r} (no hardcoded ID set)", flush=True)
+
+    store_zone = shop.get("zoneId") or zone_id or ""
+    name = shop.get("name") or "ALDI"
+    address = shop.get("address") or {}
+    city = address.get("city") or address.get("locality") or ""
+    display = f"{name} ({city})" if city else name
+
+    return shop_id, store_zone, display
+
+
+# ---------------------------------------------------------------------------
+# Product format conversion
+# ---------------------------------------------------------------------------
+
+def _to_kroger_format(prod: dict) -> Optional[dict]:
+    """
+    Convert an ALDI Items product dict into a Kroger API product dict shape
+    so that find_best_purchase() can process it unchanged.
+    """
+    price_obj = prod.get("price") or {}
+    view_sec = price_obj.get("viewSection") or {}
+    price_str = view_sec.get("priceValueString")
+    try:
+        price = float(re.sub(r"[^\d.]", "", str(price_str)))
+        if not (0.01 <= price <= 300):
+            return None
+    except Exception:
+        return None
+
+    # Use the lower of regular price and any available promo/offer price so that
+    # weekly specials (e.g. chicken breast $2.59 vs shelf $2.85) are reflected.
+    for offer_key in ("offerSection", "promoSection", "saleSection"):
+        offer_sec = price_obj.get(offer_key) or {}
+        offer_str = offer_sec.get("priceValueString")
+        if offer_str:
+            try:
+                offer_price = float(re.sub(r"[^\d.]", "", str(offer_str)))
+                if 0.01 <= offer_price < price:
+                    price = offer_price
+            except Exception:
+                pass
+
+    # ALDI's "size" field: usually "12 Count", "1 gal", "16 oz", etc.
+    size = prod.get("size") or "1 each"
+
+    return {
+        "description": prod.get("name") or "",
+        "brand": "",
+        "items": [{
+            "itemId": str(prod.get("id") or ""),
+            "soldBy": "UNIT",
+            "size": size,
+            "price": {"regular": price, "promo": None},
+        }],
+    }
+
+
+# ---------------------------------------------------------------------------
+# Search + price helpers
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Relevance filter — keeps the loose word-overlap search from accepting the
+# wrong FORM of a staple (e.g. "Garlic Powder" for "garlic bulb", "Pitted
+# Olives" for "olive oil", "Corn Muffin Mix" for "canned corn"). Kept local so
+# ALDI stays cloakbrowser-independent; mirrors instacart_pricing._is_relevant
+# but adds the qualifier/derivative-noun cases seen in ALDI's catalog.
+# ---------------------------------------------------------------------------
+_NONFOOD = (
+    "wax", "scent", "candle", "soap", "lotion", "shampoo", "detergent",
+    "air freshener", "perfume", "deodorant", "lip balm",
+)
+
+# Processing/packaging words signalling a form the query didn't ask for.
+# Rejected only when the query itself doesn't contain the word (so "trail mix"
+# still matches "mix", "chili powder" still matches "powder").
+_QUALIFIERS = (
+    "powder", "powdered", "spray", "mix", "muffin", "sauce", "soup",
+    "dressing", "wafer", "bread", "chips", "dried", "freeze-dried",
+    "dehydrated", "flavored", "candied", "pickled", "no-stick",
+    "non-stick", "nonstick",
+)
+
+# Derivative nouns: when the query names one, the product MUST contain it too —
+# "olive oil" must be oil (not olives), "vanilla extract" must be extract,
+# "chicken broth" must be broth (not cream-of-chicken soup).
+_ESSENTIAL_NOUNS = (
+    "oil", "extract", "broth", "stock", "vinegar", "paste", "juice", "syrup",
+)
+
+
+def _is_relevant(name_lower: str, query_lower: str) -> bool:
+    """True if a product name is a plausible match for the search query."""
+    if any(bad in name_lower for bad in _NONFOOD):
+        return False
+    query_words = set(query_lower.split())
+    # Substring check on the query (not word-set) so compound queries like
+    # "breadcrumbs" still tolerate a "bread" qualifier.
+    for q in _QUALIFIERS:
+        if q not in query_lower and _kw_matches(q, name_lower):
+            return False
+    for noun in _ESSENTIAL_NOUNS:
+        if noun in query_words and not _kw_matches(noun, name_lower):
+            return False
+    return True
+
+
+def _search_and_fetch(
+    query: str,
+    shop_id: str,
+    zone_id: str,
+    postal: str,
+    session: requests.Session,
+) -> list[dict]:
+    """
+    Search ALDI for `query` and return Kroger-format product dicts
+    filtered to items with at least one query-word match in the product name.
+    """
+    d = _gql("SearchResultsPlacements", {
+        "action": None,
+        "query": query,
+        "pageViewId": str(uuid.uuid4()),
+        "elevatedProductId": None,
+        "searchSource": "search",
+        "filters": [],
+        "disableReformulation": False,
+        "disableLlm": False,
+        "forceInspiration": False,
+        "orderBy": "bestMatch",
+        "clusterId": None,
+        "includeDebugInfo": False,
+        "clusteringStrategy": None,
+        "contentManagementSearchParams": {"itemGridColumnCount": 6},
+        "shopId": shop_id,
+        "postalCode": postal or None,
+        "zoneId": zone_id if zone_id else None,
+        "first": 20,
+    }, session)
+
+    ids = list(dict.fromkeys(re.findall(r'items_\d+-\d+', json.dumps(d))))[:20]
+    if not ids:
+        return []
+
+    d2 = _gql("Items", {
+        "ids": ids,
+        "shopId": shop_id,
+        "zoneId": zone_id if zone_id else None,
+        "postalCode": postal or None,
+    }, session)
+    products = d2.get("items") or []
+
+    query_low = query.lower()
+    query_words = set(query_low.split())
+    results = []
+    for prod in products:
+        name = (prod.get("name") or "").lower()
+        name_words = set(name.split())
+        if not any(qw in nw or nw in qw for qw in query_words for nw in name_words):
+            continue
+        if not _is_relevant(name, query_low):
+            continue
+        fmt = _to_kroger_format(prod)
+        if fmt:
+            results.append(fmt)
+
+    return results
+
+
+def _price_one(
+    ingredient: str,
+    qty: float,
+    unit: str,
+    shop_id: str,
+    zone_id: str,
+    postal: str,
+    session: requests.Session,
+) -> Optional[dict]:
+    """
+    Try get_all_terms() fallback sequence for one ingredient.
+    Returns a find_best_purchase() result dict on the first successful hit.
+    """
+    for term in get_all_terms(ingredient):
+        products = _search_and_fetch(term, shop_id, zone_id, postal, session)
+        if products:
+            result = find_best_purchase(ingredient, qty, unit, products)
+            if result:
+                return result
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Public interface
+# ---------------------------------------------------------------------------
+
+def price_all_aldi(
+    ingredients: dict,
+    lat: float,
+    lon: float,
+    max_workers: int = 10,
+) -> tuple[Optional[str], Optional[str], dict]:
+    """
+    Price all ingredients at the nearest ALDI store.
+
+    Parameters
+    ----------
+    ingredients : {name: {"qty": float, "unit": str, ...}}
+    lat, lon    : user coordinates
+    max_workers : parallel threads for ingredient searches
+
+    Returns
+    -------
+    (store_display_name, shop_id, prices)
+        prices: {ingredient_name: find_best_purchase() result dict}
+    """
+    session, zone_id, cached_shop_id = _get_session()
+
+    # Resolve the nearest ALDI from the caller's coordinates via DefaultShop —
+    # no longer pinned to a hardcoded ALDI_SHOP_ID. (The server passes the ALDI
+    # store's own geocoded location, so DefaultShop returns exactly that store.)
+    store_info = find_nearest_aldi_store(lat, lon, session, zone_id, cached_shop_id="")
+    if not store_info:
+        print("[ALDI] No ALDI store found near this location.", flush=True)
+        return None, None, {}
+
+    shop_id, store_zone_id, display_name = store_info
+    # Prefer the bootstrapped zoneId; fall back to what DefaultShop returned
+    effective_zone = zone_id or store_zone_id
+    postal = _get_postal(lat, lon)
+    print(f"[ALDI] Pricing at: {display_name} (shopId={shop_id})", flush=True)
+
+    prices: dict = {}
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        futures = {
+            pool.submit(
+                _price_one,
+                name,
+                float(data.get("qty", 1)),
+                str(data.get("unit", "whole")),
+                shop_id,
+                effective_zone,
+                postal,
+                session,
+            ): name
+            for name, data in ingredients.items()
+        }
+        for fut in as_completed(futures):
+            name = futures[fut]
+            try:
+                result = fut.result()
+                if result:
+                    prices[name] = result
+            except Exception as e:
+                print(f"[ALDI] Error pricing '{name}': {e}", flush=True)
+
+    print(f"[ALDI] Priced {len(prices)}/{len(ingredients)} ingredients.", flush=True)
+    return display_name, shop_id, prices
+
+
+# ---------------------------------------------------------------------------
+# Quick test
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    TEST = {
+        "Large eggs":           {"qty": 12, "unit": "whole"},
+        "Whole milk gallon":    {"qty": 1,  "unit": "gal"},
+        "Bananas":              {"qty": 5,  "unit": "whole"},
+        "Boneless skinless chicken breast": {"qty": 2, "unit": "lb"},
+        "Ground beef 80/20":    {"qty": 1,  "unit": "lb"},
+        "Russet potatoes":      {"qty": 3,  "unit": "lb"},
+        "Canned black beans":   {"qty": 2,  "unit": "cans"},
+        "Shredded cheddar":     {"qty": 8,  "unit": "oz"},
+    }
+    print("Testing ALDI pricing pipeline (Houston TX)...")
+    print("=" * 60)
+    name, sid, prices = price_all_aldi(TEST, 29.7515, -95.3615)
+    print(f"\nStore: {name} (shopId={sid})")
+    print(f"{'Item':<35} {'Cost':>7}  {'Pkg':>5}  Product")
+    print("-" * 80)
+    for item, d in prices.items():
+        print(f"{item:<35} ${d['total_cost']:>5.2f}  ×{d['units_to_buy']:<4.0f}  {d['description'][:35]}")
+    missing = [k for k in TEST if k not in prices]
+    if missing:
+        print(f"\nNo match: {missing}")

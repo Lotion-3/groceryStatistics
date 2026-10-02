@@ -1,0 +1,25 @@
+# --- Collection (pinned to match the vendored collectors; see collectors/vendor/VENDORED.md) ---
+curl_cffi==0.15.0
+cloakbrowser==0.3.31
+requests~=2.32.3
+geopy~=2.4.1
+python-dotenv~=1.0
+aiohttp~=3.10
+
+# --- Data / analysis ---
+numpy
+pandas
+scipy
+statsmodels
+scikit-learn
+matplotlib
+pyarrow
+pymc
+arviz
+pulp
+libpysal
+esda
+pyyaml
+
+# --- Tests ---
+pytest
