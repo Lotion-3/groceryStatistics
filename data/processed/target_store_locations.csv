@@ -1,0 +1,115 @@
+store_id,name,address_line1,city,state,postal_code,located_at
+3,Crystal,5537 W Broadway Ave,Crystal,Minnesota,55428-3507,2026-10-02T03:30:10+00:00
+4,Duluth,1902 Miller Trunk Hwy,Duluth,Minnesota,55811-1810,2026-10-02T03:30:12+00:00
+12,Bridgeton,12275 St Charles Rock Rd,Bridgeton,Missouri,63044-2502,2026-10-02T03:30:15+00:00
+13,North Dallas,13131 Montfort Dr,Dallas,Texas,75240-5112,2026-10-02T03:30:17+00:00
+19,Tulsa,1701 S Yale Ave,Tulsa,Oklahoma,74112-6221,2026-10-02T03:30:20+00:00
+26,Ballwin,15025 Manchester Rd,Ballwin,Missouri,63011-4626,2026-10-02T03:30:23+00:00
+43,Oklahoma City North,5400 N May Ave,Oklahoma City,Oklahoma,73112-5407,2026-10-02T03:30:25+00:00
+48,Arvada,7899 Wadsworth Blvd,Arvada,Colorado,80003-2107,2026-10-02T03:30:27+00:00
+55,Medallion,6464 E NORTHWEST HWY STE 212,Dallas,Texas,75214-7802,2026-10-02T03:30:30+00:00
+61,Fargo,4202 13th Ave SW,Fargo,North Dakota,58103-3308,2026-10-02T03:30:33+00:00
+64,Boulder,2800 Pearl St,Boulder,Colorado,80301-1123,2026-10-02T03:30:41+00:00
+67,Plano,120 W Parker Rd,Plano,Texas,75075-2331,2026-10-02T03:30:43+00:00
+68,East St Paul,1744 Suburban Ave,Saint Paul,Minnesota,55106-6619,2026-10-02T03:30:46+00:00
+69,Valley West,1800 Valley West Dr,West Des Moines,Iowa,50266-1104,2026-10-02T03:30:48+00:00
+75,Houston Westchase,10801 Westheimer Rd,Houston,Texas,77042-3201,2026-10-02T03:30:51+00:00
+76,Sioux Falls,3600 S Louise Ave,Sioux Falls,South Dakota,57106-6326,2026-10-02T03:30:53+00:00
+78,Alton,300 Homer M Adams Pkwy,Alton,Illinois,62002-5928,2026-10-02T03:30:56+00:00
+79,Fort Collins,105 W Troutman Pkwy,Fort Collins,Colorado,80525-3038,2026-10-02T03:30:58+00:00
+80,Wichita Falls,4317 Kemp Blvd,Wichita Falls,Texas,76308-3717,2026-10-02T03:31:01+00:00
+82,Waukesha,2401 Kossow Rd,Waukesha,Wisconsin,53186-2904,2026-10-02T03:31:04+00:00
+83,Lubbock University Ave,7302 University Ave,Lubbock,Texas,79423-1423,2026-10-02T03:31:06+00:00
+85,Minot,2400 10th St SW,Minot,North Dakota,58701-2013,2026-10-02T03:31:09+00:00
+86,Dubuque,3500 Dodge St,Dubuque,Iowa,52003-5261,2026-10-02T03:31:11+00:00
+90,Memphis Central,601 Colonial Rd,Memphis,Tennessee,38117-5132,2026-10-02T03:31:14+00:00
+93,Grand Junction,2424 Highway 6 and 50 Ste C,Grand Junction,Colorado,81505-1103,2026-10-02T03:31:16+00:00
+95,Austin North,8601 Research Blvd,Austin,Texas,78758-7121,2026-10-02T03:31:19+00:00
+96,Austin South Lamar,2300 W Ben White Blvd,Austin,Texas,78704-7525,2026-10-02T03:31:21+00:00
+100,Ridgedale,13201 Ridgedale Dr,Minnetonka,Minnesota,55305-1809,2026-10-02T03:31:24+00:00
+108,Evansville North,4000 1st Ave,Evansville,Indiana,47710-3614,2026-10-02T03:31:27+00:00
+111,Kokomo,1037 S Reed Rd,Kokomo,Indiana,46902-1929,2026-10-02T03:31:29+00:00
+137,Bloomington Normal,301 Veterans Pkwy,Normal,Illinois,61761-2115,2026-10-02T03:31:32+00:00
+139,New Albany,2209 State St,New Albany,Indiana,47150-4924,2026-10-02T03:31:34+00:00
+144,Rivergate,2050 Gallatin Rd N,Madison,Tennessee,37115-2002,2026-10-02T03:31:37+00:00
+146,White Bridge,26 White Bridge Pike,Nashville,Tennessee,37205-1411,2026-10-02T03:31:40+00:00
+147,Arapahoe,6767 S Clinton St,Greenwood Village,Colorado,80112-3617,2026-10-02T03:31:42+00:00
+151,Knoxville West,8040 Ray Mears Blvd,Knoxville,Tennessee,37919-5457,2026-10-02T03:31:45+00:00
+152,Racine,5300 Durand Ave,Racine,Wisconsin,53406-5056,2026-10-02T03:31:47+00:00
+154,Colorado Springs North,5240 N Academy Blvd,Colorado Springs,Colorado,80918-4004,2026-10-02T03:31:49+00:00
+158,Beaumont,5850 Eastex Fwy,Beaumont,Texas,77708-4824,2026-10-02T03:31:52+00:00
+162,Little Rock North,4000 McCain Blvd,North Little Rock,Arkansas,72116-8039,2026-10-02T03:31:54+00:00
+164,Casper,401 SE Wyoming Blvd,Casper,Wyoming,82609-4219,2026-10-02T03:31:57+00:00
+167,Alexandria,2206 Memorial Dr,Alexandria,Louisiana,71301-3611,2026-10-02T03:31:59+00:00
+171,Billings West,2601 Central Ave,Billings,Montana,59102-6652,2026-10-02T03:32:01+00:00
+176,Bitters,13700 San Pedro Ave,San Antonio,Texas,78232-4332,2026-10-02T03:32:04+00:00
+183,Pacoima,9725 Laurel Canyon Blvd,Pacoima,California,91331-4100,2026-10-02T03:32:06+00:00
+184,Alhambra,2120 W Main St,Alhambra,California,91801-1856,2026-10-02T03:32:09+00:00
+188,Orange Show,499 W Orange Show Rd,San Bernardino,California,92408-2029,2026-10-02T03:32:12+00:00
+189,Commerce,5600 Whittier Blvd,Commerce,California,90022-4106,2026-10-02T03:32:14+00:00
+190,South Gate,5700 Firestone Blvd,South Gate,California,90280-3704,2026-10-02T03:32:17+00:00
+192,Garden Grove Harbor,12100 Harbor Blvd,Garden Grove,California,92840-4004,2026-10-02T03:32:19+00:00
+193,Brookhurst,13831 Brookhurst St,Garden Grove,California,92843-3120,2026-10-02T03:32:22+00:00
+195,Long Beach Bellflower,2270 N Bellflower Blvd,Long Beach,California,90815-2017,2026-10-02T03:32:25+00:00
+198,Culver City Jefferson,10820 Jefferson Blvd,Culver City,California,90230-4935,2026-10-02T03:32:27+00:00
+199,Manhattan Beach,1200 N Sepulveda Blvd,Manhattan Beach,California,90266-5104,2026-10-02T03:32:30+00:00
+200,Torrance,3433 Sepulveda Blvd,Torrance,California,90505-2606,2026-10-02T03:32:33+00:00
+201,Sports Arena,3245 Sports Arena Blvd,San Diego,California,92110-4529,2026-10-02T03:32:35+00:00
+203,Chula Vista Broadway,1240 Broadway,Chula Vista,California,91911-2911,2026-10-02T03:32:38+00:00
+205,Kearny Mesa,8001 Othello Ave,San Diego,California,92111-3713,2026-10-02T03:32:40+00:00
+212,Riverside,3520 Tyler St,Riverside,California,92503-4175,2026-10-02T03:32:43+00:00
+217,Lincoln,333 N 48th St,Lincoln,Nebraska,68504-3505,2026-10-02T03:32:45+00:00
+219,Abilene,3710 Ridgemont Dr,Abilene,Texas,79606-2726,2026-10-02T03:32:48+00:00
+220,Eden Prairie,8225 Flying Cloud Dr,Eden Prairie,Minnesota,55344-5315,2026-10-02T03:32:50+00:00
+221,Amarillo,8201 I-40 W,Amarillo,Texas,79121-1104,2026-10-02T03:32:53+00:00
+222,Puente Hills,17751 Colima Rd,Rowland Heights,California,91748-1714,2026-10-02T03:32:55+00:00
+223,Milwaukee Chase,2950 S Chase Ave,Milwaukee,Wisconsin,53207-6407,2026-10-02T03:32:58+00:00
+224,Cheyenne,1708 Dell Range Blvd,Cheyenne,Wyoming,82009-4945,2026-10-02T03:33:01+00:00
+226,Laverne,2462 Foothill Blvd,La Verne,California,91750-3056,2026-10-02T03:33:03+00:00
+227,Santa Fe Springs,10621 Carmenita Rd,Santa Fe Springs,California,90670-4017,2026-10-02T03:33:06+00:00
+228,West Hills,6635 Fallbrook Ave,West Hills,California,91307-3520,2026-10-02T03:33:08+00:00
+229,Cypress,6835 Katella Ave,Cypress,California,90630-5107,2026-10-02T03:33:11+00:00
+230,Orange,2191 N Tustin St,Orange,California,92865-3701,2026-10-02T03:33:14+00:00
+233,Paradise Valley,12602 N Paradise Village Pkwy W,Phoenix,Arizona,85032-7671,2026-10-02T03:33:16+00:00
+238,Appleton,4301 W Wisconsin Ave,Appleton,Wisconsin,54913-8605,2026-10-02T03:33:19+00:00
+239,Columbia,2400 Bernadette Dr,Columbia,Missouri,65203-4616,2026-10-02T03:33:21+00:00
+245,Lancaster,43525 10th St W,Lancaster,California,93534-6091,2026-10-02T03:33:24+00:00
+246,Simi Valley Cochran Street,2907 Cochran St,Simi Valley,California,93065-2773,2026-10-02T03:33:26+00:00
+249,Westminster,16400 Beach Blvd,Westminster,California,92683-7858,2026-10-02T03:33:29+00:00
+251,Mesa Central,1135 S Gilbert Rd,Mesa,Arizona,85204-5205,2026-10-02T03:33:31+00:00
+253,Great Falls,2000 10th Ave S,Great Falls,Montana,59405-2753,2026-10-02T03:33:34+00:00
+254,San Angelo,4235 Sunset Dr,San Angelo,Texas,76904-5653,2026-10-02T03:33:37+00:00
+255,Irving,3333 W Airport Fwy,Irving,Texas,75062-5921,2026-10-02T03:33:40+00:00
+256,Aurora SE,16910 E Quincy Ave,Aurora,Colorado,80015-2745,2026-10-02T03:33:42+00:00
+257,Valencia,24425 Magic Mountain Pkwy,Valencia,California,91355-3403,2026-10-02T03:33:45+00:00
+258,Chino Philadelphia Street,5555 Philadelphia St,Chino,California,91710-2481,2026-10-02T03:33:47+00:00
+259,Aliso Viejo,26932 La Paz Rd,Aliso Viejo,California,92656-3038,2026-10-02T03:33:50+00:00
+260,St Louis Park Hwy 100,3601 Highway 100 S,Minneapolis,Minnesota,55416-2500,2026-10-02T03:33:53+00:00
+264,Las Vegas East,1200 S Nellis Blvd,Las Vegas,Nevada,89104-5752,2026-10-02T03:33:55+00:00
+265,Las Vegas Flamingo,4001 S Maryland Pkwy,Las Vegas,Nevada,89119-7556,2026-10-02T03:33:58+00:00
+267,Roseville Douglas Blvd,1925 Douglas Blvd,Roseville,California,95661-3834,2026-10-02T03:34:00+00:00
+271,Douglas County,1950 E County Line Rd,Highlands Ranch,Colorado,80126-2437,2026-10-02T03:34:03+00:00
+273,Modesto McHenry Ave,3405 Mchenry Ave,Modesto,California,95350-1445,2026-10-02T03:34:06+00:00
+274,Escondido,1280 Auto Park Way,Escondido,California,92029-2231,2026-10-02T03:34:08+00:00
+275,Fresno West,3150 W Shaw Ave,Fresno,California,93711-3215,2026-10-02T03:34:11+00:00
+278,Lakeside,13221 Hall Rd,Utica,Michigan,48315-5834,2026-10-02T03:34:13+00:00
+279,Dearborn,15901 Ford Rd,Dearborn,Michigan,48126-2800,2026-10-02T03:34:16+00:00
+280,Southland,14099 Pardee Rd,Taylor,Michigan,48180-4792,2026-10-02T03:34:19+00:00
+281,Westland,35401 Warren Rd,Westland,Michigan,48185-6590,2026-10-02T03:34:21+00:00
+282,Madison Heights,32001 John R Rd,Madison Heights,Michigan,48071-1322,2026-10-02T03:34:24+00:00
+286,Santa Ana 17th Street,1330 E 17th St,Santa Ana,California,92705-8500,2026-10-02T03:34:27+00:00
+288,Woodland Hills,20801 Ventura Blvd,Woodland Hills,California,91364-2319,2026-10-02T03:34:29+00:00
+289,Cerritos Bloomfield Avenue,20200 Bloomfield Ave,Cerritos,California,90703-7821,2026-10-02T03:34:32+00:00
+290,Gardena,2169 W Redondo Beach Blvd,Gardena,California,90247-3625,2026-10-02T03:34:35+00:00
+291,Riverside Arlington,3333 Arlington Ave,Riverside,California,92506-3252,2026-10-02T03:34:37+00:00
+293,Fullerton Yorba Linda,2920 Yorba Linda Blvd,Fullerton,California,92831-1523,2026-10-02T03:34:40+00:00
+294,North Hollywood,11051 Victory Blvd,North Hollywood,California,91606-3719,2026-10-02T03:34:43+00:00
+296,Poway,14823 Pomerado Rd,Poway,California,92064-2803,2026-10-02T03:34:45+00:00
+298,Ventura Main Street,4200 E Main St,Ventura,California,93003-5230,2026-10-02T03:34:48+00:00
+299,Northridge,8840 Corbin Ave,Northridge,California,91324-3309,2026-10-02T03:34:50+00:00
+300,Alicia Parkway,24500 Alicia Pkwy,Mission Viejo,California,92691-4508,2026-10-02T03:34:53+00:00
+301,Rancho Cucamonga,10576 Foothill Blvd,Rancho Cucamonga,California,91730-3890,2026-10-02T03:34:55+00:00
+302,Duarte,1050 Huntington Dr,Duarte,California,91010-2475,2026-10-02T03:34:58+00:00
+303,Oceanside,2255 S El Camino Real,Oceanside,California,92054-6318,2026-10-02T03:35:01+00:00
+304,El Cajon,250 Broadway,El Cajon,California,92021-4539,2026-10-02T03:35:03+00:00
+305,Mira Mesa,8251 Mira Mesa Blvd,San Diego,California,92126-2603,2026-10-02T03:35:06+00:00
