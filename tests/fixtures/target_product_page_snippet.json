@@ -1,0 +1,5 @@
+{
+ "_source": "data/raw/snapitems/target/product_pages/12953464__pdp__20261002T030621_40c1fe46.json.gz",
+ "_note": "target product page: only the text around the UPC field is kept.",
+ "body": "h\":5.08,\"dimension_unit_of_measure\":\"INCH\",\"weight\":10.28,\"weight_unit_of_measure\":\"POUND\",\"height\":15.71,\"width\":5.31},\"primary_barcode\":\"049000028904\",\"primary_brand\":{\"canonical_url\":\"/b/coca-cola/-/N-5s793\","
+}

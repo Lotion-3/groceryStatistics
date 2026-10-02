@@ -1,0 +1,2261 @@
+{
+ "_source": "data/raw/snap1/walmart/2098/cer_cheerios_18__search__20261002T025834_7976c1dc.json.gz",
+ "_note": "Walmart search items (one per fulfillment-type/markdown combination), scoped store 2098.",
+ "body": {
+  "itemStacks": [
+   {
+    "items": [
+     {
+      "__typename": "Product",
+      "buyBoxSuppression": false,
+      "similarItems": false,
+      "id": "5S6CYLVTN1BA",
+      "isDE": false,
+      "showDrawCTA": null,
+      "usItemId": "363183524",
+      "isBadSplit": false,
+      "catalogSellerId": "0",
+      "fitmentLabel": null,
+      "name": "Cheerios, Heart Healthy Gluten Free Breakfast Cereal, Family Size, 18 oz",
+      "checkStoreAvailabilityATC": false,
+      "seeShippingEligibility": false,
+      "productBrand": null,
+      "brand": null,
+      "showLikeButton": false,
+      "type": "VARIANT",
+      "shortDescription": "The original cheerios breakfast cereal has been a family favorite for years. Made with 100% whole grain oats, this gluten-free cereal is full of wholesome goodness for toddlers, adults and everyone in",
+      "averageWeight": null,
+      "weightIncrement": 1,
+      "topResult": null,
+      "additionalOfferCount": 5,
+      "availabilityInNearbyStore": null,
+      "itemBeacon": "{\"l1s\":32.13729,\"l2sf\":0.5586338293544083,\"l2se\":0.558634,\"l2sr\":0.07608,\"src\":[\"SOLR\"],\"iu\":[\"cheerios 18 oz\"],\"plb\":0}",
+      "catalogProductType": "Packaged Breakfast Cereals",
+      "collectibles": null,
+      "gradingTypeCode": 1,
+      "conditionPriceRange": null,
+      "imageInfo": {
+       "id": null,
+       "name": "Cheerios-Heart-Healthy-Cereal-Happy-Heart-Shapes-Family-Size-18-oz_3123917c-defd-447f-8e2a-9c92d902a297.b728dc444e3c44d6e62a96c2db50eb14.jpeg",
+       "thumbnailUrl": "https://i5.walmartimages.com/seo/Cheerios-Heart-Healthy-Cereal-Happy-Heart-Shapes-Family-Size-18-oz_3123917c-defd-447f-8e2a-9c92d902a297.b728dc444e3c44d6e62a96c2db50eb14.jpeg",
+       "size": "104-104",
+       "allImages": []
+      },
+      "aspectInfo": {
+       "name": null,
+       "header": null,
+       "id": null,
+       "snippet": null
+      },
+      "plItem": {
+       "isPLItemToBoost": false,
+       "plItemTagString": ""
+      },
+      "canonicalUrl": "/ip/Cheerios-Heart-Healthy-Cereal-Happy-Heart-Shapes-Family-Size-18-oz/363183524?classType=VARIANT",
+      "conditionV2": {
+       "code": 1,
+       "groupCode": 1
+      },
+      "externalInfo": null,
+      "itemType": null,
+      "category": {
+       "categoryPath": "Home Page/Food/Breakfast & Cereal/Cereal & Granola/Healthy Cereal",
+       "categoryPathId": "0:976759:976783:8102529:7639074",
+       "path": null
+      },
+      "returnPolicy": {
+       "returnable": null,
+       "freeReturns": null,
+       "returnWindow": {
+        "value": null,
+        "unitType": "Day"
+       },
+       "returnPolicyText": null
+      },
+      "badges": {
+       "flags": [
+        {
+         "__typename": "BaseBadge",
+         "key": "BESTSELLER",
+         "text": "Best seller",
+         "type": "LABEL",
+         "id": "L1600",
+         "styleId": null
+        }
+       ],
+       "tags": [],
+       "groups": [
+        {
+         "__typename": "UnifiedBadgeGroup",
+         "name": "fulfillment",
+         "members": [
+          {
+           "__typename": "BadgeGroupMember",
+           "id": "L1052",
+           "key": "FF_DELIVERY",
+           "memberType": "badge",
+           "otherInfo": null,
+           "rank": 2,
+           "textTemplate": null,
+           "textValues": null,
+           "slaText": "",
+           "slaDate": null,
+           "slaDateISO": null,
+           "sla": null,
+           "styleId": "FF_STYLE",
+           "text": "Delivery available",
+           "type": "LABEL",
+           "iconId": null,
+           "templates": null,
+           "badgeContent": null
+          },
+          {
+           "__typename": "BadgeGroupMember",
+           "id": "L1051",
+           "key": "FF_PICKUP",
+           "memberType": "badge",
+           "otherInfo": null,
+           "rank": 1,
+           "textTemplate": null,
+           "textValues": null,
+           "slaText": "",
+           "slaDate": null,
+           "slaDateISO": null,
+           "sla": null,
+           "styleId": "FF_STYLE",
+           "text": "Pickup available",
+           "type": "LABEL",
+           "iconId": null,
+           "templates": null,
+           "badgeContent": null
+          },
+          {
+           "__typename": "BadgeGroupMember",
+           "id": "L1053",
+           "key": "FF_SHIPPING",
+           "memberType": "badge",
+           "otherInfo": null,
+           "rank": 3,
+           "textTemplate": null,
+           "textValues": null,
+           "slaText": "",
+           "slaDate": null,
+           "slaDateISO": null,
+           "sla": null,
+           "styleId": "FF_STYLE",
+           "text": "Shipping available",
+           "type": "LABEL",
+           "iconId": null,
+           "templates": null,
+           "badgeContent": null
+          }
+         ]
+        }
+       ],
+       "labels": null,
+       "groupsV2": null
+      },
+      "buyNowEligible": true,
+      "classType": "VARIANT",
+      "averageRating": 4.8,
+      "numberOfReviews": 88196,
+      "esrb": null,
+      "mediaRating": null,
+      "salesUnit": "EACH",
+      "salesUnitType": "EACH",
+      "unitQuantity": null,
+      "sellerId": "F55CDC31AB754BB68FE0B39041159D63",
+      "sellerName": "Walmart.com",
+      "sellerType": null,
+      "hasSellerBadge": null,
+      "isEarlyAccessItem": false,
+      "preEarlyAccessEvent": false,
+      "earlyAccessEvent": false,
+      "blitzItem": false,
+      "annualEvent": false,
+      "annualEventV2": false,
+      "availabilityStatusV2": {
+       "display": "In stock",
+       "value": "IN_STOCK"
+      },
+      "availabilityStatus": "IN_STOCK",
+      "groupMetaData": {
+       "groupType": null,
+       "groupSubType": null,
+       "numberOfComponents": 0,
+       "groupComponents": null
+      },
+      "addOnServices": null,
+      "productLocation": null,
+      "fulfillmentSpeed": null,
+      "offerId": "25F3E28A2DE049A1A4A4673F4A3DA562",
+      "preOrder": {
+       "isPreOrder": false,
+       "preOrderMessage": null,
+       "preOrderStreetDateMessage": null,
+       "streetDate": null,
+       "streetDateDisplayable": null,
+       "streetDateType": null,
+       "releaseDate": null
+      },
+      "pac": null,
+      "droneAttributes": null,
+      "fulfillmentSummary": [
+       {
+        "fulfillment": "DELIVERY",
+        "storeId": "2098",
+        "deliveryDate": "2026-10-02T11:00:00.000Z",
+        "fulfillmentMethods": [
+         "UNSCHEDULED",
+         "SCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": null
+       },
+       {
+        "fulfillment": "DELIVERY",
+        "storeId": "2098",
+        "deliveryDate": null,
+        "fulfillmentMethods": [
+         "UNSCHEDULED",
+         "SCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": null
+       },
+       {
+        "fulfillment": "PICKUP",
+        "storeId": "2098",
+        "deliveryDate": "2026-10-02T11:00:00.000Z",
+        "fulfillmentMethods": [
+         "UNSCHEDULED",
+         "SCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": null
+       },
+       {
+        "fulfillment": "PICKUP",
+        "storeId": "2098",
+        "deliveryDate": "2026-10-02T15:00:00.000Z",
+        "fulfillmentMethods": [
+         "UNSCHEDULED",
+         "SCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": null
+       },
+       {
+        "fulfillment": "DELIVERY",
+        "storeId": "0",
+        "deliveryDate": "2026-10-02T21:59:00.000Z",
+        "fulfillmentMethods": [
+         "UNSCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": null
+       }
+      ],
+      "priceInfo": {
+       "itemPrice": "",
+       "linePrice": "",
+       "linePriceDisplay": "",
+       "savings": "",
+       "savingsAmt": 0,
+       "wasPrice": "",
+       "wasPriceSupportText": "",
+       "unitPrice": "",
+       "shipPrice": "",
+       "minPrice": 0,
+       "minPriceForVariant": "",
+       "priceRangeString": "",
+       "subscriptionPrice": "",
+       "subscriptionString": "",
+       "subscriptionDiscountPrice": "",
+       "priceDisplayCondition": "",
+       "finalCostByWeight": false,
+       "submapType": "",
+       "eaPricingText": "",
+       "eaPricingPreText": "",
+       "memberPriceString": "",
+       "subscriptionDualPrice": null,
+       "subscriptionPercentage": null,
+       "priceDisplayType": null,
+       "priceDetails": {
+        "currency": "USD",
+        "priceLines": [
+         {
+          "lineType": "CURRENT_PRICE",
+          "values": [
+           {
+            "key": "PRICE",
+            "value": "4.97"
+           }
+          ]
+         },
+         {
+          "lineType": "UNIT_PRICE",
+          "values": [
+           {
+            "key": "UNIT_PRICE",
+            "value": "27.6 ¢/oz"
+           }
+          ]
+         }
+        ]
+       }
+      },
+      "variantCriteria": [],
+      "snapEligible": false,
+      "fulfillmentTitle": "title_store_not_available",
+      "fulfillmentType": "STORE",
+      "manufacturerName": null,
+      "showAtc": true,
+      "showSubscribe": null,
+      "socialInfo": null,
+      "p13nDataV2": {
+       "predictedQuantity": null,
+       "labels": null,
+       "seeSimilarLinkEnabled": null
+      },
+      "sponsoredProduct": null,
+      "showOptions": false,
+      "showBuyNow": false,
+      "quickShop": null,
+      "quickShopCTALabel": null,
+      "rewards": null,
+      "promoData": [
+       {
+        "type": "AFFIRM",
+        "terms": null,
+        "templateData": {
+         "priceString": null,
+         "imageUrl": null
+        }
+       }
+      ],
+      "promoDiscount": null,
+      "arExperiences": {
+       "isARHome": false,
+       "isZeekit": false,
+       "isAROptical": false
+      },
+      "eventAttributes": {
+       "priceFlip": false,
+       "specialBuy": false
+      },
+      "subscription": {
+       "__typename": "SubscriptionData",
+       "subscriptionEligible": true,
+       "showSubscriptionCTA": true,
+       "subscriptionTransactable": true
+      },
+      "hasCarePlans": false,
+      "petRx": {
+       "eligible": false,
+       "singleDispense": null
+      },
+      "vision": {
+       "ageGroup": null,
+       "visionCenterApproved": false
+      },
+      "showExploreOtherConditionsCTA": false,
+      "isPreowned": false,
+      "pglsCondition": null,
+      "newConditionProductId": null,
+      "preownedCondition": null,
+      "keyAttributes": [],
+      "mhmdFlag": false,
+      "seeSimilar": false,
+      "isQSRItem": false,
+      "isCustomizable": false,
+      "availabilityStatusDisplayValue": "In stock",
+      "carrierDownpaymentPrice": "",
+      "productLocationDisplayValue": null,
+      "externalInfoUrl": "",
+      "canAddToCart": true,
+      "description": "The original cheerios breakfast cereal has been a family favorite for years. Made with 100% whole grain oats, this gluten-free cereal is full of wholesome goodness for toddlers, adults and everyone in",
+      "flag": "Best seller",
+      "badge": {
+       "__typename": "BaseBadge",
+       "key": "BESTSELLER",
+       "text": "Best seller",
+       "type": "LABEL",
+       "id": "L1600",
+       "styleId": null
+      },
+      "groupsV2": null,
+      "swipeableImages": [],
+      "socialProofBadges": null,
+      "fulfillmentBadges": [],
+      "preOrderBadge": null,
+      "fulfillmentBadgeGroups": [
+       {
+        "text": "Delivery available",
+        "slaText": "",
+        "isSlaTextBold": true,
+        "templates": null,
+        "textTemplate": null,
+        "textValues": null,
+        "sla": null,
+        "className": "dark-gray",
+        "key": "FF_DELIVERY",
+        "styleId": "FF_STYLE"
+       },
+       {
+        "text": "Pickup available",
+        "slaText": "",
+        "isSlaTextBold": true,
+        "templates": null,
+        "textTemplate": null,
+        "textValues": null,
+        "sla": null,
+        "className": "dark-gray",
+        "key": "FF_PICKUP",
+        "styleId": "FF_STYLE"
+       },
+       {
+        "text": "Shipping available",
+        "slaText": "",
+        "isSlaTextBold": true,
+        "templates": null,
+        "textTemplate": null,
+        "textValues": null,
+        "sla": null,
+        "className": "dark-gray",
+        "key": "FF_SHIPPING",
+        "styleId": "FF_STYLE"
+       }
+      ],
+      "specialBuy": false,
+      "priceFlip": false,
+      "image": "https://i5.walmartimages.com/seo/Cheerios-Heart-Healthy-Cereal-Happy-Heart-Shapes-Family-Size-18-oz_3123917c-defd-447f-8e2a-9c92d902a297.b728dc444e3c44d6e62a96c2db50eb14.jpeg",
+      "imageSize": "",
+      "imageID": "",
+      "imageName": "Cheerios-Heart-Healthy-Cereal-Happy-Heart-Shapes-Family-Size-18-oz_3123917c-defd-447f-8e2a-9c92d902a297.b728dc444e3c44d6e62a96c2db50eb14.jpeg",
+      "isOutOfStock": false,
+      "price": 4.97,
+      "rating": {
+       "averageRating": 4.8,
+       "numberOfReviews": 88196
+      },
+      "variantList": [],
+      "isVariantTypeSwatch": false,
+      "shouldLazyLoad": false,
+      "isSponsoredFlag": false,
+      "moqText": null,
+      "isLeftSideGridItem": true,
+      "productAttributes": {},
+      "discountsRaw": null,
+      "productIndex": 0,
+      "itemStackPosition": 1,
+      "modularStackKey": "c7d7664e-e1d6-49d4-98dd-3d4a5c41d360"
+     },
+     {
+      "__typename": "Product",
+      "buyBoxSuppression": false,
+      "similarItems": false,
+      "id": "19U48JJ69X73",
+      "isDE": false,
+      "showDrawCTA": null,
+      "usItemId": "10311410",
+      "isBadSplit": false,
+      "catalogSellerId": "103210976",
+      "fitmentLabel": null,
+      "name": "Original Cheerios Heart Healthy Cereal, 18 OZ Family Size Cereal Box",
+      "checkStoreAvailabilityATC": false,
+      "seeShippingEligibility": false,
+      "productBrand": null,
+      "brand": null,
+      "showLikeButton": false,
+      "type": "REGULAR",
+      "shortDescription": "<li>INCLUDES: One (1) 18-ounce box of Cheerios Whole Grain Oats Breakfast Cereal</li><li>WHOLE GRAINS: This cold cereal is made with 100% whole grain oats and only 1 gram of sugar per serving</li>",
+      "averageWeight": null,
+      "weightIncrement": 1,
+      "topResult": null,
+      "additionalOfferCount": 2,
+      "availabilityInNearbyStore": null,
+      "itemBeacon": "{\"l1s\":35.45636,\"l2sf\":0.23636101032077997,\"l2se\":0.236361,\"l2sr\":0.10776,\"src\":[\"SOLR\",\"ANN\"],\"iu\":[\"cheerios 18 oz\"],\"plb\":0}",
+      "catalogProductType": "Packaged Breakfast Cereals",
+      "collectibles": null,
+      "gradingTypeCode": 1,
+      "conditionPriceRange": null,
+      "imageInfo": {
+       "id": "AD6BD2513FBA4DD1BC7560461B88C2DD",
+       "name": "Original-Cheerios-Heart-Healthy-Cereal-18-OZ-Family-Size-Cereal-Box_b278408b-0cc1-48d6-ad98-83a2f6d1ded8.b72c2a970da4022b903c86003c87f1c0.jpeg",
+       "thumbnailUrl": "https://i5.walmartimages.com/seo/Original-Cheerios-Heart-Healthy-Cereal-18-OZ-Family-Size-Cereal-Box_b278408b-0cc1-48d6-ad98-83a2f6d1ded8.b72c2a970da4022b903c86003c87f1c0.jpeg",
+       "size": "104-104",
+       "allImages": []
+      },
+      "aspectInfo": {
+       "name": null,
+       "header": null,
+       "id": null,
+       "snippet": null
+      },
+      "plItem": {
+       "isPLItemToBoost": false,
+       "plItemTagString": ""
+      },
+      "canonicalUrl": "/ip/Original-Cheerios-Heart-Healthy-Cereal-18-OZ-Family-Size-Cereal-Box/10311410?classType=REGULAR",
+      "conditionV2": {
+       "code": 1,
+       "groupCode": 1
+      },
+      "externalInfo": null,
+      "itemType": null,
+      "category": {
+       "categoryPath": "Home Page/Food/Breakfast & Cereal/Breakfast Cereal/General Mills Cereal",
+       "categoryPathId": "0:976759:976783:1231208:4498827",
+       "path": null
+      },
+      "returnPolicy": {
+       "returnable": null,
+       "freeReturns": null,
+       "returnWindow": {
+        "value": null,
+        "unitType": "Day"
+       },
+       "returnPolicyText": null
+      },
+      "badges": {
+       "flags": null,
+       "tags": [],
+       "groups": [
+        {
+         "__typename": "UnifiedBadgeGroup",
+         "name": "fulfillment",
+         "members": [
+          {
+           "__typename": "BadgeGroupMember",
+           "id": "L1053",
+           "key": "FF_SHIPPING",
+           "memberType": "badge",
+           "otherInfo": null,
+           "rank": 3,
+           "textTemplate": null,
+           "textValues": null,
+           "slaText": "",
+           "slaDate": null,
+           "slaDateISO": null,
+           "sla": null,
+           "styleId": "FF_STYLE",
+           "text": "Shipping available",
+           "type": "LABEL",
+           "iconId": null,
+           "templates": null,
+           "badgeContent": null
+          }
+         ]
+        }
+       ],
+       "labels": null,
+       "groupsV2": null
+      },
+      "buyNowEligible": true,
+      "classType": "REGULAR",
+      "averageRating": 4.8,
+      "numberOfReviews": 2309,
+      "esrb": null,
+      "mediaRating": null,
+      "salesUnit": "EACH",
+      "salesUnitType": "EACH",
+      "unitQuantity": null,
+      "sellerId": "E7B36E9A16E54CFBA6B48841D3CE837E",
+      "sellerName": "JMLLCBIZ LLC",
+      "sellerType": null,
+      "hasSellerBadge": null,
+      "isEarlyAccessItem": false,
+      "preEarlyAccessEvent": false,
+      "earlyAccessEvent": false,
+      "blitzItem": false,
+      "annualEvent": false,
+      "annualEventV2": false,
+      "availabilityStatusV2": {
+       "display": "In stock",
+       "value": "IN_STOCK"
+      },
+      "availabilityStatus": "IN_STOCK",
+      "groupMetaData": {
+       "groupType": null,
+       "groupSubType": null,
+       "numberOfComponents": 0,
+       "groupComponents": null
+      },
+      "addOnServices": null,
+      "productLocation": null,
+      "fulfillmentSpeed": null,
+      "offerId": "A2490EC8E40F36B2BAFAC0DB089529D4",
+      "preOrder": {
+       "isPreOrder": false,
+       "preOrderMessage": null,
+       "preOrderStreetDateMessage": null,
+       "streetDate": null,
+       "streetDateDisplayable": null,
+       "streetDateType": null,
+       "releaseDate": null
+      },
+      "pac": null,
+      "droneAttributes": null,
+      "fulfillmentSummary": [
+       {
+        "fulfillment": "DELIVERY",
+        "storeId": "0",
+        "deliveryDate": "2026-10-06T21:59:00.000Z",
+        "fulfillmentMethods": [
+         "UNSCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": null
+       }
+      ],
+      "priceInfo": {
+       "itemPrice": "",
+       "linePrice": "",
+       "linePriceDisplay": "",
+       "savings": "",
+       "savingsAmt": 0,
+       "wasPrice": "",
+       "wasPriceSupportText": "",
+       "unitPrice": "",
+       "shipPrice": "",
+       "minPrice": 0,
+       "minPriceForVariant": "",
+       "priceRangeString": "",
+       "subscriptionPrice": "",
+       "subscriptionString": "",
+       "subscriptionDiscountPrice": "",
+       "priceDisplayCondition": "",
+       "finalCostByWeight": false,
+       "submapType": "",
+       "eaPricingText": "",
+       "eaPricingPreText": "",
+       "memberPriceString": "",
+       "subscriptionDualPrice": null,
+       "subscriptionPercentage": null,
+       "priceDisplayType": null,
+       "priceDetails": {
+        "currency": "USD",
+        "priceLines": [
+         {
+          "lineType": "CURRENT_PRICE",
+          "values": [
+           {
+            "key": "PRICE",
+            "value": "9.99"
+           }
+          ]
+         },
+         {
+          "lineType": "UNIT_PRICE",
+          "values": [
+           {
+            "key": "UNIT_PRICE",
+            "value": "55.5 ¢/oz"
+           }
+          ]
+         }
+        ]
+       }
+      },
+      "variantCriteria": [],
+      "snapEligible": false,
+      "fulfillmentTitle": "title_shipToHome_not_available",
+      "fulfillmentType": "MARKETPLACE",
+      "manufacturerName": null,
+      "showAtc": true,
+      "showSubscribe": null,
+      "socialInfo": null,
+      "p13nDataV2": {
+       "predictedQuantity": null,
+       "labels": null,
+       "seeSimilarLinkEnabled": null
+      },
+      "sponsoredProduct": null,
+      "showOptions": false,
+      "showBuyNow": false,
+      "quickShop": null,
+      "quickShopCTALabel": null,
+      "rewards": null,
+      "promoData": [],
+      "promoDiscount": null,
+      "arExperiences": {
+       "isARHome": false,
+       "isZeekit": false,
+       "isAROptical": false
+      },
+      "eventAttributes": {
+       "priceFlip": false,
+       "specialBuy": false
+      },
+      "subscription": {
+       "__typename": "SubscriptionData",
+       "subscriptionEligible": false,
+       "showSubscriptionCTA": false,
+       "subscriptionTransactable": false
+      },
+      "hasCarePlans": false,
+      "petRx": {
+       "eligible": false,
+       "singleDispense": null
+      },
+      "vision": {
+       "ageGroup": null,
+       "visionCenterApproved": false
+      },
+      "showExploreOtherConditionsCTA": false,
+      "isPreowned": false,
+      "pglsCondition": null,
+      "newConditionProductId": null,
+      "preownedCondition": null,
+      "keyAttributes": [],
+      "mhmdFlag": false,
+      "seeSimilar": false,
+      "isQSRItem": false,
+      "isCustomizable": false,
+      "availabilityStatusDisplayValue": "In stock",
+      "carrierDownpaymentPrice": "",
+      "productLocationDisplayValue": null,
+      "externalInfoUrl": "",
+      "canAddToCart": true,
+      "description": "<li>INCLUDES: One (1) 18-ounce box of Cheerios Whole Grain Oats Breakfast Cereal</li><li>WHOLE GRAINS: This cold cereal is made with 100% whole grain oats and only 1 gram of sugar per serving</li>",
+      "flag": "",
+      "badge": {
+       "text": "",
+       "id": "",
+       "type": "",
+       "key": "",
+       "bundleId": ""
+      },
+      "groupsV2": null,
+      "swipeableImages": [],
+      "socialProofBadges": null,
+      "fulfillmentBadges": [],
+      "preOrderBadge": null,
+      "fulfillmentBadgeGroups": [
+       {
+        "text": "Shipping available",
+        "slaText": "",
+        "isSlaTextBold": true,
+        "templates": null,
+        "textTemplate": null,
+        "textValues": null,
+        "sla": null,
+        "className": "dark-gray",
+        "key": "FF_SHIPPING",
+        "styleId": "FF_STYLE"
+       }
+      ],
+      "specialBuy": false,
+      "priceFlip": false,
+      "image": "https://i5.walmartimages.com/seo/Original-Cheerios-Heart-Healthy-Cereal-18-OZ-Family-Size-Cereal-Box_b278408b-0cc1-48d6-ad98-83a2f6d1ded8.b72c2a970da4022b903c86003c87f1c0.jpeg",
+      "imageSize": "",
+      "imageID": "AD6BD2513FBA4DD1BC7560461B88C2DD",
+      "imageName": "Original-Cheerios-Heart-Healthy-Cereal-18-OZ-Family-Size-Cereal-Box_b278408b-0cc1-48d6-ad98-83a2f6d1ded8.b72c2a970da4022b903c86003c87f1c0.jpeg",
+      "isOutOfStock": false,
+      "price": 9.99,
+      "rating": {
+       "averageRating": 4.8,
+       "numberOfReviews": 2309
+      },
+      "variantList": [],
+      "isVariantTypeSwatch": false,
+      "shouldLazyLoad": false,
+      "isSponsoredFlag": false,
+      "moqText": null,
+      "isLeftSideGridItem": true,
+      "productAttributes": {},
+      "discountsRaw": null,
+      "productIndex": 2,
+      "itemStackPosition": 1,
+      "modularStackKey": "c7d7664e-e1d6-49d4-98dd-3d4a5c41d360"
+     },
+     {
+      "__typename": "Product",
+      "buyBoxSuppression": false,
+      "similarItems": false,
+      "id": "6AU64SFUBLWD",
+      "isDE": false,
+      "showDrawCTA": null,
+      "usItemId": "38384605",
+      "isBadSplit": false,
+      "catalogSellerId": "103245166",
+      "fitmentLabel": null,
+      "name": "Multi Grain Cheerios, Multigrain Breakfast Cereal, Gluten Free, 18 oz",
+      "checkStoreAvailabilityATC": false,
+      "seeShippingEligibility": false,
+      "productBrand": null,
+      "brand": null,
+      "showLikeButton": false,
+      "type": "REGULAR",
+      "shortDescription": "<li>Made with 5 whole grains</li><li>May reduce the risk of heart disease</li><li>Good source of 12 vitamins and minerals</li>",
+      "averageWeight": null,
+      "weightIncrement": 1,
+      "topResult": null,
+      "additionalOfferCount": 6,
+      "availabilityInNearbyStore": null,
+      "itemBeacon": "{\"l1s\":35.861084,\"l2sf\":0.18639703870644964,\"l2se\":0.186397,\"l2sr\":0.101658,\"src\":[\"SOLR\"],\"iu\":[\"cheerios 18 oz\"],\"plb\":0}",
+      "catalogProductType": "Packaged Breakfast Cereals",
+      "collectibles": null,
+      "gradingTypeCode": 1,
+      "conditionPriceRange": null,
+      "imageInfo": {
+       "id": "8A2ED445A0B34FEB8724115D5E7D75F6",
+       "name": "Multi-Grain-Cheerios-Multigrain-Breakfast-Cereal-Gluten-Free-18-oz_07d00415-9c56-4677-bd75-9b7e41e1e791.630635626f87bc229a6395e595d95230.jpeg",
+       "thumbnailUrl": "https://i5.walmartimages.com/seo/Multi-Grain-Cheerios-Multigrain-Breakfast-Cereal-Gluten-Free-18-oz_07d00415-9c56-4677-bd75-9b7e41e1e791.630635626f87bc229a6395e595d95230.jpeg",
+       "size": "104-104",
+       "allImages": []
+      },
+      "aspectInfo": {
+       "name": null,
+       "header": null,
+       "id": null,
+       "snippet": null
+      },
+      "plItem": {
+       "isPLItemToBoost": false,
+       "plItemTagString": ""
+      },
+      "canonicalUrl": "/ip/Multi-Grain-Cheerios-Multigrain-Breakfast-Cereal-Gluten-Free-18-oz/38384605?classType=REGULAR",
+      "conditionV2": {
+       "code": 1,
+       "groupCode": 1
+      },
+      "externalInfo": null,
+      "itemType": null,
+      "category": {
+       "categoryPath": "Home Page/Food/Breakfast & Cereal/Breakfast Cereal/General Mills Cereal",
+       "categoryPathId": "0:976759:976783:1231208:4498827",
+       "path": null
+      },
+      "returnPolicy": {
+       "returnable": null,
+       "freeReturns": null,
+       "returnWindow": {
+        "value": null,
+        "unitType": "Day"
+       },
+       "returnPolicyText": null
+      },
+      "badges": {
+       "flags": null,
+       "tags": [],
+       "groups": [
+        {
+         "__typename": "UnifiedBadgeGroup",
+         "name": "fulfillment",
+         "members": [
+          {
+           "__typename": "BadgeGroupMember",
+           "id": "L1053",
+           "key": "FF_SHIPPING",
+           "memberType": "badge",
+           "otherInfo": null,
+           "rank": 3,
+           "textTemplate": null,
+           "textValues": null,
+           "slaText": "",
+           "slaDate": null,
+           "slaDateISO": null,
+           "sla": null,
+           "styleId": "FF_STYLE",
+           "text": "Shipping available",
+           "type": "LABEL",
+           "iconId": null,
+           "templates": null,
+           "badgeContent": null
+          }
+         ]
+        }
+       ],
+       "labels": null,
+       "groupsV2": null
+      },
+      "buyNowEligible": true,
+      "classType": "REGULAR",
+      "averageRating": 4.7,
+      "numberOfReviews": 513,
+      "esrb": null,
+      "mediaRating": null,
+      "salesUnit": "EACH",
+      "salesUnitType": "EACH",
+      "unitQuantity": null,
+      "sellerId": "76E5604717E94025B5B85E5B7B6C4F2F",
+      "sellerName": "RNK shop us",
+      "sellerType": null,
+      "hasSellerBadge": null,
+      "isEarlyAccessItem": false,
+      "preEarlyAccessEvent": false,
+      "earlyAccessEvent": false,
+      "blitzItem": false,
+      "annualEvent": false,
+      "annualEventV2": false,
+      "availabilityStatusV2": {
+       "display": "In stock",
+       "value": "IN_STOCK"
+      },
+      "availabilityStatus": "IN_STOCK",
+      "groupMetaData": {
+       "groupType": null,
+       "groupSubType": null,
+       "numberOfComponents": 0,
+       "groupComponents": null
+      },
+      "addOnServices": null,
+      "productLocation": null,
+      "fulfillmentSpeed": null,
+      "offerId": "FA1C99AEC7C63A5888F38A42F36FAD94",
+      "preOrder": {
+       "isPreOrder": false,
+       "preOrderMessage": null,
+       "preOrderStreetDateMessage": null,
+       "streetDate": null,
+       "streetDateDisplayable": null,
+       "streetDateType": null,
+       "releaseDate": null
+      },
+      "pac": null,
+      "droneAttributes": null,
+      "fulfillmentSummary": [
+       {
+        "fulfillment": "DELIVERY",
+        "storeId": "0",
+        "deliveryDate": "2026-10-07T21:59:00.000Z",
+        "fulfillmentMethods": [
+         "UNSCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": false
+       }
+      ],
+      "priceInfo": {
+       "itemPrice": "",
+       "linePrice": "",
+       "linePriceDisplay": "",
+       "savings": "",
+       "savingsAmt": 0,
+       "wasPrice": "",
+       "wasPriceSupportText": "",
+       "unitPrice": "",
+       "shipPrice": "",
+       "minPrice": 0,
+       "minPriceForVariant": "",
+       "priceRangeString": "",
+       "subscriptionPrice": "",
+       "subscriptionString": "",
+       "subscriptionDiscountPrice": "",
+       "priceDisplayCondition": "",
+       "finalCostByWeight": false,
+       "submapType": "",
+       "eaPricingText": "",
+       "eaPricingPreText": "",
+       "memberPriceString": "",
+       "subscriptionDualPrice": null,
+       "subscriptionPercentage": null,
+       "priceDisplayType": null,
+       "priceDetails": {
+        "currency": "USD",
+        "priceLines": [
+         {
+          "lineType": "DISCOUNTED_PRICE",
+          "values": [
+           {
+            "key": "PRICE",
+            "value": "7.00"
+           }
+          ]
+         },
+         {
+          "lineType": "COMPARISON",
+          "values": [
+           {
+            "key": "WAS_PRICE",
+            "value": "8.99"
+           }
+          ]
+         },
+         {
+          "lineType": "UNIT_PRICE",
+          "values": [
+           {
+            "key": "UNIT_PRICE",
+            "value": "38.9 ¢/oz"
+           }
+          ]
+         }
+        ]
+       }
+      },
+      "variantCriteria": [],
+      "snapEligible": false,
+      "fulfillmentTitle": "title_shipToHome_not_available",
+      "fulfillmentType": "MARKETPLACE",
+      "manufacturerName": null,
+      "showAtc": true,
+      "showSubscribe": null,
+      "socialInfo": null,
+      "p13nDataV2": {
+       "predictedQuantity": null,
+       "labels": null,
+       "seeSimilarLinkEnabled": null
+      },
+      "sponsoredProduct": null,
+      "showOptions": false,
+      "showBuyNow": false,
+      "quickShop": null,
+      "quickShopCTALabel": null,
+      "rewards": null,
+      "promoData": [],
+      "promoDiscount": null,
+      "arExperiences": {
+       "isARHome": false,
+       "isZeekit": false,
+       "isAROptical": false
+      },
+      "eventAttributes": {
+       "priceFlip": false,
+       "specialBuy": false
+      },
+      "subscription": {
+       "__typename": "SubscriptionData",
+       "subscriptionEligible": false,
+       "showSubscriptionCTA": false,
+       "subscriptionTransactable": false
+      },
+      "hasCarePlans": false,
+      "petRx": {
+       "eligible": false,
+       "singleDispense": null
+      },
+      "vision": {
+       "ageGroup": null,
+       "visionCenterApproved": false
+      },
+      "showExploreOtherConditionsCTA": false,
+      "isPreowned": false,
+      "pglsCondition": null,
+      "newConditionProductId": null,
+      "preownedCondition": null,
+      "keyAttributes": [],
+      "mhmdFlag": false,
+      "seeSimilar": false,
+      "isQSRItem": false,
+      "isCustomizable": false,
+      "availabilityStatusDisplayValue": "In stock",
+      "carrierDownpaymentPrice": "",
+      "productLocationDisplayValue": null,
+      "externalInfoUrl": "",
+      "canAddToCart": true,
+      "description": "<li>Made with 5 whole grains</li><li>May reduce the risk of heart disease</li><li>Good source of 12 vitamins and minerals</li>",
+      "flag": "",
+      "badge": {
+       "text": "",
+       "id": "",
+       "type": "",
+       "key": "",
+       "bundleId": ""
+      },
+      "groupsV2": null,
+      "swipeableImages": [],
+      "socialProofBadges": null,
+      "fulfillmentBadges": [],
+      "preOrderBadge": null,
+      "fulfillmentBadgeGroups": [
+       {
+        "text": "Shipping available",
+        "slaText": "",
+        "isSlaTextBold": true,
+        "templates": null,
+        "textTemplate": null,
+        "textValues": null,
+        "sla": null,
+        "className": "dark-gray",
+        "key": "FF_SHIPPING",
+        "styleId": "FF_STYLE"
+       }
+      ],
+      "specialBuy": false,
+      "priceFlip": false,
+      "image": "https://i5.walmartimages.com/seo/Multi-Grain-Cheerios-Multigrain-Breakfast-Cereal-Gluten-Free-18-oz_07d00415-9c56-4677-bd75-9b7e41e1e791.630635626f87bc229a6395e595d95230.jpeg",
+      "imageSize": "",
+      "imageID": "8A2ED445A0B34FEB8724115D5E7D75F6",
+      "imageName": "Multi-Grain-Cheerios-Multigrain-Breakfast-Cereal-Gluten-Free-18-oz_07d00415-9c56-4677-bd75-9b7e41e1e791.630635626f87bc229a6395e595d95230.jpeg",
+      "isOutOfStock": false,
+      "price": 7,
+      "rating": {
+       "averageRating": 4.7,
+       "numberOfReviews": 513
+      },
+      "variantList": [],
+      "isVariantTypeSwatch": false,
+      "shouldLazyLoad": false,
+      "isSponsoredFlag": false,
+      "moqText": null,
+      "isLeftSideGridItem": false,
+      "productAttributes": {},
+      "discountsRaw": null,
+      "productIndex": 3,
+      "itemStackPosition": 1,
+      "modularStackKey": "c7d7664e-e1d6-49d4-98dd-3d4a5c41d360"
+     },
+     {
+      "__typename": "AdPlaceholder",
+      "type": "SponsoredVideoAd",
+      "moduleLocation": "middle",
+      "lazy": "700",
+      "adUuid": "00-380f979624040f7f73592c209ee9e6c3-c3f4f106c8e2ea8a-00-3201953329956915",
+      "hasVideo": false,
+      "hasAd": false,
+      "moduleInfo": "{\"brands\":[\"cheerios\"],\"ruleIds\":[],\"status\":\"BLOCKED\"}",
+      "videoAdType": null,
+      "tileOptions": {
+       "addToCart": null,
+       "addToCartButtonStyle": null,
+       "addToList": null,
+       "addToRegistry": null,
+       "averageRatings": null,
+       "brandTitle": null,
+       "displayAveragePriceCondition": null,
+       "displayBenefitEligibilityBadges": null,
+       "displayPricePerUnit": null,
+       "displaySocialHandle": null,
+       "displayStandardPrice": null,
+       "displayVariant": null,
+       "displayWasPrice": null,
+       "displayYouSaveBadge": null,
+       "distance": null,
+       "fulfillmentBadging": null,
+       "hideSimilarText": null,
+       "lowStockBadge": null,
+       "mediaRatings": null,
+       "priceOptions": null,
+       "productEBTEligible": null,
+       "productFlags": null,
+       "productLabels": null,
+       "productPrice": null,
+       "productTitle": null,
+       "productTitleLineCount": null,
+       "productTitleLineCountV1": null,
+       "seeSimilarText": null,
+       "selectedSellerIdInCTA": null,
+       "shippingCosts": null,
+       "walmartCash": null
+      }
+     },
+     {
+      "__typename": "Product",
+      "buyBoxSuppression": false,
+      "similarItems": false,
+      "id": "42BIB1D42MTW",
+      "isDE": false,
+      "showDrawCTA": null,
+      "usItemId": "482683293",
+      "isBadSplit": false,
+      "catalogSellerId": "0",
+      "fitmentLabel": null,
+      "name": "(10 pack) Cheerios, Heart Healthy Gluten Free Breakfast Cereal, Family Size, 18 oz",
+      "checkStoreAvailabilityATC": false,
+      "seeShippingEligibility": false,
+      "productBrand": null,
+      "brand": null,
+      "showLikeButton": false,
+      "type": "REGULAR",
+      "shortDescription": "Cheerios, Heart Healthy Gluten Free Breakfast Cereal, Family Size, 18 oz",
+      "averageWeight": null,
+      "weightIncrement": 1,
+      "topResult": null,
+      "additionalOfferCount": null,
+      "availabilityInNearbyStore": null,
+      "itemBeacon": "{\"l1s\":28.858597,\"l2sf\":0.15057564356044484,\"l2se\":0.150576,\"l2sr\":0.085949,\"src\":[\"SOLR\",\"ANN\"],\"iu\":[\"cheerios 18 oz\"],\"plb\":0}",
+      "catalogProductType": "Packaged Breakfast Cereals",
+      "collectibles": null,
+      "gradingTypeCode": 1,
+      "conditionPriceRange": null,
+      "imageInfo": {
+       "id": "25AEEFC80ED6480491642EFA83525727",
+       "name": "10-Pack-Cereal-Cheerios-Oat-18-oz_2c2677b8-45ef-4ab1-872e-ec11719dd72c.834c6d69b6d807f574cd0fa667b7e391.jpeg",
+       "thumbnailUrl": "https://i5.walmartimages.com/seo/10-Pack-Cereal-Cheerios-Oat-18-oz_2c2677b8-45ef-4ab1-872e-ec11719dd72c.834c6d69b6d807f574cd0fa667b7e391.jpeg",
+       "size": "104-104",
+       "allImages": []
+      },
+      "aspectInfo": {
+       "name": null,
+       "header": null,
+       "id": null,
+       "snippet": null
+      },
+      "plItem": {
+       "isPLItemToBoost": false,
+       "plItemTagString": ""
+      },
+      "canonicalUrl": "/ip/10-Pack-Cereal-Cheerios-Oat-18-oz/482683293?classType=REGULAR",
+      "conditionV2": {
+       "code": 1,
+       "groupCode": 1
+      },
+      "externalInfo": null,
+      "itemType": null,
+      "category": {
+       "categoryPath": "Home Page/Food/Value packs/Cereals & toaster pastries",
+       "categoryPathId": "0:976759:5283635:5117494",
+       "path": null
+      },
+      "returnPolicy": {
+       "returnable": null,
+       "freeReturns": null,
+       "returnWindow": {
+        "value": null,
+        "unitType": "Day"
+       },
+       "returnPolicyText": null
+      },
+      "badges": {
+       "flags": null,
+       "tags": [],
+       "groups": [
+        {
+         "__typename": "UnifiedBadgeGroup",
+         "name": "fulfillment",
+         "members": [
+          {
+           "__typename": "BadgeGroupMember",
+           "id": "L1053",
+           "key": "FF_SHIPPING",
+           "memberType": "badge",
+           "otherInfo": null,
+           "rank": 3,
+           "textTemplate": null,
+           "textValues": null,
+           "slaText": "",
+           "slaDate": null,
+           "slaDateISO": null,
+           "sla": null,
+           "styleId": "FF_STYLE",
+           "text": "Shipping available",
+           "type": "LABEL",
+           "iconId": null,
+           "templates": null,
+           "badgeContent": null
+          }
+         ]
+        }
+       ],
+       "labels": null,
+       "groupsV2": null
+      },
+      "buyNowEligible": true,
+      "classType": "REGULAR",
+      "averageRating": 5,
+      "numberOfReviews": 3,
+      "esrb": null,
+      "mediaRating": null,
+      "salesUnit": "EACH",
+      "salesUnitType": "EACH",
+      "unitQuantity": null,
+      "sellerId": "F55CDC31AB754BB68FE0B39041159D63",
+      "sellerName": "Walmart.com",
+      "sellerType": null,
+      "hasSellerBadge": null,
+      "isEarlyAccessItem": false,
+      "preEarlyAccessEvent": false,
+      "earlyAccessEvent": false,
+      "blitzItem": false,
+      "annualEvent": false,
+      "annualEventV2": false,
+      "availabilityStatusV2": {
+       "display": "In stock",
+       "value": "IN_STOCK"
+      },
+      "availabilityStatus": "IN_STOCK",
+      "groupMetaData": {
+       "groupType": null,
+       "groupSubType": null,
+       "numberOfComponents": 0,
+       "groupComponents": null
+      },
+      "addOnServices": null,
+      "productLocation": null,
+      "fulfillmentSpeed": null,
+      "offerId": "4B2E6C7A7FC13CFC800922C5F2846D72",
+      "preOrder": {
+       "isPreOrder": false,
+       "preOrderMessage": null,
+       "preOrderStreetDateMessage": null,
+       "streetDate": null,
+       "streetDateDisplayable": null,
+       "streetDateType": null,
+       "releaseDate": null
+      },
+      "pac": null,
+      "droneAttributes": null,
+      "fulfillmentSummary": [
+       {
+        "fulfillment": "DELIVERY",
+        "storeId": "0",
+        "deliveryDate": "2026-10-03T21:59:00.000Z",
+        "fulfillmentMethods": [
+         "UNSCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": null
+       }
+      ],
+      "priceInfo": {
+       "itemPrice": "",
+       "linePrice": "",
+       "linePriceDisplay": "",
+       "savings": "",
+       "savingsAmt": 0,
+       "wasPrice": "",
+       "wasPriceSupportText": "",
+       "unitPrice": "",
+       "shipPrice": "",
+       "minPrice": 0,
+       "minPriceForVariant": "",
+       "priceRangeString": "",
+       "subscriptionPrice": "",
+       "subscriptionString": "",
+       "subscriptionDiscountPrice": "",
+       "priceDisplayCondition": "",
+       "finalCostByWeight": false,
+       "submapType": "",
+       "eaPricingText": "",
+       "eaPricingPreText": "",
+       "memberPriceString": "",
+       "subscriptionDualPrice": null,
+       "subscriptionPercentage": null,
+       "priceDisplayType": null,
+       "priceDetails": {
+        "currency": "USD",
+        "priceLines": [
+         {
+          "lineType": "CURRENT_PRICE",
+          "values": [
+           {
+            "key": "PRICE",
+            "value": "47.22"
+           }
+          ]
+         },
+         {
+          "lineType": "UNIT_PRICE",
+          "values": [
+           {
+            "key": "UNIT_PRICE",
+            "value": "26.2 ¢/oz"
+           }
+          ]
+         }
+        ]
+       }
+      },
+      "variantCriteria": [],
+      "snapEligible": false,
+      "fulfillmentTitle": "title_shipToHome_not_available",
+      "fulfillmentType": "FC",
+      "manufacturerName": null,
+      "showAtc": true,
+      "showSubscribe": null,
+      "socialInfo": null,
+      "p13nDataV2": {
+       "predictedQuantity": null,
+       "labels": null,
+       "seeSimilarLinkEnabled": null
+      },
+      "sponsoredProduct": null,
+      "showOptions": false,
+      "showBuyNow": false,
+      "quickShop": null,
+      "quickShopCTALabel": null,
+      "rewards": null,
+      "promoData": [
+       {
+        "type": "AFFIRM",
+        "terms": null,
+        "templateData": {
+         "priceString": null,
+         "imageUrl": null
+        }
+       }
+      ],
+      "promoDiscount": null,
+      "arExperiences": {
+       "isARHome": false,
+       "isZeekit": false,
+       "isAROptical": false
+      },
+      "eventAttributes": {
+       "priceFlip": false,
+       "specialBuy": false
+      },
+      "subscription": {
+       "__typename": "SubscriptionData",
+       "subscriptionEligible": true,
+       "showSubscriptionCTA": true,
+       "subscriptionTransactable": true
+      },
+      "hasCarePlans": false,
+      "petRx": {
+       "eligible": false,
+       "singleDispense": null
+      },
+      "vision": {
+       "ageGroup": null,
+       "visionCenterApproved": false
+      },
+      "showExploreOtherConditionsCTA": false,
+      "isPreowned": false,
+      "pglsCondition": null,
+      "newConditionProductId": null,
+      "preownedCondition": null,
+      "keyAttributes": [],
+      "mhmdFlag": false,
+      "seeSimilar": false,
+      "isQSRItem": false,
+      "isCustomizable": false,
+      "availabilityStatusDisplayValue": "In stock",
+      "carrierDownpaymentPrice": "",
+      "productLocationDisplayValue": null,
+      "externalInfoUrl": "",
+      "canAddToCart": true,
+      "description": "Cheerios, Heart Healthy Gluten Free Breakfast Cereal, Family Size, 18 oz",
+      "flag": "",
+      "badge": {
+       "text": "",
+       "id": "",
+       "type": "",
+       "key": "",
+       "bundleId": ""
+      },
+      "groupsV2": null,
+      "swipeableImages": [],
+      "socialProofBadges": null,
+      "fulfillmentBadges": [],
+      "preOrderBadge": null,
+      "fulfillmentBadgeGroups": [
+       {
+        "text": "Shipping available",
+        "slaText": "",
+        "isSlaTextBold": true,
+        "templates": null,
+        "textTemplate": null,
+        "textValues": null,
+        "sla": null,
+        "className": "dark-gray",
+        "key": "FF_SHIPPING",
+        "styleId": "FF_STYLE"
+       }
+      ],
+      "specialBuy": false,
+      "priceFlip": false,
+      "image": "https://i5.walmartimages.com/seo/10-Pack-Cereal-Cheerios-Oat-18-oz_2c2677b8-45ef-4ab1-872e-ec11719dd72c.834c6d69b6d807f574cd0fa667b7e391.jpeg",
+      "imageSize": "",
+      "imageID": "25AEEFC80ED6480491642EFA83525727",
+      "imageName": "10-Pack-Cereal-Cheerios-Oat-18-oz_2c2677b8-45ef-4ab1-872e-ec11719dd72c.834c6d69b6d807f574cd0fa667b7e391.jpeg",
+      "isOutOfStock": false,
+      "price": 47.22,
+      "rating": {
+       "averageRating": 5,
+       "numberOfReviews": 3
+      },
+      "variantList": [],
+      "isVariantTypeSwatch": false,
+      "isAtfMarker": true,
+      "shouldLazyLoad": false,
+      "isSponsoredFlag": false,
+      "moqText": null,
+      "isLeftSideGridItem": true,
+      "productAttributes": {},
+      "discountsRaw": null,
+      "productIndex": 8,
+      "itemStackPosition": 1,
+      "modularStackKey": "c7d7664e-e1d6-49d4-98dd-3d4a5c41d360"
+     },
+     {
+      "__typename": "Product",
+      "buyBoxSuppression": false,
+      "similarItems": false,
+      "id": "73ZSKRJIT8TD",
+      "isDE": false,
+      "showDrawCTA": null,
+      "usItemId": "118689036",
+      "isBadSplit": false,
+      "catalogSellerId": "101334018",
+      "fitmentLabel": null,
+      "name": "Multi Grain Cheerios Heart Healthy Cereal, 18.75 OZ Cereal Box (Pack of 2)",
+      "checkStoreAvailabilityATC": false,
+      "seeShippingEligibility": false,
+      "productBrand": null,
+      "brand": null,
+      "showLikeButton": false,
+      "type": "REGULAR",
+      "shortDescription": "Multi Grain Cereal",
+      "averageWeight": null,
+      "weightIncrement": 1,
+      "topResult": null,
+      "additionalOfferCount": 5,
+      "availabilityInNearbyStore": null,
+      "itemBeacon": "{\"l1s\":22.435568,\"l2sf\":0.13937194704700862,\"l2se\":0.139372,\"l2sr\":0.153815,\"src\":[\"ANN\"],\"iu\":[\"cheerios 18 oz\"],\"plb\":0}",
+      "catalogProductType": "Packaged Breakfast Cereals",
+      "collectibles": null,
+      "gradingTypeCode": 1,
+      "conditionPriceRange": null,
+      "imageInfo": {
+       "id": "DD4613C1401C42BDA39470EEDB4A7A15",
+       "name": "Multi-Grain-Cheerios-Heart-Healthy-Cereal-18-75-OZ-Cereal-Box-Pack-of-2_e4d03a16-032e-449b-b223-5a3adc5943bc.5b625b8e4474324679540634528c8310.jpeg",
+       "thumbnailUrl": "https://i5.walmartimages.com/seo/Multi-Grain-Cheerios-Heart-Healthy-Cereal-18-75-OZ-Cereal-Box-Pack-of-2_e4d03a16-032e-449b-b223-5a3adc5943bc.5b625b8e4474324679540634528c8310.jpeg",
+       "size": "104-104",
+       "allImages": []
+      },
+      "aspectInfo": {
+       "name": null,
+       "header": null,
+       "id": null,
+       "snippet": null
+      },
+      "plItem": {
+       "isPLItemToBoost": false,
+       "plItemTagString": ""
+      },
+      "canonicalUrl": "/ip/Multi-Grain-Cheerios-Heart-Healthy-Cereal-18-75-OZ-Cereal-Box-Pack-of-2/118689036?classType=REGULAR",
+      "conditionV2": {
+       "code": 1,
+       "groupCode": 1
+      },
+      "externalInfo": null,
+      "itemType": null,
+      "category": {
+       "categoryPath": "Home Page/Food/Breakfast & Cereal/Cereal & Granola/Healthy Cereal",
+       "categoryPathId": "0:976759:976783:8102529:7639074",
+       "path": null
+      },
+      "returnPolicy": {
+       "returnable": null,
+       "freeReturns": null,
+       "returnWindow": {
+        "value": null,
+        "unitType": "Day"
+       },
+       "returnPolicyText": null
+      },
+      "badges": {
+       "flags": null,
+       "tags": [],
+       "groups": [
+        {
+         "__typename": "UnifiedBadgeGroup",
+         "name": "fulfillment",
+         "members": [
+          {
+           "__typename": "BadgeGroupMember",
+           "id": "L1053",
+           "key": "FF_SHIPPING",
+           "memberType": "badge",
+           "otherInfo": null,
+           "rank": 3,
+           "textTemplate": null,
+           "textValues": null,
+           "slaText": "",
+           "slaDate": null,
+           "slaDateISO": null,
+           "sla": null,
+           "styleId": "FF_STYLE",
+           "text": "Shipping available",
+           "type": "LABEL",
+           "iconId": null,
+           "templates": null,
+           "badgeContent": null
+          }
+         ]
+        }
+       ],
+       "labels": null,
+       "groupsV2": null
+      },
+      "buyNowEligible": true,
+      "classType": "REGULAR",
+      "averageRating": 4.8,
+      "numberOfReviews": 1045,
+      "esrb": null,
+      "mediaRating": null,
+      "salesUnit": "EACH",
+      "salesUnitType": "EACH",
+      "unitQuantity": null,
+      "sellerId": "C2B59C7A3FB94176BE5AFFB36B2311B9",
+      "sellerName": "Elite Suppliers",
+      "sellerType": null,
+      "hasSellerBadge": null,
+      "isEarlyAccessItem": false,
+      "preEarlyAccessEvent": false,
+      "earlyAccessEvent": false,
+      "blitzItem": false,
+      "annualEvent": false,
+      "annualEventV2": false,
+      "availabilityStatusV2": {
+       "display": "In stock",
+       "value": "IN_STOCK"
+      },
+      "availabilityStatus": "IN_STOCK",
+      "groupMetaData": {
+       "groupType": null,
+       "groupSubType": null,
+       "numberOfComponents": 0,
+       "groupComponents": null
+      },
+      "addOnServices": null,
+      "productLocation": null,
+      "fulfillmentSpeed": null,
+      "offerId": "FEE684D77355320CB6FF3F8BBEC821BC",
+      "preOrder": {
+       "isPreOrder": false,
+       "preOrderMessage": null,
+       "preOrderStreetDateMessage": null,
+       "streetDate": null,
+       "streetDateDisplayable": null,
+       "streetDateType": null,
+       "releaseDate": null
+      },
+      "pac": null,
+      "droneAttributes": null,
+      "fulfillmentSummary": [
+       {
+        "fulfillment": "DELIVERY",
+        "storeId": "0",
+        "deliveryDate": "2026-10-03T21:59:00.000Z",
+        "fulfillmentMethods": [
+         "UNSCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": null
+       }
+      ],
+      "priceInfo": {
+       "itemPrice": "",
+       "linePrice": "",
+       "linePriceDisplay": "",
+       "savings": "",
+       "savingsAmt": 0,
+       "wasPrice": "",
+       "wasPriceSupportText": "",
+       "unitPrice": "",
+       "shipPrice": "",
+       "minPrice": 0,
+       "minPriceForVariant": "",
+       "priceRangeString": "",
+       "subscriptionPrice": "",
+       "subscriptionString": "",
+       "subscriptionDiscountPrice": "",
+       "priceDisplayCondition": "",
+       "finalCostByWeight": false,
+       "submapType": "",
+       "eaPricingText": "",
+       "eaPricingPreText": "",
+       "memberPriceString": "",
+       "subscriptionDualPrice": null,
+       "subscriptionPercentage": null,
+       "priceDisplayType": null,
+       "priceDetails": {
+        "currency": "USD",
+        "priceLines": [
+         {
+          "lineType": "DISCOUNTED_PRICE",
+          "values": [
+           {
+            "key": "PRICE",
+            "value": "14.92"
+           }
+          ]
+         },
+         {
+          "lineType": "COMPARISON",
+          "values": [
+           {
+            "key": "WAS_PRICE",
+            "value": "17.18"
+           }
+          ]
+         },
+         {
+          "lineType": "UNIT_PRICE",
+          "values": [
+           {
+            "key": "UNIT_PRICE",
+            "value": "39.8 ¢/oz"
+           }
+          ]
+         }
+        ]
+       }
+      },
+      "variantCriteria": [],
+      "snapEligible": false,
+      "fulfillmentTitle": "title_shipToHome_not_available",
+      "fulfillmentType": "FC",
+      "manufacturerName": null,
+      "showAtc": true,
+      "showSubscribe": null,
+      "socialInfo": null,
+      "p13nDataV2": {
+       "predictedQuantity": null,
+       "labels": null,
+       "seeSimilarLinkEnabled": null
+      },
+      "sponsoredProduct": null,
+      "showOptions": false,
+      "showBuyNow": false,
+      "quickShop": null,
+      "quickShopCTALabel": null,
+      "rewards": null,
+      "promoData": [],
+      "promoDiscount": null,
+      "arExperiences": {
+       "isARHome": false,
+       "isZeekit": false,
+       "isAROptical": false
+      },
+      "eventAttributes": {
+       "priceFlip": false,
+       "specialBuy": false
+      },
+      "subscription": {
+       "__typename": "SubscriptionData",
+       "subscriptionEligible": false,
+       "showSubscriptionCTA": false,
+       "subscriptionTransactable": false
+      },
+      "hasCarePlans": false,
+      "petRx": {
+       "eligible": false,
+       "singleDispense": null
+      },
+      "vision": {
+       "ageGroup": null,
+       "visionCenterApproved": false
+      },
+      "showExploreOtherConditionsCTA": false,
+      "isPreowned": false,
+      "pglsCondition": null,
+      "newConditionProductId": null,
+      "preownedCondition": null,
+      "keyAttributes": [],
+      "mhmdFlag": false,
+      "seeSimilar": false,
+      "isQSRItem": false,
+      "isCustomizable": false,
+      "availabilityStatusDisplayValue": "In stock",
+      "carrierDownpaymentPrice": "",
+      "productLocationDisplayValue": null,
+      "externalInfoUrl": "",
+      "canAddToCart": true,
+      "description": "Multi Grain Cereal",
+      "flag": "",
+      "badge": {
+       "text": "",
+       "id": "",
+       "type": "",
+       "key": "",
+       "bundleId": ""
+      },
+      "groupsV2": null,
+      "swipeableImages": [],
+      "socialProofBadges": null,
+      "fulfillmentBadges": [],
+      "preOrderBadge": null,
+      "fulfillmentBadgeGroups": [
+       {
+        "text": "Shipping available",
+        "slaText": "",
+        "isSlaTextBold": true,
+        "templates": null,
+        "textTemplate": null,
+        "textValues": null,
+        "sla": null,
+        "className": "dark-gray",
+        "key": "FF_SHIPPING",
+        "styleId": "FF_STYLE"
+       }
+      ],
+      "specialBuy": false,
+      "priceFlip": false,
+      "image": "https://i5.walmartimages.com/seo/Multi-Grain-Cheerios-Heart-Healthy-Cereal-18-75-OZ-Cereal-Box-Pack-of-2_e4d03a16-032e-449b-b223-5a3adc5943bc.5b625b8e4474324679540634528c8310.jpeg",
+      "imageSize": "",
+      "imageID": "DD4613C1401C42BDA39470EEDB4A7A15",
+      "imageName": "Multi-Grain-Cheerios-Heart-Healthy-Cereal-18-75-OZ-Cereal-Box-Pack-of-2_e4d03a16-032e-449b-b223-5a3adc5943bc.5b625b8e4474324679540634528c8310.jpeg",
+      "isOutOfStock": false,
+      "price": 14.92,
+      "rating": {
+       "averageRating": 4.8,
+       "numberOfReviews": 1045
+      },
+      "variantList": [],
+      "isVariantTypeSwatch": false,
+      "shouldLazyLoad": false,
+      "isSponsoredFlag": false,
+      "moqText": null,
+      "isLeftSideGridItem": true,
+      "productAttributes": {},
+      "discountsRaw": null,
+      "productIndex": 16,
+      "itemStackPosition": 1,
+      "modularStackKey": "c7d7664e-e1d6-49d4-98dd-3d4a5c41d360"
+     },
+     {
+      "__typename": "Product",
+      "buyBoxSuppression": false,
+      "similarItems": false,
+      "id": "4UDWTOQW2JLZ",
+      "isDE": false,
+      "showDrawCTA": null,
+      "usItemId": "10311408",
+      "isBadSplit": false,
+      "catalogSellerId": "0",
+      "fitmentLabel": null,
+      "name": "Cheerios, Heart Healthy Gluten Free Breakfast Cereal, 8.9 oz",
+      "checkStoreAvailabilityATC": false,
+      "seeShippingEligibility": false,
+      "productBrand": null,
+      "brand": null,
+      "showLikeButton": false,
+      "type": "VARIANT",
+      "shortDescription": "<li>INCLUDES: One (1) 8.9-ounce box of Cheerios Whole Grain Oats Breakfast Cereal</li><li>WHOLE GRAINS: This cold cereal is made with 100% whole grain oats and only 1 gram of sugar per serving</li>",
+      "averageWeight": null,
+      "weightIncrement": 1,
+      "topResult": null,
+      "additionalOfferCount": 8,
+      "availabilityInNearbyStore": null,
+      "itemBeacon": "{\"l1s\":24.802347,\"l2sf\":0.28767263239801566,\"l2se\":0.287673,\"l2sr\":0.058187,\"src\":[\"ANN\"],\"iu\":[\"cheerios 18 oz\"],\"plb\":0}",
+      "catalogProductType": "Packaged Breakfast Cereals",
+      "collectibles": null,
+      "gradingTypeCode": 1,
+      "conditionPriceRange": null,
+      "imageInfo": {
+       "id": null,
+       "name": "Cheerios-Heart-Healthy-Cereal-Happy-Heart-Shapes-8-9-oz_a9b77b36-774b-4817-9784-b70eb5ebfb72.c0ee5396019e6b63ec83cf989bf6e79d.jpeg",
+       "thumbnailUrl": "https://i5.walmartimages.com/seo/Cheerios-Heart-Healthy-Cereal-Happy-Heart-Shapes-8-9-oz_a9b77b36-774b-4817-9784-b70eb5ebfb72.c0ee5396019e6b63ec83cf989bf6e79d.jpeg",
+       "size": "104-104",
+       "allImages": []
+      },
+      "aspectInfo": {
+       "name": null,
+       "header": null,
+       "id": null,
+       "snippet": null
+      },
+      "plItem": {
+       "isPLItemToBoost": false,
+       "plItemTagString": ""
+      },
+      "canonicalUrl": "/ip/Cheerios-Heart-Healthy-Cereal-Happy-Heart-Shapes-8-9-oz/10311408?classType=VARIANT",
+      "conditionV2": {
+       "code": 1,
+       "groupCode": 1
+      },
+      "externalInfo": null,
+      "itemType": null,
+      "category": {
+       "categoryPath": "Home Page/Food/Breakfast & Cereal/Breakfast Cereal/General Mills Cereal",
+       "categoryPathId": "0:976759:976783:1231208:4498827",
+       "path": null
+      },
+      "returnPolicy": {
+       "returnable": null,
+       "freeReturns": null,
+       "returnWindow": {
+        "value": null,
+        "unitType": "Day"
+       },
+       "returnPolicyText": null
+      },
+      "badges": {
+       "flags": [
+        {
+         "__typename": "BaseBadge",
+         "key": "ROLLBACK",
+         "text": "Rollback",
+         "type": "LABEL",
+         "id": "L1300",
+         "styleId": null
+        }
+       ],
+       "tags": [],
+       "groups": [
+        {
+         "__typename": "UnifiedBadgeGroup",
+         "name": "fulfillment",
+         "members": [
+          {
+           "__typename": "BadgeGroupMember",
+           "id": "L1052",
+           "key": "FF_DELIVERY",
+           "memberType": "badge",
+           "otherInfo": null,
+           "rank": 2,
+           "textTemplate": null,
+           "textValues": null,
+           "slaText": "",
+           "slaDate": null,
+           "slaDateISO": null,
+           "sla": null,
+           "styleId": "FF_STYLE",
+           "text": "Delivery available",
+           "type": "LABEL",
+           "iconId": null,
+           "templates": null,
+           "badgeContent": null
+          },
+          {
+           "__typename": "BadgeGroupMember",
+           "id": "L1051",
+           "key": "FF_PICKUP",
+           "memberType": "badge",
+           "otherInfo": null,
+           "rank": 1,
+           "textTemplate": null,
+           "textValues": null,
+           "slaText": "",
+           "slaDate": null,
+           "slaDateISO": null,
+           "sla": null,
+           "styleId": "FF_STYLE",
+           "text": "Pickup available",
+           "type": "LABEL",
+           "iconId": null,
+           "templates": null,
+           "badgeContent": null
+          },
+          {
+           "__typename": "BadgeGroupMember",
+           "id": "L1053",
+           "key": "FF_SHIPPING",
+           "memberType": "badge",
+           "otherInfo": null,
+           "rank": 3,
+           "textTemplate": null,
+           "textValues": null,
+           "slaText": "",
+           "slaDate": null,
+           "slaDateISO": null,
+           "sla": null,
+           "styleId": "FF_STYLE",
+           "text": "Shipping available",
+           "type": "LABEL",
+           "iconId": null,
+           "templates": null,
+           "badgeContent": null
+          }
+         ]
+        }
+       ],
+       "labels": null,
+       "groupsV2": null
+      },
+      "buyNowEligible": true,
+      "classType": "VARIANT",
+      "averageRating": 4.8,
+      "numberOfReviews": 88196,
+      "esrb": null,
+      "mediaRating": null,
+      "salesUnit": "EACH",
+      "salesUnitType": "EACH",
+      "unitQuantity": null,
+      "sellerId": "F55CDC31AB754BB68FE0B39041159D63",
+      "sellerName": "Walmart.com",
+      "sellerType": null,
+      "hasSellerBadge": null,
+      "isEarlyAccessItem": false,
+      "preEarlyAccessEvent": false,
+      "earlyAccessEvent": false,
+      "blitzItem": false,
+      "annualEvent": false,
+      "annualEventV2": false,
+      "availabilityStatusV2": {
+       "display": "In stock",
+       "value": "IN_STOCK"
+      },
+      "availabilityStatus": "IN_STOCK",
+      "groupMetaData": {
+       "groupType": null,
+       "groupSubType": null,
+       "numberOfComponents": 0,
+       "groupComponents": null
+      },
+      "addOnServices": null,
+      "productLocation": null,
+      "fulfillmentSpeed": null,
+      "offerId": "A0675023918D48B69106AD23367F9237",
+      "preOrder": {
+       "isPreOrder": false,
+       "preOrderMessage": null,
+       "preOrderStreetDateMessage": null,
+       "streetDate": null,
+       "streetDateDisplayable": null,
+       "streetDateType": null,
+       "releaseDate": null
+      },
+      "pac": null,
+      "droneAttributes": null,
+      "fulfillmentSummary": [
+       {
+        "fulfillment": "DELIVERY",
+        "storeId": "2098",
+        "deliveryDate": "2026-10-02T11:00:00.000Z",
+        "fulfillmentMethods": [
+         "UNSCHEDULED",
+         "SCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": null
+       },
+       {
+        "fulfillment": "DELIVERY",
+        "storeId": "2098",
+        "deliveryDate": null,
+        "fulfillmentMethods": [
+         "UNSCHEDULED",
+         "SCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": null
+       },
+       {
+        "fulfillment": "PICKUP",
+        "storeId": "2098",
+        "deliveryDate": "2026-10-02T11:00:00.000Z",
+        "fulfillmentMethods": [
+         "UNSCHEDULED",
+         "SCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": null
+       },
+       {
+        "fulfillment": "PICKUP",
+        "storeId": "2098",
+        "deliveryDate": "2026-10-02T15:00:00.000Z",
+        "fulfillmentMethods": [
+         "UNSCHEDULED",
+         "SCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": null
+       },
+       {
+        "fulfillment": "DELIVERY",
+        "storeId": "0",
+        "deliveryDate": "2026-10-02T21:59:00.000Z",
+        "fulfillmentMethods": [
+         "UNSCHEDULED"
+        ],
+        "fulfillmentBadge": null,
+        "outOfCountryEligible": null
+       }
+      ],
+      "priceInfo": {
+       "itemPrice": "",
+       "linePrice": "",
+       "linePriceDisplay": "",
+       "savings": "",
+       "savingsAmt": 0,
+       "wasPrice": "",
+       "wasPriceSupportText": "",
+       "unitPrice": "",
+       "shipPrice": "",
+       "minPrice": 0,
+       "minPriceForVariant": "",
+       "priceRangeString": "",
+       "subscriptionPrice": "",
+       "subscriptionString": "",
+       "subscriptionDiscountPrice": "",
+       "priceDisplayCondition": "",
+       "finalCostByWeight": false,
+       "submapType": "",
+       "eaPricingText": "",
+       "eaPricingPreText": "",
+       "memberPriceString": "",
+       "subscriptionDualPrice": null,
+       "subscriptionPercentage": null,
+       "priceDisplayType": null,
+       "priceDetails": {
+        "currency": "USD",
+        "priceLines": [
+         {
+          "lineType": "DISCOUNTED_PRICE",
+          "values": [
+           {
+            "key": "PRICE",
+            "value": "2.97"
+           }
+          ]
+         },
+         {
+          "lineType": "COMPARISON",
+          "values": [
+           {
+            "key": "WAS_PRICE",
+            "value": "3.47"
+           }
+          ]
+         },
+         {
+          "lineType": "UNIT_PRICE",
+          "values": [
+           {
+            "key": "UNIT_PRICE",
+            "value": "33.4 ¢/oz"
+           }
+          ]
+         }
+        ]
+       }
+      },
+      "variantCriteria": [],
+      "snapEligible": false,
+      "fulfillmentTitle": "title_store_not_available",
+      "fulfillmentType": "STORE",
+      "manufacturerName": null,
+      "showAtc": true,
+      "showSubscribe": null,
+      "socialInfo": null,
+      "p13nDataV2": {
+       "predictedQuantity": null,
+       "labels": null,
+       "seeSimilarLinkEnabled": null
+      },
+      "sponsoredProduct": null,
+      "showOptions": false,
+      "showBuyNow": false,
+      "quickShop": null,
+      "quickShopCTALabel": null,
+      "rewards": null,
+      "promoData": [
+       {
+        "type": "AFFIRM",
+        "terms": null,
+        "templateData": {
+         "priceString": null,
+         "imageUrl": null
+        }
+       }
+      ],
+      "promoDiscount": null,
+      "arExperiences": {
+       "isARHome": false,
+       "isZeekit": false,
+       "isAROptical": false
+      },
+      "eventAttributes": {
+       "priceFlip": false,
+       "specialBuy": false
+      },
+      "subscription": {
+       "__typename": "SubscriptionData",
+       "subscriptionEligible": true,
+       "showSubscriptionCTA": true,
+       "subscriptionTransactable": true
+      },
+      "hasCarePlans": false,
+      "petRx": {
+       "eligible": false,
+       "singleDispense": null
+      },
+      "vision": {
+       "ageGroup": null,
+       "visionCenterApproved": false
+      },
+      "showExploreOtherConditionsCTA": false,
+      "isPreowned": false,
+      "pglsCondition": null,
+      "newConditionProductId": null,
+      "preownedCondition": null,
+      "keyAttributes": [],
+      "mhmdFlag": false,
+      "seeSimilar": false,
+      "isQSRItem": false,
+      "isCustomizable": false,
+      "availabilityStatusDisplayValue": "In stock",
+      "carrierDownpaymentPrice": "",
+      "productLocationDisplayValue": null,
+      "externalInfoUrl": "",
+      "canAddToCart": true,
+      "description": "<li>INCLUDES: One (1) 8.9-ounce box of Cheerios Whole Grain Oats Breakfast Cereal</li><li>WHOLE GRAINS: This cold cereal is made with 100% whole grain oats and only 1 gram of sugar per serving</li>",
+      "flag": "Rollback",
+      "badge": {
+       "__typename": "BaseBadge",
+       "key": "ROLLBACK",
+       "text": "Rollback",
+       "type": "LABEL",
+       "id": "L1300",
+       "styleId": null
+      },
+      "groupsV2": null,
+      "swipeableImages": [],
+      "socialProofBadges": null,
+      "fulfillmentBadges": [],
+      "preOrderBadge": null,
+      "fulfillmentBadgeGroups": [
+       {
+        "text": "Delivery available",
+        "slaText": "",
+        "isSlaTextBold": true,
+        "templates": null,
+        "textTemplate": null,
+        "textValues": null,
+        "sla": null,
+        "className": "dark-gray",
+        "key": "FF_DELIVERY",
+        "styleId": "FF_STYLE"
+       },
+       {
+        "text": "Pickup available",
+        "slaText": "",
+        "isSlaTextBold": true,
+        "templates": null,
+        "textTemplate": null,
+        "textValues": null,
+        "sla": null,
+        "className": "dark-gray",
+        "key": "FF_PICKUP",
+        "styleId": "FF_STYLE"
+       },
+       {
+        "text": "Shipping available",
+        "slaText": "",
+        "isSlaTextBold": true,
+        "templates": null,
+        "textTemplate": null,
+        "textValues": null,
+        "sla": null,
+        "className": "dark-gray",
+        "key": "FF_SHIPPING",
+        "styleId": "FF_STYLE"
+       }
+      ],
+      "specialBuy": false,
+      "priceFlip": false,
+      "image": "https://i5.walmartimages.com/seo/Cheerios-Heart-Healthy-Cereal-Happy-Heart-Shapes-8-9-oz_a9b77b36-774b-4817-9784-b70eb5ebfb72.c0ee5396019e6b63ec83cf989bf6e79d.jpeg",
+      "imageSize": "",
+      "imageID": "",
+      "imageName": "Cheerios-Heart-Healthy-Cereal-Happy-Heart-Shapes-8-9-oz_a9b77b36-774b-4817-9784-b70eb5ebfb72.c0ee5396019e6b63ec83cf989bf6e79d.jpeg",
+      "isOutOfStock": false,
+      "price": 2.97,
+      "rating": {
+       "averageRating": 4.8,
+       "numberOfReviews": 88196
+      },
+      "variantList": [],
+      "isVariantTypeSwatch": false,
+      "shouldLazyLoad": false,
+      "isSponsoredFlag": false,
+      "moqText": null,
+      "isLeftSideGridItem": false,
+      "productAttributes": {},
+      "discountsRaw": null,
+      "productIndex": 0,
+      "itemStackPosition": 2,
+      "modularStackKey": "noAduid-2"
+     }
+    ]
+   }
+  ]
+ }
+}

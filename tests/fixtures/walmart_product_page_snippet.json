@@ -1,0 +1,5 @@
+{
+ "_source": "data/raw/snapitems/walmart/product_pages/10309153__pdp__20261002T030617_9058242e.json.gz",
+ "_note": "walmart product page: only the text around the UPC field is kept.",
+ "body": "ame\":\"6 Pack\",\"products\":[\"7JH58K3NO1S6\"],\"swatchImageUrl\":null,\"selected\":false}]}],\"variants\":[],\"groupMetaData\":null,\"upc\":\"076808280081\",\"wfsEnabled\":false,\"wfsProviderName\":null,\"sellerType\":\"INT"
+}

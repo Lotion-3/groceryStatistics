@@ -1,0 +1,1472 @@
+{
+ "_source": "data/raw/snap1/target/1058/cer_cheerios_18__search__20261002T025717_9703ab06.json.gz",
+ "_note": "Target slp products: a regular item, an item priced at another location, a sale item. page_context removed.",
+ "body": {
+  "data_source_modules": [
+   {
+    "module_data": {
+     "search_response": {
+      "products": [
+       {
+        "fast_selling": {
+         "fast_selling": false,
+         "queue_gated": false
+        },
+        "__typename": "ProductSummary",
+        "tcin": "81875238",
+        "original_tcin": "81875238",
+        "ornaments": [
+         {
+          "ornament": "highly_rated",
+          "display": "Highly rated",
+          "long_description": "Based on average star rating, number of ratings and reviews (including incentivized), and verified purchases.",
+          "ornament_type": "guest",
+          "template_type": "light_marker_with_star"
+         }
+        ],
+        "item": {
+         "cart_add_on_threshold": 35.0,
+         "relationship_type": "Variation Child",
+         "relationship_type_code": "VC",
+         "merchandise_classification": {
+          "class_id": 0,
+          "department_id": 231
+         },
+         "wellness_merchandise_attributes": [
+          {
+           "badge_url": "https://target.scene7.com/is/image/Target/wellness_6472ad96e4614d43",
+           "parent_id": "304049",
+           "parent_name": "wellness standard",
+           "value_id": "835620",
+           "value_name": "Whole Grain",
+           "wellness_description": "A product that carries an on-pack Whole Grain Council Stamp, or has at least 8g of whole grains per serving."
+          },
+          {
+           "badge_url": "https://target.scene7.com/is/image/Target/wellness_25c25b609d1c43b7",
+           "parent_id": "304049",
+           "parent_name": "wellness standard",
+           "value_id": "825392",
+           "value_name": "Gluten Free",
+           "wellness_description": "A product that has an unqualified independent third-party certification, or carries an on-pack statement relating to the finished product being gluten-free."
+          },
+          {
+           "badge_url": "https://target.scene7.com/is/image/Target/wellness_3fce9b8de04a4a35",
+           "parent_id": "304049",
+           "parent_name": "wellness standard",
+           "value_id": "825393",
+           "value_name": "Non-GMO",
+           "wellness_description": "A product that has an on-pack third-party certification or an unqualified statement that the  product is non-GMO."
+          }
+         ],
+         "compliance": {
+          "is_snap_eligible": true
+         },
+         "primary_brand": {
+          "canonical_url": "/b/cheerios/-/N-56fcm",
+          "linking_id": "56fcm",
+          "name": "Cheerios"
+         },
+         "eligibility_rules": {
+          "add_on": {
+           "is_active": true
+          },
+          "scheduled_delivery": {
+           "is_active": true
+          }
+         },
+         "enrichment": {
+          "buy_url": "https://www.target.com/p/general-mills-family-size-cheerios-cereal-18oz/-/A-81875238",
+          "image_info": {
+           "base_url": "//target.scene7.com/is/image/Target/",
+           "primary_image": {
+            "url": "https://target.scene7.com/is/image/Target/GUEST_c5c2f37e-8ec8-4e3d-81de-fa5b6ac1dc07",
+            "image_name": "GUEST_c5c2f37e-8ec8-4e3d-81de-fa5b6ac1dc07"
+           },
+           "alternate_images": [
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_1ec114de-2801-4ff9-a16a-08271228eb77",
+             "image_name": "GUEST_1ec114de-2801-4ff9-a16a-08271228eb77"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_54317a7b-6c53-4fe5-9bb9-52bf9212a232",
+             "image_name": "GUEST_54317a7b-6c53-4fe5-9bb9-52bf9212a232"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_958127ac-ec71-43e0-96b6-ae06550827cd",
+             "image_name": "GUEST_958127ac-ec71-43e0-96b6-ae06550827cd"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_ebb3f54e-0327-4063-8054-542b893a06b4",
+             "image_name": "GUEST_ebb3f54e-0327-4063-8054-542b893a06b4"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_72947fd6-07c4-4d0e-82dc-2fd04148c2bb",
+             "image_name": "GUEST_72947fd6-07c4-4d0e-82dc-2fd04148c2bb"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_13483a26-3718-4901-a2f2-871dd90d6625",
+             "image_name": "GUEST_13483a26-3718-4901-a2f2-871dd90d6625"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_7cb646fd-85df-4087-98ab-6c7a8c3fa2a5",
+             "image_name": "GUEST_7cb646fd-85df-4087-98ab-6c7a8c3fa2a5"
+            }
+           ],
+           "swatch_image": {}
+          },
+          "videos": [
+           {
+            "is_list_page_eligible": false,
+            "video_files": [
+             {
+              "mime_type": "video/mp4",
+              "video_url": "https://target.scene7.com/is/content/Target/GUEST_2a50bb40-34c6-4759-aee2-99531c74b328"
+             }
+            ]
+           },
+           {
+            "is_list_page_eligible": false,
+            "video_files": [
+             {
+              "mime_type": "video/mp4",
+              "video_url": "https://target.scene7.com/is/content/Target/GUEST_2a50bb40-34c6-4759-aee2-99531c74b328"
+             }
+            ]
+           },
+           {
+            "is_list_page_eligible": false,
+            "video_files": [
+             {
+              "mime_type": "video/mp4",
+              "video_url": "https://target.scene7.com/is/content/Target/GUEST_ef973e37-bea4-4d4a-8093-170335a40f04"
+             }
+            ]
+           },
+           {
+            "is_list_page_eligible": false,
+            "video_files": [
+             {
+              "mime_type": "video/mp4",
+              "video_url": "https://target.scene7.com/is/content/Target/GUEST_a1e52693-4e83-4740-8e17-0233d43f6fd0"
+             }
+            ]
+           },
+           {
+            "is_list_page_eligible": false,
+            "video_files": [
+             {
+              "mime_type": "video/mp4",
+              "video_url": "https://target.scene7.com/is/content/Target/GUEST_e2e48553-fec8-41f1-9e8e-c60bd35fa14a"
+             }
+            ]
+           },
+           {
+            "is_list_page_eligible": false,
+            "video_files": [
+             {
+              "mime_type": "video/mp4",
+              "video_url": "https://target.scene7.com/is/content/Target/GUEST_5a526b1c-80df-4990-baba-5fda64e6b1bb"
+             }
+            ]
+           },
+           {
+            "is_list_page_eligible": false,
+            "video_files": [
+             {
+              "mime_type": "video/mp4",
+              "video_url": "https://target.scene7.com/is/content/Target/GUEST_2036d056-10ec-4551-b6ac-c707cc32bb51"
+             }
+            ]
+           },
+           {
+            "is_list_page_eligible": false,
+            "video_files": [
+             {
+              "mime_type": "video/mp4",
+              "video_url": "https://target.scene7.com/is/content/Target/GUEST_755fe869-dc60-473d-bb2b-de6e256cfa83"
+             }
+            ]
+           },
+           {
+            "is_list_page_eligible": false,
+            "video_files": [
+             {
+              "mime_type": "video/mp4",
+              "video_url": "https://target.scene7.com/is/content/Target/GUEST_912fa6e2-32ba-4f81-a6c3-d18f853135ab"
+             }
+            ]
+           },
+           {
+            "is_list_page_eligible": false,
+            "video_files": [
+             {
+              "mime_type": "video/mp4",
+              "video_url": "https://target.scene7.com/is/content/Target/GUEST_5a526b1c-80df-4990-baba-5fda64e6b1bb"
+             }
+            ]
+           }
+          ]
+         },
+         "dpci": "231-00-0978",
+         "product_description": {
+          "title": "General Mills Family Size Cheerios Cereal - 18oz",
+          "bullet_descriptions": [
+           "<B>Features:</B> No Artificial Sweeteners, Non-GMO, No Synthetic Colors, No High Fructose Corn Syrup, No Artificial Flavors, Whole Grain, No Artificial Colors",
+           "<B>Dietary Needs:</B> Low Fat, 0 Grams Trans Fat, Gluten-Free, Low Cholesterol, Cholesterol Free, Non-GMO Project Verified, Kosher",
+           "<B>State of Readiness:</B> Ready to Eat",
+           "<B>Package Quantity:</B> 1"
+          ],
+          "soft_bullets": {
+           "bullets": [
+            "PANTRY ESSENTIAL: Made with 100% whole grain oats for a morning food your whole family can enjoy; Keep a box on hand as the perfect pantry staple that's ready to eat any time",
+            "CAN HELP LOWER CHOLESTEROL as part of a heart healthy diet; 3g of soluble fiber daily from whole grain oat foods, like Cheerios, in a diet low in saturated fat and cholesterol, may reduce the risk of heart disease - Cheerios provides 1.5g per serving",
+            "GLUTEN FREE CEREAL: Pour some in a bowl with milk for a great-tasting, gluten free part of an easy breakfast; Pack some in a lunch box or backpack for snacks on the go; Add to homemade cereal bars as snacks for kids",
+            "WHOLESOME INGREDIENTS: Provides 34g of whole grain (at least 48g recommended daily), a good source of calcium and fiber, and 11 vitamins and minerals per serving; No artificial flavors or colors",
+            "CONTAINS: One 18 oz Family Size box of Cheerios Breakfast Cereal"
+           ]
+          }
+         },
+         "product_classification": {
+          "item_type": {
+           "name": "Cold Cereals",
+           "type": "433900"
+          }
+         },
+         "fulfillment": {},
+         "variation_info": {
+          "is_expanded_variation": true
+         }
+        },
+        "promotions": [
+         {
+          "plp_message": "Buy 2 for $9 breakfast cereal",
+          "promotion_id": "504856726",
+          "promotion_class": "Mandated Multiple",
+          "subscription_type": "ALL",
+          "threshold_type": "quantity",
+          "threshold_value": 2.0,
+          "reward_type": "FixedPrice",
+          "reward_value": 9.0,
+          "circle_offer": false,
+          "mass_offer": true,
+          "channel": "online_and_store"
+         }
+        ],
+        "price": {
+         "current_retail": 5.29,
+         "display_was_now": false,
+         "formatted_current_price": "$5.29",
+         "formatted_current_price_type": "reg",
+         "formatted_unit_price": "$0.29",
+         "formatted_unit_price_suffix": "/ounce",
+         "reg_retail": 5.29,
+         "location_id": 1058
+        },
+        "parent": {
+         "__typename": "ParentSummary",
+         "tcin": "94740943",
+         "item": {
+          "cart_add_on_threshold": 35.0,
+          "relationship_type": "Variation Parent",
+          "relationship_type_code": "VAP",
+          "merchandise_classification": {
+           "class_id": 0,
+           "department_id": 231
+          },
+          "wellness_merchandise_attributes": [
+           {
+            "badge_url": "https://target.scene7.com/is/image/Target/wellness_6472ad96e4614d43",
+            "parent_id": "304049",
+            "parent_name": "wellness standard",
+            "value_id": "835620",
+            "value_name": "Whole Grain",
+            "wellness_description": "A product that carries an on-pack Whole Grain Council Stamp, or has at least 8g of whole grains per serving."
+           },
+           {
+            "badge_url": "https://target.scene7.com/is/image/Target/wellness_25c25b609d1c43b7",
+            "parent_id": "304049",
+            "parent_name": "wellness standard",
+            "value_id": "825392",
+            "value_name": "Gluten Free",
+            "wellness_description": "A product that has an unqualified independent third-party certification, or carries an on-pack statement relating to the finished product being gluten-free."
+           }
+          ],
+          "compliance": {
+           "is_snap_eligible": true
+          },
+          "primary_brand": {
+           "canonical_url": "/b/cheerios/-/N-56fcm",
+           "linking_id": "56fcm",
+           "name": "Cheerios"
+          },
+          "enrichment": {
+           "buy_url": "https://www.target.com/p/cheerios-breakfast-cereal/-/A-94740943",
+           "image_info": {
+            "base_url": "//target.scene7.com/is/image/Target/",
+            "primary_image": {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_c6d2cfc8-4a99-494d-b854-4a3fae326600",
+             "image_name": "GUEST_c6d2cfc8-4a99-494d-b854-4a3fae326600"
+            },
+            "alternate_images": [
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_bc5342c5-8f32-4b51-a220-1f650ff8a725",
+              "image_name": "GUEST_bc5342c5-8f32-4b51-a220-1f650ff8a725"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_10c937b6-018c-4b52-afeb-bfd65558fec8",
+              "image_name": "GUEST_10c937b6-018c-4b52-afeb-bfd65558fec8"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_06a47ac4-776a-4c43-bac4-4af408337d44",
+              "image_name": "GUEST_06a47ac4-776a-4c43-bac4-4af408337d44"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_8d5fbb24-8728-445a-bd05-a9e7b615fd52",
+              "image_name": "GUEST_8d5fbb24-8728-445a-bd05-a9e7b615fd52"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_96f491ae-f438-4a3a-b2de-e6b46aedd603",
+              "image_name": "GUEST_96f491ae-f438-4a3a-b2de-e6b46aedd603"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_012de628-c25e-4616-8a72-f07505642884",
+              "image_name": "GUEST_012de628-c25e-4616-8a72-f07505642884"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_fcd78655-cff2-4452-8a76-3a8dfd655a60",
+              "image_name": "GUEST_fcd78655-cff2-4452-8a76-3a8dfd655a60"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_fc44cc84-ba54-43e5-b030-dc100203439d",
+              "image_name": "GUEST_fc44cc84-ba54-43e5-b030-dc100203439d"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_84c36280-f03d-4d6c-a0a7-1b7ef22135f6",
+              "image_name": "GUEST_84c36280-f03d-4d6c-a0a7-1b7ef22135f6"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_d2e4e50f-b2e1-4f29-9e90-a7fc630a0d07",
+              "image_name": "GUEST_d2e4e50f-b2e1-4f29-9e90-a7fc630a0d07"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_d31bfd6e-9777-4d45-b341-b7f1d7aad19b",
+              "image_name": "GUEST_d31bfd6e-9777-4d45-b341-b7f1d7aad19b"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_f88bd894-9917-40b6-ad5a-a28b3d101dcd",
+              "image_name": "GUEST_f88bd894-9917-40b6-ad5a-a28b3d101dcd"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_74134e82-fa12-426c-801f-effe39db26c2",
+              "image_name": "GUEST_74134e82-fa12-426c-801f-effe39db26c2"
+             }
+            ],
+            "swatch_image": {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_b2e5ffb3-f40b-4a60-a574-73943d1e1223",
+             "image_name": "GUEST_b2e5ffb3-f40b-4a60-a574-73943d1e1223"
+            }
+           },
+           "videos": [
+            {
+             "is_list_page_eligible": false,
+             "video_files": [
+              {
+               "mime_type": "video/mp4",
+               "video_url": "https://target.scene7.com/is/content/Target/GUEST_5a526b1c-80df-4990-baba-5fda64e6b1bb"
+              }
+             ]
+            },
+            {
+             "is_list_page_eligible": false,
+             "video_files": [
+              {
+               "mime_type": "video/mp4",
+               "video_url": "https://target.scene7.com/is/content/Target/GUEST_2036d056-10ec-4551-b6ac-c707cc32bb51"
+              }
+             ]
+            },
+            {
+             "is_list_page_eligible": false,
+             "video_files": [
+              {
+               "mime_type": "video/mp4",
+               "video_url": "https://target.scene7.com/is/content/Target/GUEST_755fe869-dc60-473d-bb2b-de6e256cfa83"
+              }
+             ]
+            },
+            {
+             "is_list_page_eligible": false,
+             "video_files": [
+              {
+               "mime_type": "video/mp4",
+               "video_url": "https://target.scene7.com/is/content/Target/GUEST_912fa6e2-32ba-4f81-a6c3-d18f853135ab"
+              }
+             ]
+            },
+            {
+             "is_list_page_eligible": false,
+             "video_files": [
+              {
+               "mime_type": "video/mp4",
+               "video_url": "https://target.scene7.com/is/content/Target/GUEST_5a526b1c-80df-4990-baba-5fda64e6b1bb"
+              }
+             ]
+            }
+           ]
+          },
+          "has_extended_sizing": false,
+          "product_description": {
+           "title": "Cheerios Breakfast Cereal",
+           "bullet_descriptions": [
+            "<B>Features:</B> No Artificial Sweeteners, No Synthetic Colors, No High Fructose Corn Syrup, No Artificial Flavors, No Artificial Colors, Whole Grain",
+            "<B>Dietary Needs:</B> Low Fat, 0 Grams Trans Fat, Gluten-Free, Low Cholesterol, Cholesterol Free, Kosher",
+            "<B>State of Readiness:</B> Ready to Eat",
+            "<B>Package Quantity:</B> 1"
+           ]
+          },
+          "product_classification": {
+           "item_type": {
+            "name": "Cold Cereals",
+            "type": "433900"
+           }
+          },
+          "ribbons": [
+           "New At Target"
+          ],
+          "variation_info": {}
+         },
+         "promotions": [
+          {
+           "plp_message": "Buy 2 for $9 breakfast cereal on select items",
+           "promotion_id": "504856726",
+           "promotion_class": "Mandated Multiple",
+           "subscription_type": "ALL",
+           "threshold_type": "quantity",
+           "threshold_value": 2.0,
+           "reward_type": "FixedPrice",
+           "reward_value": 9.0,
+           "circle_offer": false,
+           "mass_offer": true,
+           "channel": "online_and_store"
+          }
+         ],
+         "price": {
+          "formatted_current_price": "$3.59 - $6.19",
+          "formatted_current_price_type": "reg",
+          "location_id": 1058
+         },
+         "ratings_and_reviews": {
+          "statistics": {
+           "rating": {
+            "average": 4.68,
+            "count": 16253,
+            "secondary_averages": [
+             {
+              "id": "quality",
+              "label": "quality",
+              "value": 4.28
+             },
+             {
+              "id": "taste",
+              "label": "taste",
+              "value": 4.16
+             },
+             {
+              "id": "value",
+              "label": "value",
+              "value": 4.23
+             }
+            ]
+           }
+          }
+         },
+         "variation_summary": {
+          "themes": [
+           {
+            "name": "Flavor",
+            "has_swatch": true,
+            "swatches": [
+             {
+              "value": "Apple Cinnamon",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "81877852"
+              }
+             },
+             {
+              "value": "Chocolate",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "81878152"
+              }
+             },
+             {
+              "value": "Chocolate Oat Crunch",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "92790846"
+              }
+             },
+             {
+              "value": "Fruity",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "90251886"
+              }
+             },
+             {
+              "value": "Honey Nut",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "14767378"
+              }
+             },
+             {
+              "value": "Multigrain",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "81875320"
+              }
+             },
+             {
+              "value": "Oat Crunch Almond",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "81880222"
+              }
+             },
+             {
+              "value": "Oat Crunch Cinnamon",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "81877833"
+              }
+             },
+             {
+              "value": "Oat Crunch Oats Honey",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "81877842"
+              }
+             },
+             {
+              "value": "Plain",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "81875238"
+              }
+             },
+             {
+              "value": "Protein Cinnamon",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "92789415"
+              }
+             },
+             {
+              "value": "Protein Strawberry",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "92789130"
+              }
+             },
+             {
+              "value": "Pumpkin Spice",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "82427680"
+              }
+             },
+             {
+              "value": "Strawberry Banana",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "83939037"
+              }
+             }
+            ]
+           },
+           {
+            "name": "Size",
+            "has_swatch": true,
+            "swatches": [
+             {
+              "value": "19oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "81877852"
+              }
+             },
+             {
+              "value": "19.2oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "81878152"
+              }
+             },
+             {
+              "value": "24oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "92790846"
+              }
+             },
+             {
+              "value": "18.4oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "90251886"
+              }
+             },
+             {
+              "value": "10.8oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "14767378"
+              }
+             },
+             {
+              "value": "18.8oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "81875234"
+              }
+             },
+             {
+              "value": "27.2oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "15773401"
+              }
+             },
+             {
+              "value": "18oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "81875320"
+              }
+             },
+             {
+              "value": "20.6oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "90250905"
+              }
+             },
+             {
+              "value": "9oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {
+                 "url": "https://target.scene7.com/is/image/Target/GUEST_b2e5ffb3-f40b-4a60-a574-73943d1e1223",
+                 "image_name": "GUEST_b2e5ffb3-f40b-4a60-a574-73943d1e1223"
+                }
+               },
+               "tcin": "13782530"
+              }
+             },
+             {
+              "value": "20oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "17088702"
+              }
+             },
+             {
+              "value": "8.9oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "39602815"
+              }
+             },
+             {
+              "value": "15oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "92789415"
+              }
+             },
+             {
+              "value": "18.5oz",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {}
+               },
+               "tcin": "82427680"
+              }
+             }
+            ]
+           }
+          ]
+         },
+         "review_summarization": {
+          "pros": [
+           "nutritional value",
+           "great taste",
+           "variety of flavors",
+           "kid-friendly",
+           "crunchy texture"
+          ],
+          "cons": [
+           "packaging issues",
+           "high sweetness"
+          ],
+          "overall_summary": [
+           {
+            "title": "Guests are saying",
+            "value": "Guests appreciate the variety of Cheerios flavors, particularly the apple cinnamon and strawberry banana options, which are praised for their delicious taste and nutritional benefits. Many guests enjoy them as a healthy breakfast or snack, highlighting their appeal to both children and adults. However, some guests have expressed concerns about packaging issues and sweetness levels. Overall, Cheerios remain a beloved choice for families seeking tasty and nutritious cereal options."
+           }
+          ],
+          "overall_sentiment": "mixed",
+          "highlighted_pros": "nutritional value"
+         }
+        },
+        "fulfillment": {
+         "product_id": "81875238",
+         "is_out_of_stock_in_all_store_locations": false,
+         "sold_out": false,
+         "shipping_options": {
+          "availability_status": "IN_STOCK",
+          "loyalty_availability_status": "IN_STOCK",
+          "available_to_promise_quantity": 10.0,
+          "minimum_order_quantity": 1.0,
+          "services": [
+           {
+            "shipping_method_id": "STANDARD",
+            "min_delivery_date": "2026-10-04",
+            "max_delivery_date": "2026-10-04",
+            "is_two_day_shipping": true,
+            "is_base_shipping_method": true,
+            "service_level_description": "2-day shipping",
+            "shipping_method_short_description": "Standard",
+            "cutoff": "2026-10-02T17:00:00Z"
+           }
+          ]
+         },
+         "store_options": [
+          {
+           "location_id": "1058",
+           "store": {
+            "location_name": "Columbus Central",
+            "mailing_address": {
+             "address_line1": "1717 Olentangy River Rd",
+             "city": "Columbus",
+             "state": "Ohio",
+             "postal_code": "43212-1452"
+            }
+           },
+           "search_response_store_type": "PRIMARY",
+           "order_pickup": {
+            "pickup_date": "2026-10-02",
+            "guest_pick_sla": 120,
+            "availability_status": "IN_STOCK",
+            "location_locale": "America/New_York"
+           },
+           "in_store_only": {
+            "availability_status": "IN_STOCK"
+           }
+          }
+         ],
+         "scheduled_delivery": {
+          "availability_status": "IN_STOCK"
+         }
+        },
+        "free_shipping": {
+         "enabled": false
+        },
+        "category": {
+         "category_id": "q6ug6",
+         "parent_category_id": "5xt0g"
+        }
+       },
+       {
+        "fast_selling": {
+         "fast_selling": false,
+         "queue_gated": false
+        },
+        "__typename": "ProductSummary",
+        "tcin": "94887102",
+        "original_tcin": "94887102",
+        "item": {
+         "cart_add_on_threshold": 35.0,
+         "relationship_type": "Stand Alone",
+         "relationship_type_code": "SA",
+         "merchandise_classification": {
+          "class_id": 0,
+          "department_id": 231
+         },
+         "wellness_merchandise_attributes": [
+          {
+           "badge_url": "https://target.scene7.com/is/image/Target/wellness_6472ad96e4614d43",
+           "parent_id": "304049",
+           "parent_name": "wellness standard",
+           "value_id": "835620",
+           "value_name": "Whole Grain",
+           "wellness_description": "A product that carries an on-pack Whole Grain Council Stamp, or has at least 8g of whole grains per serving."
+          },
+          {
+           "badge_url": "https://target.scene7.com/is/image/Target/wellness_25c25b609d1c43b7",
+           "parent_id": "304049",
+           "parent_name": "wellness standard",
+           "value_id": "825392",
+           "value_name": "Gluten Free",
+           "wellness_description": "A product that has an unqualified independent third-party certification, or carries an on-pack statement relating to the finished product being gluten-free."
+          }
+         ],
+         "compliance": {
+          "is_snap_eligible": true
+         },
+         "primary_brand": {
+          "canonical_url": "/b/cheerios/-/N-56fcm",
+          "linking_id": "56fcm",
+          "name": "Cheerios"
+         },
+         "eligibility_rules": {
+          "add_on": {
+           "is_active": true
+          },
+          "scheduled_delivery": {
+           "is_active": true
+          }
+         },
+         "enrichment": {
+          "buy_url": "https://www.target.com/p/cheerios-confetti-family-size-breakfast-cereal-19oz/-/A-94887102",
+          "image_info": {
+           "base_url": "//target.scene7.com/is/image/Target/",
+           "primary_image": {
+            "url": "https://target.scene7.com/is/image/Target/GUEST_9d7148f5-c2b6-4a69-866a-8b9fddb235ae",
+            "image_name": "GUEST_9d7148f5-c2b6-4a69-866a-8b9fddb235ae"
+           },
+           "alternate_images": [
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_921365dd-ff0d-4905-9a73-8bda67b446e2",
+             "image_name": "GUEST_921365dd-ff0d-4905-9a73-8bda67b446e2"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_2b0fa55d-5133-46a6-a0ac-85cc016d1929",
+             "image_name": "GUEST_2b0fa55d-5133-46a6-a0ac-85cc016d1929"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_578d15d1-271a-4d8c-9ce3-bf94dec080a2",
+             "image_name": "GUEST_578d15d1-271a-4d8c-9ce3-bf94dec080a2"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_12a20716-4c9b-40d6-aae6-df28e0e4ae69",
+             "image_name": "GUEST_12a20716-4c9b-40d6-aae6-df28e0e4ae69"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_194a8946-5157-43b3-8e70-3552877ae482",
+             "image_name": "GUEST_194a8946-5157-43b3-8e70-3552877ae482"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_0da1dfea-ca92-407f-80e3-9f8f0c1b9edf",
+             "image_name": "GUEST_0da1dfea-ca92-407f-80e3-9f8f0c1b9edf"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_a3e3fe0d-296b-485e-974b-41e430539109",
+             "image_name": "GUEST_a3e3fe0d-296b-485e-974b-41e430539109"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_a93bf32f-3797-4a88-9e62-2e4cbf6bdec4",
+             "image_name": "GUEST_a93bf32f-3797-4a88-9e62-2e4cbf6bdec4"
+            }
+           ],
+           "swatch_image": {}
+          },
+          "videos": [
+           {
+            "is_list_page_eligible": false,
+            "video_files": [
+             {
+              "mime_type": "video/mp4",
+              "video_url": "https://target.scene7.com/is/content/Target/GUEST_5a526b1c-80df-4990-baba-5fda64e6b1bb"
+             }
+            ]
+           }
+          ]
+         },
+         "dpci": "231-00-3100",
+         "product_description": {
+          "title": "Cheerios Confetti Size Breakfast Cereal - 19oz: Gluten-Free, No Artificial Flavors",
+          "bullet_descriptions": [
+           "<B>Features:</B> No Artificial Sweeteners, No Synthetic Colors, No High Fructose Corn Syrup, No Artificial Flavors, No Artificial Colors, Whole Grain",
+           "<B>Dietary Needs:</B> Low Fat, 0 Grams Trans Fat, Gluten-Free, Low Cholesterol, 0 Grams Saturated Fat, Cholesterol Free, Kosher",
+           "<B>State of Readiness:</B> Ready to Eat",
+           "<B>Package Quantity:</B> 1"
+          ],
+          "soft_bullets": {
+           "bullets": [
+            "SPRINKLED WITH FUN: Spoon up delicious vanilla flavored sweetened whole grain oats mixed with playful rainbow sprinkles; Perfect as part of mornings, kids snacks, or late night bites",
+            "GOODNESS MADE DELICIOUS: This gluten free cereal contains no artificial flavors or colors from artificial sources; It's a good source of calcium, has 12 vitamins and minerals; Plus 21g whole grain per serving, at least 48g recommended daily",
+            "CAN HELP LOWER CHOLESTEROL: As part of a heart healthy diet; 3g soluble fiber daily from whole grain oat foods, in a diet low in saturated fat and cholesterol, may reduce the risk of heart disease; Confetti Cheerios cereal provides .75g per serving",
+            "PARTY IN EVERY BOX: Celebrate every day with a bowlful of fun with or without milk; Create yummy party bites or add to snack mixes; Keep a box handy as the perfect pantry staple that's ready to eat any time",
+            "CONTAINS: One cardboard box of crunchy Confetti Cheerios breakfast cereal, made with whole grain, family size, 19 oz; Perfect for instant snacking, or a part of breakfast or meals"
+           ]
+          }
+         },
+         "product_classification": {
+          "item_type": {
+           "name": "Cold Cereals",
+           "type": "433900"
+          }
+         },
+         "fulfillment": {}
+        },
+        "promotions": [
+         {
+          "plp_message": "Buy 2 for $9 breakfast cereal",
+          "promotion_id": "504856726",
+          "promotion_class": "Mandated Multiple",
+          "subscription_type": "ALL",
+          "threshold_type": "quantity",
+          "threshold_value": 2.0,
+          "reward_type": "FixedPrice",
+          "reward_value": 9.0,
+          "circle_offer": false,
+          "mass_offer": true,
+          "channel": "online_and_store"
+         }
+        ],
+        "price": {
+         "current_retail": 5.29,
+         "display_was_now": false,
+         "formatted_current_price": "$5.29",
+         "formatted_current_price_type": "reg",
+         "reg_retail": 5.29,
+         "location_id": 3991
+        },
+        "ratings_and_reviews": {
+         "statistics": {
+          "rating": {
+           "average": 4.7,
+           "count": 431,
+           "secondary_averages": [
+            {
+             "id": "quality",
+             "label": "quality",
+             "value": 5.0
+            },
+            {
+             "id": "taste",
+             "label": "taste",
+             "value": 5.0
+            },
+            {
+             "id": "value",
+             "label": "value",
+             "value": 4.88
+            }
+           ]
+          }
+         }
+        },
+        "review_summarization": {
+         "overall_summary": [
+          {
+           "title": "Guests are saying",
+           "value": "Confetti Cheerios have captured the hearts of families with their delightful blend of classic Cheerios taste and a fun, sweet twist. Guests appreciate the lower sugar content while still enjoying a satisfying flavor reminiscent of birthday cake. The colorful sprinkles and heart shapes make breakfast exciting for kids, and the cereal is versatile enough to be enjoyed as a snack or in various recipes. Many guests express their intention to repurchase, highlighting its appeal for both children and adults."
+          }
+         ],
+         "overall_sentiment": "positive"
+        },
+        "fulfillment": {
+         "product_id": "94887102",
+         "is_out_of_stock_in_all_store_locations": false,
+         "sold_out": false,
+         "shipping_options": {
+          "availability_status": "IN_STOCK",
+          "loyalty_availability_status": "IN_STOCK",
+          "available_to_promise_quantity": 10.0,
+          "minimum_order_quantity": 1.0,
+          "services": [
+           {
+            "shipping_method_id": "STANDARD",
+            "min_delivery_date": "2026-10-04",
+            "max_delivery_date": "2026-10-04",
+            "is_two_day_shipping": true,
+            "is_base_shipping_method": true,
+            "service_level_description": "2-day shipping",
+            "shipping_method_short_description": "Standard",
+            "cutoff": "2026-10-02T17:00:00Z"
+           }
+          ]
+         },
+         "store_options": [
+          {
+           "location_id": "1058",
+           "store": {
+            "location_name": "Columbus Central",
+            "mailing_address": {
+             "address_line1": "1717 Olentangy River Rd",
+             "city": "Columbus",
+             "state": "Ohio",
+             "postal_code": "43212-1452"
+            }
+           },
+           "search_response_store_type": "PRIMARY",
+           "order_pickup": {
+            "pickup_date": "2026-10-02",
+            "guest_pick_sla": 120,
+            "availability_status": "IN_STOCK",
+            "location_locale": "America/New_York"
+           },
+           "in_store_only": {
+            "availability_status": "IN_STOCK"
+           }
+          }
+         ],
+         "scheduled_delivery": {
+          "availability_status": "IN_STOCK"
+         }
+        },
+        "free_shipping": {
+         "enabled": false
+        },
+        "category": {
+         "category_id": "q6ug6",
+         "parent_category_id": "5xt0g"
+        }
+       },
+       {
+        "fast_selling": {
+         "fast_selling": false,
+         "queue_gated": false
+        },
+        "__typename": "ProductSummary",
+        "tcin": "81883216",
+        "original_tcin": "81883216",
+        "item": {
+         "cart_add_on_threshold": 35.0,
+         "relationship_type": "Variation Child",
+         "relationship_type_code": "VC",
+         "merchandise_classification": {
+          "class_id": 57,
+          "department_id": 45
+         },
+         "compliance": {},
+         "primary_brand": {
+          "canonical_url": "/b/coca-cola/-/N-5s793",
+          "linking_id": "5s793",
+          "name": "Coca-Cola"
+         },
+         "enrichment": {
+          "buy_url": "https://www.target.com/p/men-s-coca-cola-merry-christmas-t-shirt-red-small/-/A-81883216",
+          "image_info": {
+           "base_url": "//target.scene7.com/is/image/Target/",
+           "primary_image": {
+            "url": "https://target.scene7.com/is/image/Target/GUEST_67a3725a-f717-4808-9ceb-5535725f2e69",
+            "image_name": "GUEST_67a3725a-f717-4808-9ceb-5535725f2e69"
+           },
+           "alternate_images": [
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_b2113da7-3390-48fa-8789-afbcbb5cb1cd",
+             "image_name": "GUEST_b2113da7-3390-48fa-8789-afbcbb5cb1cd"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_34f8a7bd-1b6f-4e0b-a113-8382c70d9336",
+             "image_name": "GUEST_34f8a7bd-1b6f-4e0b-a113-8382c70d9336"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_6cfa148f-7ee7-40c1-b4e2-f4bd3aff5361",
+             "image_name": "GUEST_6cfa148f-7ee7-40c1-b4e2-f4bd3aff5361"
+            },
+            {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_6158f5c5-16cd-4249-9701-6711a950de7b",
+             "image_name": "GUEST_6158f5c5-16cd-4249-9701-6711a950de7b"
+            }
+           ],
+           "swatch_image": {
+            "url": "https://target.scene7.com/is/image/Target/GUEST_053cdff7-28a5-44c8-b957-d7f9df77e1df",
+            "image_name": "GUEST_053cdff7-28a5-44c8-b957-d7f9df77e1df"
+           }
+          }
+         },
+         "product_description": {
+          "title": "Men's Coca Cola Merry Christmas T-Shirt - Red - Small",
+          "bullet_descriptions": [
+           "<B>Sizing:</B> Mens",
+           "<B>Material:</B> 100% Cotton",
+           "<B>Fabric Name:</B> Novelty",
+           "<B>Neckline:</B> Crew",
+           "<B>Item Style:</B> Graphic Tees",
+           "<B>Garment Style:</B> Short Sleeve, Pullover",
+           "<B>Length:</B> At Hip",
+           "<B>Fit:</B> Classic Fit",
+           "<B>Cuff Type:</B> No Cuff",
+           "<B>Garment Details:</B> Single Layered Construction",
+           "<B>Theme:</B> Food and Drink, Pop Culture",
+           "<B>UPF rating:</B> No UPF Rating",
+           "<B>Fabric Weight Type:</B> Lightweight Fabric",
+           "<B>Garment sleeve style:</B> Basic Sleeve",
+           "<B>Package Quantity:</B> 1",
+           "<B>Care and Cleaning:</B> Machine Wash, Line Dry or Lay Flat to Dry"
+          ],
+          "soft_bullets": {
+           "bullets": [
+            "Enjoy comfort and fashion at the same time with this unique Men's graphic T Shirt from Coca Cola.",
+            "Strut your stuff with this stylish new Christmas Men's t-shirt Shirt that is perfect for every occasion!",
+            "Find the perfect fit for you! Check out size charts for more information. Made from the highest quality materials on first-class digital direct-to-garment printers. *This item is made to order please consider this when ordering multiple sizes.*",
+            "Printed In the U.S.A with safe water-based inks. Easy care; machine wash cold inside out with similar colors, tumble dry low, (hang dry for best results).",
+            "Officially licensed apparel. Designed by an exclusive collaboration with top brands & world-class artists.",
+            "**Notice: Customers have mentioned our sizing tends to run small. Please consider ordering a size up.**"
+           ]
+          }
+         },
+         "product_classification": {
+          "item_type": {
+           "name": "Shirts",
+           "type": "1743507941"
+          }
+         },
+         "product_vendors": [
+          {
+           "vendor_name": "Fifth Sun",
+           "id": "10002840"
+          }
+         ],
+         "fulfillment": {
+          "is_marketplace": true
+         },
+         "variation_info": {}
+        },
+        "promotions": [],
+        "price": {
+         "current_retail": 17.99,
+         "display_was_now": false,
+         "formatted_comparison_price": "$29.99",
+         "formatted_comparison_price_type": "reg",
+         "formatted_current_price": "$17.99",
+         "formatted_current_price_type": "sale",
+         "reg_retail": 29.99,
+         "location_id": 3991
+        },
+        "parent": {
+         "__typename": "ParentSummary",
+         "tcin": "81883212",
+         "item": {
+          "cart_add_on_threshold": 35.0,
+          "relationship_type": "Variation Parent",
+          "relationship_type_code": "VAP",
+          "merchandise_classification": {
+           "class_id": 55,
+           "department_id": 43
+          },
+          "compliance": {},
+          "primary_brand": {
+           "canonical_url": "/b/coca-cola/-/N-5s793",
+           "linking_id": "5s793",
+           "name": "Coca-Cola"
+          },
+          "enrichment": {
+           "buy_url": "https://www.target.com/p/men-s-coca-cola-merry-christmas-t-shirt/-/A-81883212",
+           "image_info": {
+            "base_url": "//target.scene7.com/is/image/Target/",
+            "primary_image": {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_67a3725a-f717-4808-9ceb-5535725f2e69",
+             "image_name": "GUEST_67a3725a-f717-4808-9ceb-5535725f2e69"
+            },
+            "alternate_images": [
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_b2113da7-3390-48fa-8789-afbcbb5cb1cd",
+              "image_name": "GUEST_b2113da7-3390-48fa-8789-afbcbb5cb1cd"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_34f8a7bd-1b6f-4e0b-a113-8382c70d9336",
+              "image_name": "GUEST_34f8a7bd-1b6f-4e0b-a113-8382c70d9336"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_6cfa148f-7ee7-40c1-b4e2-f4bd3aff5361",
+              "image_name": "GUEST_6cfa148f-7ee7-40c1-b4e2-f4bd3aff5361"
+             },
+             {
+              "url": "https://target.scene7.com/is/image/Target/GUEST_6158f5c5-16cd-4249-9701-6711a950de7b",
+              "image_name": "GUEST_6158f5c5-16cd-4249-9701-6711a950de7b"
+             }
+            ],
+            "swatch_image": {
+             "url": "https://target.scene7.com/is/image/Target/GUEST_053cdff7-28a5-44c8-b957-d7f9df77e1df",
+             "image_name": "GUEST_053cdff7-28a5-44c8-b957-d7f9df77e1df"
+            }
+           }
+          },
+          "has_extended_sizing": true,
+          "product_description": {
+           "title": "Men's Coca Cola Merry Christmas T-Shirt",
+           "bullet_descriptions": [
+            "<B>Fabric Name:</B> Novelty",
+            "<B>Neckline:</B> Crew",
+            "<B>Item Style:</B> Graphic Tees",
+            "<B>Garment Style:</B> Short Sleeve, Pullover",
+            "<B>Length:</B> At Hip",
+            "<B>Fit:</B> Classic Fit",
+            "<B>Cuff Type:</B> No Cuff",
+            "<B>Garment Details:</B> Single Layered Construction",
+            "<B>Theme:</B> Food and Drink, Pop Culture",
+            "<B>UPF rating:</B> No UPF Rating",
+            "<B>Fabric Weight Type:</B> Lightweight Fabric",
+            "<B>Garment sleeve style:</B> Basic Sleeve",
+            "<B>Care and Cleaning:</B> Machine Wash, Line Dry or Lay Flat to Dry"
+           ],
+           "soft_bullets": {
+            "bullets": [
+             "Enjoy comfort and fashion at the same time with this unique Men's graphic T Shirt from Coca Cola.",
+             "Strut your stuff with this stylish new Christmas Men's t-shirt Shirt that is perfect for every occasion!",
+             "Find the perfect fit for you! Check out size charts for more information. Made from the highest quality materials on first-class digital direct-to-garment printers. *This item is made to order please consider this when ordering multiple sizes.*",
+             "Printed In the U.S.A with safe water-based inks. Easy care; machine wash cold inside out with similar colors, tumble dry low, (hang dry for best results).",
+             "Officially licensed apparel. Designed by an exclusive collaboration with top brands & world-class artists.",
+             "**Notice: Customers have mentioned our sizing tends to run small. Please consider ordering a size up.**"
+            ]
+           }
+          },
+          "product_classification": {
+           "item_type": {
+            "name": "Shirts",
+            "type": "1743507941"
+           }
+          },
+          "product_vendors": [
+           {
+            "vendor_name": "Fifth Sun",
+            "id": "10002840"
+           }
+          ],
+          "fulfillment": {
+           "is_marketplace": true
+          },
+          "variation_info": {}
+         },
+         "promotions": [],
+         "price": {
+          "formatted_comparison_price": "$29.99",
+          "formatted_comparison_price_type": "reg",
+          "formatted_current_price": "$17.99 - $18.99",
+          "formatted_current_price_type": "sale",
+          "location_id": 3991
+         },
+         "ratings_and_reviews": {
+          "statistics": {
+           "rating": {
+            "average": 4.0,
+            "count": 1
+           }
+          }
+         },
+         "variation_summary": {
+          "themes": [
+           {
+            "name": "Color",
+            "has_swatch": true,
+            "swatches": [
+             {
+              "value": "Red",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {
+                 "url": "https://target.scene7.com/is/image/Target/GUEST_96107e49-7646-40f9-853d-1f0dc4413258",
+                 "image_name": "GUEST_96107e49-7646-40f9-853d-1f0dc4413258"
+                }
+               },
+               "tcin": "81883211"
+              }
+             },
+             {
+              "value": "Red Heather",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {
+                 "url": "https://target.scene7.com/is/image/Target/baseswatch?color=206,67,77",
+                 "image_name": "baseswatch?color=206,67,77"
+                }
+               },
+               "tcin": "1001000226"
+              }
+             }
+            ]
+           },
+           {
+            "name": "Size",
+            "has_swatch": true,
+            "swatches": [
+             {
+              "value": "2X Large",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {
+                 "url": "https://target.scene7.com/is/image/Target/GUEST_96107e49-7646-40f9-853d-1f0dc4413258",
+                 "image_name": "GUEST_96107e49-7646-40f9-853d-1f0dc4413258"
+                }
+               },
+               "tcin": "81883211"
+              }
+             },
+             {
+              "value": "Large",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {
+                 "url": "https://target.scene7.com/is/image/Target/GUEST_95e6b64c-586b-49ab-bf77-b8a56f79550d",
+                 "image_name": "GUEST_95e6b64c-586b-49ab-bf77-b8a56f79550d"
+                }
+               },
+               "tcin": "81883214"
+              }
+             },
+             {
+              "value": "Medium",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {
+                 "url": "https://target.scene7.com/is/image/Target/GUEST_84f65877-efee-4d2b-8f9f-04c8253a24c9",
+                 "image_name": "GUEST_84f65877-efee-4d2b-8f9f-04c8253a24c9"
+                }
+               },
+               "tcin": "81883215"
+              }
+             },
+             {
+              "value": "Small",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {
+                 "url": "https://target.scene7.com/is/image/Target/GUEST_053cdff7-28a5-44c8-b957-d7f9df77e1df",
+                 "image_name": "GUEST_053cdff7-28a5-44c8-b957-d7f9df77e1df"
+                }
+               },
+               "tcin": "81883216"
+              }
+             },
+             {
+              "value": "X Large",
+              "first_child": {
+               "image_info": {
+                "swatch_image": {
+                 "url": "https://target.scene7.com/is/image/Target/GUEST_b3637954-f5c2-411c-b054-42ae02932f2a",
+                 "image_name": "GUEST_b3637954-f5c2-411c-b054-42ae02932f2a"
+                }
+               },
+               "tcin": "81883217"
+              }
+             }
+            ]
+           }
+          ]
+         }
+        },
+        "fulfillment": {
+         "product_id": "81883216",
+         "is_out_of_stock_in_all_store_locations": true,
+         "sold_out": false,
+         "shipping_options": {
+          "availability_status": "IN_STOCK",
+          "loyalty_availability_status": "IN_STOCK",
+          "available_to_promise_quantity": 10.0,
+          "minimum_order_quantity": 1.0,
+          "services": [
+           {
+            "shipping_method_id": "STANDARD",
+            "min_delivery_date": "2026-10-08",
+            "max_delivery_date": "2026-10-08",
+            "is_two_day_shipping": false,
+            "is_base_shipping_method": true,
+            "service_level_description": "Standard Shipping",
+            "shipping_method_short_description": "Standard",
+            "cutoff": "2026-10-02T08:00:00Z"
+           }
+          ]
+         },
+         "store_options": [
+          {
+           "location_id": "1058",
+           "store": {
+            "location_name": "Columbus Central",
+            "mailing_address": {
+             "address_line1": "1717 Olentangy River Rd",
+             "city": "Columbus",
+             "state": "Ohio",
+             "postal_code": "43212-1452"
+            }
+           },
+           "search_response_store_type": "PRIMARY",
+           "order_pickup": {
+            "availability_status": "UNAVAILABLE",
+            "reason_code": "IN_ELIGIBLE"
+           },
+           "in_store_only": {
+            "availability_status": "NOT_SOLD_IN_STORE"
+           },
+           "ship_to_store": {
+            "availability_status": "UNAVAILABLE"
+           }
+          }
+         ],
+         "scheduled_delivery": {
+          "availability_status": "UNAVAILABLE"
+         }
+        },
+        "free_shipping": {
+         "enabled": false
+        },
+        "category": {
+         "category_id": "4kt5y",
+         "parent_category_id": "4ujkz"
+        }
+       }
+      ]
+     }
+    }
+   }
+  ]
+ }
+}
