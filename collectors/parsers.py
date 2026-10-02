@@ -450,7 +450,70 @@ def parse_kroger(body: str) -> list[dict]:
     return rows
 
 
+# ---------------------------------------------------------------------------
+# Meijer  (body = {"store_id", "term", "status", "response": <Constructor.io JSON>},
+# written by collectors/meijer.search)
+# ---------------------------------------------------------------------------
+
+def upc_from_no_check(raw: Any) -> Optional[str]:
+    """UPC-A from a number given WITHOUT its check digit and with leading zeros
+    dropped (Meijer's `ean`, e.g. 7680828008 -> 076808280081). A 12-digit value
+    whose check digit is already valid is returned as is."""
+    d = re.sub(r"\D", "", str(raw or ""))
+    if not d or len(d) > 12:
+        return None
+    if len(d) == 12 and upc_check_ok(d):
+        return d
+    body = d.zfill(11)[-11:]
+    n = [int(c) for c in body]
+    chk = (10 - (3 * sum(n[0::2]) + sum(n[1::2])) % 10) % 10
+    return normalize_upc(body + str(chk))
+
+
+_MULTIBUY_RE = re.compile(r"\b(buy|for)\b.*\d", re.IGNORECASE)
+
+
+def parse_meijer(body: str) -> list[dict]:
+    env = json.loads(body) if isinstance(body, str) else body
+    sid = str(env.get("store_id") or "")
+    rows = []
+    for i, x in enumerate(_get(env, "response", "response", "results") or []):
+        d = x.get("data") or {}
+        if not d.get("id") or not x.get("value"):
+            continue
+        # VERIFIED (2026-10-02): `price` is the regular price. With sale=True,
+        # discountSalePriceValue is the sale price; for multi-buy offers
+        # ("Buy 3 for $4.00") it is a per-unit price that only applies when
+        # buying the multiple -- not a shelf price (DECISIONS #12), so it is
+        # kept in `extra` and not treated as a promotion.
+        regular = money(d.get("price"))
+        text = d.get("discountSalePriceText") or ""
+        multibuy = bool(_MULTIBUY_RE.search(text))
+        sale = money(d.get("discountSalePriceValue")) if d.get("sale") and not multibuy else None
+        price = sale if (sale is not None and regular is not None and sale < regular) else regular
+        stock = d.get("stockLevelStatus")
+        rows.append({
+            "chain_product_id": str(d["id"]),
+            "product_name": x.get("value"),
+            "brand": None,
+            "upc": upc_from_no_check(d.get("ean")),
+            **_promo_fields(price, regular),
+            "unit_price": None, "unit_price_unit": None,
+            "pack_size": d.get("productUnit"),
+            "in_stock": None if stock is None else int(str(stock).lower() == "instock"),
+            "priced_store_id": sid if price is not None else None,
+            "search_rank": i,
+            "extra": {"sale_flag": d.get("sale"), "sale_text": text or None,
+                      "sale_value": d.get("discountSalePriceValue"), "multibuy": multibuy,
+                      "mperks": d.get("hasMPerks"), "price_good_through": d.get("priceGoodThrough"),
+                      "price_by_weight": d.get("priceByWeight"), "term": env.get("term")},
+        })
+    return rows
+
+
 PARSERS = {
+    "meijer": parse_meijer,
+    "aldi": parse_instacart,
     "kroger": parse_kroger,
     "walmart": parse_walmart,
     "target": parse_target,

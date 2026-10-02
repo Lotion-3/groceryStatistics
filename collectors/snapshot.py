@@ -47,7 +47,7 @@ from collectors.common import (ROOT, ChainBlocked, TransientError, end_snapshot,
 from db.init_db import DEFAULT_DB, connect, load_items
 from sampling.geo import osm_coords, zip_from_address, zip_info
 
-ALL_CHAINS = ("target", "walmart", "costco", "trader_joes", "kroger")
+ALL_CHAINS = ("target", "walmart", "costco", "trader_joes", "kroger", "aldi", "meijer")
 # Trader Joe's is dropped from the study (HTTP 403; national price only): DECISIONS #24.
 DEFAULT_CHAINS = ("target", "walmart", "costco")
 
@@ -81,6 +81,8 @@ class Run:
         self.sessions: dict = {}
         self.costco_done: set[str] = set()
         self.kroger_done: set[str] = set()
+        self.aldi_done: set[str] = set()
+        self.meijer_done: set[str] = set()
 
     # -- bookkeeping -------------------------------------------------------
     def done(self, store_pk: int, item_id: str) -> bool:
@@ -251,6 +253,67 @@ class Run:
         store_pk = upsert_store(self.con, store)
         self._query_items("kroger", store, store_pk, items, lambda it: K.search_item(it, loc, sess))
 
+    def aldi(self, srow: dict, items: list[dict]):
+        """ALDI shop assigned to the anchor ZIP (Instacart white-label, own
+        domain). Location = anchor ZIP centroid, as for Costco."""
+        from collectors import aldi as AL
+        if "asess" not in self.sessions:
+            self.sessions["asess"] = AL.session()
+        sess, zone = self.sessions["asess"]
+        z = zip_info(srow["zip"])
+        lat, lon = z["lat"] or float(srow["lat"]), z["lon"] or float(srow["lon"])
+        try:
+            shop, raw = with_backoff(AL.find_shop, srow["zip"], lat, lon, sess)
+        except ChainBlocked as e:
+            return self.block("aldi", None, None, e)
+        except TransientError as e:
+            return self.fail("aldi", None, None, f"shop lookup zip={srow['zip']}: {e}")
+        save_raw(self.snap, "aldi", f"zip{srow['zip']}", "_shop", raw, {"zip": srow["zip"]}, kind="shop")
+        if not shop or not shop.get("retailerLocationId"):
+            return self.fail("aldi", None, None, f"no ALDI shop for zip={srow['zip']}")
+        loc_id, shop_id = str(shop["retailerLocationId"]), str(shop["id"])
+        if loc_id in self.aldi_done:
+            return
+        self.aldi_done.add(loc_id)
+        store = {"chain": "aldi", "store_id": loc_id, "name": f"ALDI (location {loc_id}, shop {shop_id})",
+                 "lat": lat, "lon": lon, "zip": srow["zip"], "state": z["state"], "region": z["region"],
+                 "urbanicity": z["urbanicity"], "ruca": z["ruca"], "source": AL.SOURCE,
+                 "anchor_zip": srow["zip"], "coord_quality": "anchor_zip"}
+        store_pk = upsert_store(self.con, store)
+        self._query_items("aldi", store, store_pk, items,
+                          lambda it: AL.search(it["search_term"], shop_id, zone, srow["zip"], sess),
+                          meta={"shop_id": shop_id, "zip": srow["zip"]})
+
+    def meijer(self, srow: dict, items: list[dict]):
+        """Nearest full Meijer within 50 km of the anchor (Midwest only), from
+        Meijer's own locator; never the upstream default store 130."""
+        from collectors import meijer as M
+        z = zip_info(srow["zip"])
+        lat, lon = z["lat"] or float(srow["lat"]), z["lon"] or float(srow["lon"])
+        try:
+            st, raw = with_backoff(M.nearest_store, srow["zip"], lat, lon)
+        except ChainBlocked as e:
+            return self.block("meijer", None, None, e)
+        except TransientError as e:
+            return self.fail("meijer", None, None, f"locator zip={srow['zip']}: {e}")
+        save_raw(self.snap, "meijer", f"zip{srow['zip']}", "_locator", raw, {"zip": srow["zip"]}, kind="locator")
+        if not st:
+            return self.fail("meijer", None, None, f"no Meijer within {M.MAX_KM:.0f} km of zip={srow['zip']}")
+        sid = str(st["name"])
+        if sid in self.meijer_done:
+            return
+        self.meijer_done.add(sid)
+        gp, a = st.get("geoPoint") or {}, st.get("address") or {}
+        zc = str(a.get("postalCode") or srow["zip"])[:5]
+        zz = zip_info(zc)
+        store = {"chain": "meijer", "store_id": sid, "name": f"Meijer {st.get('displayName')}",
+                 "lat": gp.get("latitude"), "lon": gp.get("longitude"), "zip": zc, "state": zz["state"],
+                 "region": zz["region"], "urbanicity": zz["urbanicity"], "ruca": zz["ruca"], "source": M.SOURCE,
+                 "anchor_zip": srow["zip"], "coord_quality": "locator_geopoint",
+                 "address": f"{a.get('line1')}, {a.get('town')} {a.get('postalCode')}"}
+        store_pk = upsert_store(self.con, store)
+        self._query_items("meijer", store, store_pk, items, lambda it: M.search(it["search_term"], sid))
+
     def trader_joes(self, items: list[dict]):
         from collectors import trader_joes as TJ
         store = {"chain": "trader_joes", "store_id": "national",
@@ -272,7 +335,7 @@ def run(chains: list[str], stores: list[dict], items: list[dict], db_path=DEFAUL
             r.trader_joes(items)
         for i, s in enumerate(stores, 1):
             print(f"[{i}/{len(stores)}] anchor Target #{s['store_id']} zip={s['zip']} {s['state']}", flush=True)
-            for ch in ("target", "walmart", "costco", "kroger"):
+            for ch in ("target", "walmart", "costco", "kroger", "aldi", "meijer"):
                 if ch in r.active:
                     try:
                         getattr(r, ch)(s, items)

@@ -160,3 +160,29 @@ def test_kroger_unpriced_rows_kept_but_not_store_specific():
     from collectors.parsers import parse_kroger
     rows = parse_kroger((FIX / "kroger_search_bread_unpriced.json").read_text(encoding="utf-8"))
     assert rows and all(r["price"] is None and r["priced_store_id"] is None for r in rows)
+
+
+# --- Meijer (Constructor.io) and ALDI (Instacart white-label); live probes 2026-10-02 ---
+
+def test_meijer_multibuy_is_not_a_promotion():
+    rows = P.parse_meijer((FIX / "meijer_search_pas_barilla_spaghetti_16.json").read_text(encoding="utf-8"))
+    b = next(r for r in rows if r["upc"] == "076808280081")      # same UPC as Target / Kroger
+    assert b["extra"]["multibuy"] and b["is_promo"] == 0 and b["price"] == b["regular_price"] == 1.89
+    assert all(r["priced_store_id"] == "104" for r in rows)
+
+
+def test_meijer_straight_sale_is_a_promotion():
+    rows = P.parse_meijer((FIX / "meijer_search_sod_coke_12pk.json").read_text(encoding="utf-8"))
+    sale = [r for r in rows if r["is_promo"]]
+    assert sale and all(r["price"] < r["regular_price"] for r in sale)
+
+
+def test_meijer_upc_without_check_digit():
+    assert P.upc_from_no_check(7680828008) == "076808280081"
+    assert P.upc_from_no_check(4900001278) == "049000012781"
+
+
+def test_aldi_rows_tied_to_shop_location():
+    rows = P.parse("aldi", (FIX / "aldi_search_eggs.json").read_text(encoding="utf-8"))
+    assert rows and all(r["priced_store_id"] == "178404" for r in rows)
+    assert all(r["price"] > 0 for r in rows)

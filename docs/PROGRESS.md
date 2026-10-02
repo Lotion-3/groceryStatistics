@@ -144,3 +144,8 @@ non-grocery national brands; after the Target block, pause and resume at ≥ 5 s
 2. **Review `config/items_resolved.csv`** (and `item_candidates.csv`), then copy the
    confirmed `walmart_id` / `target_tcin` / `upc` into `config/items.csv`.
 3. Kroger production keys, if you want Kroger.
+- **~09:00: chains added to snapshot 2** (owner request).
+  - ALDI and Meijer wrappers written, probed (2 stores × 2–3 items each) and tested.
+  - Kroger: re-checked by exact UPC (19/58 in the catalog); added for its 25 carried
+    items.
+  - All three running alongside Walmart and Costco: `data/raw/logs/snap2_{aldi,meijer,kroger}.log`.
