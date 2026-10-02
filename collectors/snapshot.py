@@ -25,8 +25,11 @@ Resumable: re-running with --snapshot-id N skips store-item pairs that
 already have observations in snapshot N.
 
 Usage:
-  python -m collectors.snapshot --chains target,walmart,costco,trader_joes \
+  python -m collectors.snapshot --chains target,walmart,costco \
       [--limit-stores 2] [--limit-items 3] [--items a,b] [--snapshot-id N] [--notes ...]
+  python -m collectors.snapshot --new-snapshot-only --notes "..."   # prints the new id
+
+Parallel (one process per chain, one shared snapshot id): scripts/run_snapshot_parallel.ps1
 
 THIS GENERATES RETAILER TRAFFIC. Full runs need the owner's go-ahead.
 """
@@ -45,6 +48,8 @@ from db.init_db import DEFAULT_DB, connect, load_items
 from sampling.geo import osm_coords, zip_from_address, zip_info
 
 ALL_CHAINS = ("target", "walmart", "costco", "trader_joes")
+# Trader Joe's is dropped from the study (HTTP 403; national price only): DECISIONS #24.
+DEFAULT_CHAINS = ("target", "walmart", "costco")
 
 
 def read_csv(path: Path) -> list[dict]:
@@ -246,7 +251,7 @@ def run(chains: list[str], stores: list[dict], items: list[dict], db_path=DEFAUL
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--chains", default=",".join(ALL_CHAINS))
+    ap.add_argument("--chains", default=",".join(DEFAULT_CHAINS))
     ap.add_argument("--stores", default=str(ROOT / "config" / "store_sample.csv"))
     ap.add_argument("--items-csv", default=str(ROOT / "config" / "items.csv"))
     ap.add_argument("--items", default="", help="comma-separated item_ids to restrict to")
@@ -255,7 +260,14 @@ def main(argv=None) -> int:
     ap.add_argument("--snapshot-id", type=int, default=None, help="resume this snapshot")
     ap.add_argument("--db", default=str(DEFAULT_DB))
     ap.add_argument("--notes", default="")
+    ap.add_argument("--new-snapshot-only", action="store_true",
+                    help="create a snapshot row, print its id and exit (for parallel per-chain runs)")
     a = ap.parse_args(argv)
+    if a.new_snapshot_only:
+        con = connect(a.db)
+        load_items(con)
+        print(start_snapshot(con, a.notes))
+        return 0
     chains = [c.strip() for c in a.chains.split(",") if c.strip()]
     bad = set(chains) - set(ALL_CHAINS)
     if bad:

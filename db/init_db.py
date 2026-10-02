@@ -22,7 +22,11 @@ def connect(db_path: Path | str = DEFAULT_DB) -> sqlite3.Connection:
     """Open the database, creating it and its tables if needed."""
     db_path = Path(db_path)
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    con = sqlite3.connect(db_path)
+    # timeout + WAL: the per-chain snapshot processes write to one file at once
+    # (scripts/run_snapshot_parallel.*); readers never block writers.
+    con = sqlite3.connect(db_path, timeout=30)
+    con.execute("PRAGMA journal_mode = WAL")
+    con.execute("PRAGMA busy_timeout = 30000")
     con.execute("PRAGMA foreign_keys = ON")
     con.executescript(SCHEMA.read_text(encoding="utf-8"))
     return con

@@ -41,6 +41,28 @@ except Exception:
 
 MIN_INTERVAL = float(os.environ.get("GS_MIN_INTERVAL_SECONDS", "2.0"))
 MAX_RETRIES = int(os.environ.get("GS_MAX_RETRIES", "2"))
+# Circuit breaker: this many failed requests IN A ROW to one domain (any
+# TransientError, e.g. HTTP 435/429 soft blocks) is treated as a block and the
+# chain stops. Without it a soft block is retried, logged and skipped store by
+# store, and the run keeps knocking on a retailer that is refusing it
+# (happened in the Day-2 locate pass: HTTP 435 at every store).
+MAX_CONSECUTIVE_FAILURES = int(os.environ.get("GS_MAX_CONSECUTIVE_FAILURES", "6"))
+
+
+def _domain_intervals() -> dict[str, float]:
+    """Slower per-domain minimum intervals. Target soft-blocked (HTTP 435) after
+    ~115 requests at 2 s on Day 2 and Walmart served a captcha after ~80, so both
+    default to 5 s (DECISIONS #27, #29).
+    Override with GS_DOMAIN_INTERVALS="host=sec,host=sec"."""
+    out = {"cdui-orchestrations.target.com": 5.0, "www.target.com": 5.0, "www.walmart.com": 5.0}
+    for part in os.environ.get("GS_DOMAIN_INTERVALS", "").split(","):
+        if "=" in part:
+            host, sec = part.split("=", 1)
+            out[host.strip()] = float(sec)
+    return out
+
+
+DOMAIN_INTERVALS = _domain_intervals()
 
 
 def utcnow() -> str:
@@ -53,10 +75,19 @@ def utcnow() -> str:
 
 class DomainPacer:
     """Serialize requests per domain and keep at least `min_interval` seconds
-    (plus a little jitter) between consecutive requests to the same domain."""
+    (plus a little jitter) between consecutive requests to the same domain.
 
-    def __init__(self, min_interval: float = MIN_INTERVAL):
+    Also a per-domain circuit breaker: after `max_failures` consecutive
+    TransientErrors the domain is tripped and every later call raises
+    ChainBlocked without sending anything."""
+
+    def __init__(self, min_interval: float = MIN_INTERVAL, max_failures: int = MAX_CONSECUTIVE_FAILURES,
+                 per_domain: Optional[dict[str, float]] = None):
         self.min_interval = min_interval
+        self.per_domain = dict(per_domain or {})
+        self.max_failures = max_failures
+        self._fails: dict[str, int] = {}
+        self._tripped: dict[str, str] = {}
         self._last: dict[str, float] = {}
         self._locks: dict[str, threading.Lock] = {}
         self._guard = threading.Lock()
@@ -67,16 +98,30 @@ class DomainPacer:
 
     def call(self, domain: str, fn: Callable, *args, **kwargs):
         with self._lock(domain):
-            wait = self._last.get(domain, 0) + self.min_interval + random.uniform(0, 0.5) - time.monotonic()
+            if domain in self._tripped:
+                raise ChainBlocked(self._tripped[domain])
+            gap = max(self.min_interval, self.per_domain.get(domain, 0.0))
+            wait = self._last.get(domain, 0) + gap + random.uniform(0, 0.5) - time.monotonic()
             if wait > 0:
                 time.sleep(wait)
             try:
-                return fn(*args, **kwargs)
+                out = fn(*args, **kwargs)
+            except TransientError as e:
+                n = self._fails[domain] = self._fails.get(domain, 0) + 1
+                if n >= self.max_failures:
+                    self._tripped[domain] = f"soft-streak:{n} consecutive failures at {domain}, last: {e}"
+                    raise ChainBlocked(self._tripped[domain]) from e
+                raise
+            except ChainBlocked as e:
+                self._tripped[domain] = str(e)
+                raise
             finally:
                 self._last[domain] = time.monotonic()
+            self._fails[domain] = 0
+            return out
 
 
-PACER = DomainPacer()
+PACER = DomainPacer(per_domain=DOMAIN_INTERVALS)
 
 
 class ChainBlocked(Exception):
@@ -152,7 +197,11 @@ def start_snapshot(con: sqlite3.Connection, notes: str = "") -> int:
 
 
 def end_snapshot(con: sqlite3.Connection, snapshot_id: int) -> None:
-    con.execute("UPDATE snapshots SET ended_at=? WHERE snapshot_id=?", (utcnow(), snapshot_id))
+    # Several per-chain processes share one snapshot; the last to finish sets
+    # ended_at (ISO-8601 UTC strings compare correctly as text).
+    now = utcnow()
+    con.execute("UPDATE snapshots SET ended_at=? WHERE snapshot_id=? AND (ended_at IS NULL OR ended_at < ?)",
+                (now, snapshot_id, now))
     con.commit()
 
 

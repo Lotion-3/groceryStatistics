@@ -59,3 +59,77 @@ def test_collected_data_sanity():
     from collectors.common import ROOT
     missing = [p for (p,) in con.execute("SELECT DISTINCT raw_path FROM observations") if not (ROOT / p).exists()]
     assert not missing
+
+
+def test_parallel_chain_writers(tmp_path):
+    """Per-chain snapshot processes share one SQLite file (WAL + busy timeout)."""
+    import threading
+    from collectors.common import end_snapshot, start_snapshot
+    path = tmp_path / "p.sqlite"
+    con0 = connect(path)
+    load_items(con0)
+    snap = start_snapshot(con0)
+    errors = []
+
+    def writer(chain):
+        try:
+            con = connect(path)
+            pk = upsert_store(con, {"chain": chain, "store_id": "1", "source": "direct"})
+            for i in range(200):
+                insert_observations(con, [{"snapshot_id": snap, "store_pk": pk, "item_id": "cer_cheerios_18",
+                                           "observed_at": "x", "price": 1.0, "store_specific": 1,
+                                           "raw_path": "r", "chain_product_id": f"p{i}", "source": "direct"}])
+            end_snapshot(con, snap)
+        except Exception as e:   # pragma: no cover - the assertion reports it
+            errors.append(e)
+
+    ts = [threading.Thread(target=writer, args=(c,)) for c in ("target", "walmart", "costco")]
+    for t in ts:
+        t.start()
+    for t in ts:
+        t.join()
+    assert not errors
+    assert con0.execute("SELECT COUNT(*) FROM observations").fetchone()[0] == 600
+    assert con0.execute("SELECT journal_mode FROM pragma_journal_mode").fetchone()[0] == "wal"
+
+
+def test_end_snapshot_never_moves_back(tmp_path):
+    from collectors.common import end_snapshot, start_snapshot
+    con = connect(tmp_path / "e.sqlite")
+    snap = start_snapshot(con)
+    con.execute("UPDATE snapshots SET ended_at='2999-01-01T00:00:00+00:00' WHERE snapshot_id=?", (snap,))
+    end_snapshot(con, snap)
+    assert con.execute("SELECT ended_at FROM snapshots").fetchone()[0].startswith("2999")
+
+
+def test_pacer_circuit_breaker_stops_after_soft_streak():
+    from collectors.common import ChainBlocked, DomainPacer, TransientError
+    p = DomainPacer(min_interval=0, max_failures=3)
+    calls = []
+
+    def refused():
+        calls.append(1)
+        raise TransientError("soft:http 435")
+
+    for _ in range(2):
+        with pytest.raises(TransientError):
+            p.call("x.com", refused)
+    with pytest.raises(ChainBlocked):
+        p.call("x.com", refused)
+    with pytest.raises(ChainBlocked):     # tripped: nothing more is sent
+        p.call("x.com", refused)
+    assert len(calls) == 3
+    assert p.call("y.com", lambda: "ok") == "ok"   # other domains unaffected
+
+
+def test_pacer_success_resets_streak():
+    from collectors.common import DomainPacer, TransientError
+    p = DomainPacer(min_interval=0, max_failures=2)
+
+    def bad():
+        raise TransientError("soft")
+    with pytest.raises(TransientError):
+        p.call("x.com", bad)
+    p.call("x.com", lambda: 1)
+    with pytest.raises(TransientError):
+        p.call("x.com", bad)
