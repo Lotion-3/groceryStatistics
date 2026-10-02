@@ -165,3 +165,55 @@ def exceedance_clustering_test(lat, lon, exceed, radius_km: float = 100.0,
     perm = np.array([(lambda p: p @ W @ p)(rng.permutation(e)) for _ in range(n_perm)])
     return {"T": t_obs, "T_perm_mean": float(perm.mean()), "p_value": float((1 + np.sum(perm >= t_obs)) / (1 + n_perm)),
             "n": int(len(e)), "n_exceed": int(e.sum()), "radius_km": radius_km, "n_perm": n_perm}
+
+
+def cluster_bootstrap_ci(values: np.ndarray, clusters: np.ndarray, stat: Callable[[np.ndarray], float],
+                         B: int = 1000, level: float = 0.95, seed: int = 0) -> tuple[float, float, float]:
+    """(estimate, lo, hi): percentile bootstrap that resamples whole CLUSTERS
+    (here: stores) with replacement and keeps all of each cluster's values.
+
+    Deviations from one store are not independent (a store that prices one
+    product high tends to price others high), so resampling single prices
+    would understate the uncertainty. Resampling stores respects that."""
+    values, clusters = np.asarray(values, float), np.asarray(clusters)
+    est = stat(values)
+    ids, inv = np.unique(clusters, return_inverse=True)
+    groups = [np.flatnonzero(inv == g) for g in range(len(ids))]
+    rng = np.random.default_rng(seed)
+    reps = []
+    for _ in range(B):
+        pick = rng.integers(0, len(groups), size=len(groups))
+        try:
+            reps.append(stat(values[np.concatenate([groups[g] for g in pick])]))
+        except (ValueError, FloatingPointError, RuntimeError):
+            continue
+    reps = np.asarray([r for r in reps if np.isfinite(r)])
+    if len(reps) < 0.5 * B:
+        return float(est), np.nan, np.nan
+    a = (1 - level) / 2
+    return float(est), float(np.quantile(reps, a)), float(np.quantile(reps, 1 - a))
+
+
+def morans_i(lat, lon, z, radius_km: float = 100.0, n_perm: int = 9999, seed: int = 0) -> dict:
+    """Moran's I of z with binary weights w_ij = 1 if 0 < distance <= radius_km:
+        I = (n / W) * sum_ij w_ij (z_i - zbar)(z_j - zbar) / sum_i (z_i - zbar)^2.
+    I > 0: nearby stores have similar values. p-value from permuting z over
+    the fixed locations (one-sided, I_perm >= I_obs)."""
+    lat, lon, z = np.asarray(lat, float), np.asarray(lon, float), np.asarray(z, float)
+    D = haversine_km(lat[:, None], lon[:, None], lat[None, :], lon[None, :])
+    W = (D <= radius_km).astype(float)
+    np.fill_diagonal(W, 0)
+    S0 = W.sum()
+    n = len(z)
+
+    def stat(v):
+        c = v - v.mean()
+        return n / S0 * (c @ W @ c) / (c @ c)
+
+    if S0 == 0:
+        return {"I": np.nan, "p_value": np.nan, "n": n, "n_neighbour_pairs": 0, "radius_km": radius_km}
+    i_obs = stat(z)
+    rng = np.random.default_rng(seed)
+    perm = np.array([stat(rng.permutation(z)) for _ in range(n_perm)])
+    return {"I": float(i_obs), "E_I": -1.0 / (n - 1), "p_value": float((1 + np.sum(perm >= i_obs)) / (1 + n_perm)),
+            "n": n, "n_neighbour_pairs": int(S0), "radius_km": radius_km, "n_perm": n_perm}

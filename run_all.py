@@ -11,7 +11,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from analysis import module_a_tails, module_b_bayes, module_c_hd, module_d_basket, module_e_tda
+from analysis import coverage, module_a_tails, module_b_bayes, module_c_hd, module_d_basket, module_e_tda
 
 
 def main(argv=None) -> int:
@@ -21,7 +21,7 @@ def main(argv=None) -> int:
     if a.sim:
         from simulation import validate_tail_estimators
         validate_tail_estimators.main()
-    for mod in (module_a_tails, module_b_bayes, module_c_hd, module_d_basket, module_e_tda):
+    for mod in (coverage, module_a_tails, module_b_bayes, module_c_hd, module_d_basket, module_e_tda):
         print(mod.run(), flush=True)
     return 0
 

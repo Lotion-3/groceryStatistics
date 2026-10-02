@@ -23,10 +23,28 @@ DB = ROOT / "data" / "grocery.sqlite"
 FIG = ROOT / "figures"
 TAB = ROOT / "tables"
 SEED = 20261001
+ANALYSIS_CFG = ROOT / "config" / "analysis.yaml"
+
+# Non-grocery categories in config/items.csv (DECISIONS #28); everything else is grocery.
+GENERAL_MERCH = {"household", "personal_care", "otc_health", "baby", "pet"}
 
 
-def load_observations(db: Path = DB, snapshot_id: int | None = None,
+def department(category: str) -> str:
+    return "general_merchandise" if category in GENERAL_MERCH else "grocery"
+
+
+def main_snapshots(db: Path = DB) -> list[int]:
+    """Snapshot ids the analysis uses, from config/analysis.yaml (DECISIONS #26).
+    Snapshot 1 (smoke test + item-resolution searches) is never included."""
+    import yaml
+    cfg = yaml.safe_load(ANALYSIS_CFG.read_text(encoding="utf-8")) or {}
+    return [int(s) for s in (cfg.get("main_snapshots") or [])]
+
+
+def load_observations(db: Path = DB, snapshot_id: int | list[int] | None = None,
                       store_specific_only: bool = True) -> pd.DataFrame:
+    """Observations joined to stores and items. snapshot_id may be one id or a
+    list (e.g. main_snapshots()); None loads every snapshot."""
     con = sqlite3.connect(db)
     q = """
     SELECT o.*, s.chain, s.store_id, s.lat, s.lon, s.zip, s.state, s.region, s.urbanicity,
@@ -37,8 +55,9 @@ def load_observations(db: Path = DB, snapshot_id: int | None = None,
     """
     conds, params = [], []
     if snapshot_id is not None:
-        conds.append("o.snapshot_id = ?")
-        params.append(snapshot_id)
+        ids = [snapshot_id] if isinstance(snapshot_id, int) else list(snapshot_id)
+        conds.append(f"o.snapshot_id IN ({','.join('?' * len(ids))})")
+        params.extend(ids)
     if store_specific_only:
         conds.append("o.store_specific = 1")
     if conds:
@@ -57,7 +76,8 @@ def product_panel(obs: pd.DataFrame, min_stores: int = 20) -> pd.DataFrame:
     cols = ["snapshot_id", "chain", "source", "chain_product_id", "store_pk", "store_id", "lat", "lon",
             "state", "region", "urbanicity", "product_name", "upc", "price", "regular_price",
             "is_promo", "category"]
-    p = obs[cols].drop_duplicates(["snapshot_id", "chain", "chain_product_id", "store_pk"])
+    p = obs[cols].drop_duplicates(["snapshot_id", "chain", "chain_product_id", "store_pk"]).copy()
+    p["department"] = p["category"].map(department)
     n = p.groupby(["snapshot_id", "chain", "chain_product_id"])["store_pk"].transform("nunique")
     return p[n >= min_stores].copy()
 
@@ -103,3 +123,35 @@ def sample_size_note(df: pd.DataFrame) -> str:
     return (f"n = {len(df):,} store-product prices; {df['store_pk'].nunique():,} stores; "
             f"{df['chain_product_id'].nunique():,} products; snapshot(s) "
             f"{sorted(df['snapshot_id'].unique().tolist())}. PRELIMINARY, cross-sectional.")
+
+
+# ---------------------------------------------------------------------------
+# Figures: one look for every module
+# ---------------------------------------------------------------------------
+
+# Colour follows the chain, never its rank (validated categorical slots 1-3;
+# every figure also has a legend and a matching table in tables/).
+CHAIN_COLORS = {"target": "#2a78d6", "walmart": "#eb6834", "costco": "#1baf7a"}
+INK, MUTED, GRID = "#1f1f1e", "#6b6a63", "#e4e3dc"
+
+
+def style():
+    """Matplotlib defaults: thin marks, recessive grid/axes, no top/right spines."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    plt.rcParams.update({
+        "figure.dpi": 150, "savefig.dpi": 200, "savefig.bbox": "tight",
+        "font.size": 9, "axes.titlesize": 10, "axes.labelsize": 9,
+        "axes.edgecolor": MUTED, "axes.labelcolor": INK, "text.color": INK,
+        "xtick.color": MUTED, "ytick.color": MUTED,
+        "axes.spines.top": False, "axes.spines.right": False,
+        "axes.grid": True, "grid.color": GRID, "grid.linewidth": 0.6,
+        "lines.linewidth": 2, "legend.frameon": False,
+    })
+    return plt
+
+
+def caption(fig, text: str):
+    """Sample-size / PRELIMINARY footnote under a figure."""
+    fig.text(0.0, -0.02, text, ha="left", va="top", fontsize=7, color=MUTED, wrap=True)

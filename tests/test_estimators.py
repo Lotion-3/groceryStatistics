@@ -37,3 +37,24 @@ def test_clustering_test_detects_cluster():
     assert E.exceedance_clustering_test(lat, lon, exceed, 100, n_perm=499)["p_value"] < 0.01
     shuffled = rng.permutation(exceed)
     assert E.exceedance_clustering_test(lat, lon, shuffled, 100, n_perm=499)["p_value"] > 0.01
+
+
+def test_cluster_bootstrap_wider_than_iid_for_clustered_data():
+    from analysis.estimators import bootstrap_ci, cluster_bootstrap_ci
+    rng = np.random.default_rng(1)
+    store_effect = rng.normal(0, 1, 50)
+    clusters = np.repeat(np.arange(50), 20)
+    v = store_effect[clusters] + rng.normal(0, 0.1, len(clusters))
+    _, lo_c, hi_c = cluster_bootstrap_ci(v, clusters, np.mean, B=400)
+    _, lo_i, hi_i = bootstrap_ci(v, np.mean, B=400)
+    assert (hi_c - lo_c) > 2 * (hi_i - lo_i)
+
+
+def test_morans_i_detects_smooth_field():
+    from analysis.estimators import morans_i
+    rng = np.random.default_rng(2)
+    lat, lon = rng.uniform(30, 45, 200), rng.uniform(-120, -75, 200)
+    smooth = morans_i(lat, lon, lon + rng.normal(0, 1, 200), radius_km=300, n_perm=499)
+    noise = morans_i(lat, lon, rng.normal(0, 1, 200), radius_km=300, n_perm=499)
+    assert smooth["I"] > 0.5 and smooth["p_value"] < 0.01
+    assert noise["p_value"] > 0.01
