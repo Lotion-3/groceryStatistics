@@ -57,3 +57,43 @@
 **Next**
 - After approvals: locate pass, redraw, item resolution and review, then snapshot 1 in the
   background with logging. Then a coverage and missingness report, and Module A.
+
+## Day 2: 2026-10-01/02 (evening)
+
+**Owner decisions:** approve the locate pass and item resolution; snapshot 1 at full scope
+(250 × 58) with chains in parallel; drop Trader Joe's; swap 15 grocery items for
+non-grocery national brands; after the Target block, pause and resume at ≥ 5 s
+(DECISIONS #24–28).
+
+**Done**
+- Parallel snapshot runner: SQLite WAL + busy timeout, `--new-snapshot-only`, `ended_at`
+  only moves forward, `scripts/run_snapshot_parallel.{ps1,sh}`. Tested with concurrent
+  writers.
+- **Circuit breaker** in the pacer (6 consecutive failures to one domain → chain stops)
+  and a per-domain pace (Target ≥ 5 s). Tested.
+- Item-resolution searches at one store (Columbus OH, in snapshot 1). Costco: all 58
+  items, no failures. Walmart: 55 items, then a px-captcha stopped it automatically
+  (3 left). Walmart is now also paced at ≥ 5 s (#29).
+- `config/items.csv`: 15 grocery items replaced by household, personal care, OTC, baby
+  and pet items (still 58).
+- `analysis/coverage.py` (first step of `run_all.py`), `config/analysis.yaml`
+  (main-snapshot list).
+- Module A implemented in full (tails by chain, category and department; promo
+  sensitivity; cross-chain; store-cluster bootstrap CIs; join-count and Moran's I; basket
+  VaR/ES; 4 figures). Checked end to end on the smoke snapshot with lowered thresholds;
+  the outputs are not kept.
+- `sampling/fetch_external.py` can fetch ACS 2023 5-year by ZCTA, but it needs
+  `CENSUS_API_KEY`.
+
+**Blocked**
+- **Target soft block (HTTP 435)** after ~115 locate-pass requests at 2 s. Stopped after
+  10 refused requests. Locate pass is at 115 / 1,893. Resume is scheduled for ~04:13
+  local, in this order: Target resolution searches → product-page UPCs → locate pass.
+- **Census API key** needed for the Module C covariates (free; put it in `.env` as
+  `CENSUS_API_KEY`).
+
+**Next**
+- Owner review of `config/items_resolved.csv`, then copy the confirmed IDs into
+  `items.csv`.
+- Locate pass → redraw the sample → snapshot 1 (Target at 5 s ≈ 20 h for 250 stores; may
+  need ~150 stores).

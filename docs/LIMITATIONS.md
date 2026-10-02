@@ -31,7 +31,14 @@
 - **Collection method and access.** Data were collected with the owner's existing tooling
   (browser-minted sessions replayed over HTTP), rate-limited, without escalating past
   blocks. Chains that block are dropped for that run, and that missingness is logged.
-  Trader Joe's returned HTTP 403 on day 1.
+  Trader Joe's returned HTTP 403 on day 1 and was dropped. Target soft-blocked (HTTP 435)
+  on day 2 at a 2 s pace, so Target is now collected at ≥ 5 s per request, and a
+  circuit breaker stops any chain after 6 consecutive failures.
+- **Snapshot window.** A full snapshot takes many hours, not "a few", so prices within
+  one snapshot were not all observed at the same moment. `observed_at` is kept per row.
+- **Item scope.** 37 packaged grocery items, 15 non-grocery national brands and 6
+  perishables. These are hand-picked items that both chains stock, not a random sample
+  of either chain's assortment.
 - **Tail estimation at n ≈ 250 per chain** is noisy. Simulation shows RMSE of α̂ around
   0.7–1.1 at n = 250 even for well-behaved tails, and poor interval coverage when the tail
   is only asymptotically Pareto.
