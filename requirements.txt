@@ -16,6 +16,9 @@ matplotlib
 pyarrow
 pymc
 arviz
+# NUTS backend for PyMC: no C++ compiler is needed (Windows), and it is much faster
+numpyro
+jax
 pulp
 libpysal
 esda
