@@ -41,6 +41,10 @@ be redrawn after the locate pass, before snapshot 1.
   `numpy.random.default_rng(seed)`. Strata are visited in sorted order and stores sorted
   by `store_id`, so the draw is reproducible.
 - `n_target = 250` and `seed = 20261001` (`config/sampling.yaml`).
+- Visit order: the drawn stores are then shuffled with seed + 1 and numbered
+  (`visit_order`). Collection follows that order, so if a chain is stopped part-way the
+  stores it covered are a random subsample of every stratum, not whole regions
+  (DECISIONS #31).
 
 Reproduce with:
 

@@ -155,8 +155,13 @@ def main(argv=None) -> int:
     frame.to_csv(out / "target_frame.csv", index=False)
 
     sample = draw_sample(frame, args.n, args.seed)
+    # Visit order: a seeded random permutation, so that a snapshot stopped
+    # part-way (e.g. a chain blocked) has covered a random subsample of all
+    # strata rather than whole regions in turn (DECISIONS #31).
+    sample = sample.sample(frac=1.0, random_state=args.seed + 1).reset_index(drop=True)
+    sample["visit_order"] = np.arange(1, len(sample) + 1)
     cols = ["chain", "store_id", "slug", "lat", "lon", "zip", "state", "region",
-            "urbanicity", "ruca", "zcta_dist_km", "coord_quality"]
+            "urbanicity", "ruca", "zcta_dist_km", "coord_quality", "visit_order"]
     sample[cols].to_csv(ROOT / "config" / "store_sample.csv", index=False)
 
     print(f"Frame: {len(frame)} Target stores; eligible {int(frame['eligible'].sum())} "
