@@ -515,6 +515,7 @@ PARSERS = {
     "meijer": parse_meijer,
     "aldi": parse_instacart,
     "kroger": parse_kroger,
+    "kroger_ce": parse_kroger,
     "walmart": parse_walmart,
     "target": parse_target,
     "costco": parse_instacart,

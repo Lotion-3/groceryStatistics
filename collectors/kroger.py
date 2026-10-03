@@ -30,9 +30,12 @@ from collectors.common import PACER, ChainBlocked, TransientError
 
 BASE_URL = os.environ.get("KROGER_BASE_URL", "https://api-ce.kroger.com/v1")
 DOMAIN = urlparse(BASE_URL).netloc                 # pacing key: api-ce.kroger.com or api.kroger.com
-CHAIN = "kroger"
+# Test (certification) data are a separate chain label so they can never
+# collide with production rows (same store ids in both environments).
+PRODUCTION = not urlparse(BASE_URL).netloc.startswith("api-ce.")
+CHAIN = "kroger" if PRODUCTION else "kroger_ce"
 # Test (certification) and production prices are kept apart in the data.
-SOURCE = "kroger_ce" if DOMAIN.startswith("api-ce.") else "kroger"
+SOURCE = "kroger" if PRODUCTION else "kroger_ce"
 LIMIT = 50            # API maximum page size
 # Same exclusion list as vendor/kroger_async._JUNK_LOCATION_TOKENS
 _JUNK_LOCATION_TOKENS = ("distribution", "fuel", "lab", "picking")
@@ -42,10 +45,13 @@ class Session:
     """Holds a bearer token and refreshes it before it expires (~30 min)."""
 
     def __init__(self):
-        self.cid = os.environ.get("KROGER_CLIENT_ID", "").strip()
-        self.secret = os.environ.get("KROGER_CLIENT_SECRET", "").strip()
+        # Production and certification credentials are separate apps:
+        # production keys live in KROGER_CLIENT_ID2 / KROGER_CLIENT_SECRET2.
+        sfx = "2" if PRODUCTION else ""
+        self.cid = os.environ.get(f"KROGER_CLIENT_ID{sfx}", "").strip()
+        self.secret = os.environ.get(f"KROGER_CLIENT_SECRET{sfx}", "").strip()
         if not (self.cid and self.secret):
-            raise ChainBlocked("session:KROGER_CLIENT_ID / KROGER_CLIENT_SECRET not set")
+            raise ChainBlocked(f"session:KROGER_CLIENT_ID{sfx} / KROGER_CLIENT_SECRET{sfx} not set")
         self.token: Optional[str] = None
         self.expires = 0.0
 

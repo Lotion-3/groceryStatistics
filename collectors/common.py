@@ -54,7 +54,9 @@ def _domain_intervals() -> dict[str, float]:
     ~115 requests at 2 s on Day 2 and Walmart served a captcha after ~80, so both
     default to 5 s (DECISIONS #27, #29).
     Override with GS_DOMAIN_INTERVALS="host=sec,host=sec"."""
-    out = {"cdui-orchestrations.target.com": 5.0, "www.target.com": 5.0, "www.walmart.com": 5.0}
+    out = {"cdui-orchestrations.target.com": 5.0, "www.target.com": 5.0, "www.walmart.com": 5.0,
+           # Kroger production Products API: 10,000 calls/day = one per 8.64 s
+           "api.kroger.com": 9.0}
     for part in os.environ.get("GS_DOMAIN_INTERVALS", "").split(","):
         if "=" in part:
             host, sec = part.split("=", 1)

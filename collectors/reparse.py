@@ -29,7 +29,16 @@ from db.init_db import connect, load_items
 from sampling.geo import osm_coords, zip_from_address, zip_info
 
 SOURCE = {"target": "direct", "walmart": "direct", "costco": "instacart", "trader_joes": "national",
-          "kroger": "kroger_ce", "aldi": "aldi_ic", "meijer": "direct"}
+          "kroger": "kroger_ce", "kroger_ce": "kroger_ce", "aldi": "aldi_ic", "meijer": "direct"}
+# Before this time, every "kroger" envelope/failure came from the certification
+# (test) host; it is stored as chain "kroger_ce" (DECISIONS #39).
+KROGER_PROD_CUTOVER = "2026-10-03T01:45:00+00:00"
+
+
+def _chain_label(chain: str, store: dict | None = None, at: str = "") -> str:
+    if chain == "kroger" and ((store or {}).get("source") == "kroger_ce" or (at and at < KROGER_PROD_CUTOVER)):
+        return "kroger_ce"
+    return chain
 
 
 def _legacy_store(chain: str, env: dict, path: Path) -> dict:
@@ -95,8 +104,9 @@ def rebuild(db_path: Path, snapshots: list[int] | None = None) -> dict:
         con.execute("INSERT INTO snapshots (snapshot_id, started_at, ended_at, notes) VALUES (?,?,?,?)",
                     (snap, min(times), max(times), "rebuilt from data/raw by collectors.reparse"))
         for p, env in envs:
-            chain = env["meta"]["chain"]
-            store = env["meta"].get("store") or _legacy_store(chain, env, p)
+            store = env["meta"].get("store") or _legacy_store(env["meta"]["chain"], env, p)
+            chain = _chain_label(env["meta"]["chain"], store, env["meta"].get("saved_at", ""))
+            store = {**store, "chain": chain}
             store_pk = upsert_store(con, store)
             ctx = {"snapshot_id": snap, "store_pk": store_pk, "item_id": env["meta"]["item_id"],
                    "observed_at": env["meta"]["saved_at"], "source": store["source"],
@@ -108,6 +118,7 @@ def rebuild(db_path: Path, snapshots: list[int] | None = None) -> dict:
         if flog.exists():
             for line in flog.read_text(encoding="utf-8").splitlines():
                 f = json.loads(line)
+                f["chain"] = _chain_label(f["chain"], at=f.get("occurred_at", ""))
                 pk = con.execute("SELECT store_pk FROM stores WHERE chain=? AND store_id=?",
                                  (f["chain"], f.get("store_id"))).fetchone()
                 con.execute("INSERT INTO collection_failures (snapshot_id, chain, store_pk, item_id, "
