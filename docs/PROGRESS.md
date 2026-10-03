@@ -149,3 +149,27 @@ non-grocery national brands; after the Target block, pause and resume at ≥ 5 s
   - Kroger: re-checked by exact UPC (19/58 in the catalog); added for its 25 carried
     items.
   - All three running alongside Walmart and Costco: `data/raw/logs/snap2_{aldi,meijer,kroger}.log`.
+
+## Day 3 (2026-10-02, evening)
+
+**Snapshot 2 status at 20:17**
+- Walmart: **42 stores** (2,425 searches), then a px-captcha; stopped automatically.
+- Meijer: 3 stores × 58 items, then its store locator returned a block page; stopped
+  automatically.
+- Costco: 86 of 250 anchors and running. ALDI: 21 anchors and running. Kroger: 73 anchors
+  and running; 216 "empty" responses are items its test catalog lacks at that store.
+- No chain has been retried after a block.
+
+**Partial-data check** (outputs in the scratchpad only, not reported)
+- Two bugs found and fixed:
+  - Instacart product ids embed the store, so Costco/ALDI products never matched across
+    stores.
+  - Baskets with fewer than 5 items are now skipped.
+- Walmart's extreme deviations are a real Honolulu premium (milk $6.28 vs a median of
+  $2.97), so Module A now also reports tails without HI and AK.
+- Early signal, to examine later: Costco via Instacart is *not* near-uniform (73% of prices
+  at the chain median vs Walmart's 89%), which may mean location-varying markups.
+
+**Item review aid:** `python -m scripts.item_review_sheet` → `config/item_review.csv`. It
+compares Walmart's pick with a UPC proposed independently from Meijer/Kroger search results
+(store brands excluded), flags agreement, and leaves `confirmed_*` columns for the owner.
