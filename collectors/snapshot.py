@@ -147,14 +147,14 @@ class Run:
         return True
 
     def session_ready(self, chain: str) -> bool:
-        """Once per chain per run: respect a cooldown, and put this network's
-        stored session in place (or let the collector start one normally)."""
+        """Once per chain per run: respect a pause, start a FRESH session (the
+        collector makes it normally) and make a fresh spare (DECISIONS #44)."""
         if chain in self.prepared:
             return chain in self.active
         from collectors import session_stash as SS
         self.prepared.add(chain)
         try:
-            how = SS.restore(chain)
+            how = SS.start_fresh(chain)
         except ChainBlocked as e:
             self.fail(chain, None, None, f"{e} (chain skipped this run)")
             self.active.discard(chain)
@@ -162,7 +162,7 @@ class Run:
         spare = "n/a"
         if chain in SS.SPARE_CHAINS:
             try:
-                spare = SS.ensure_spare(chain)
+                spare = SS.make_spare(chain)
             except Exception as e:     # a spare is optional: never stop the run over it
                 spare = f"unavailable ({repr(e)[:80]})"
         print(f"  [{chain}] session: {how}; spare: {spare} (network {SS.public_ip()})", flush=True)
@@ -185,7 +185,7 @@ class Run:
         n = insert_observations(self.con, rows)
         if chain not in self.saved:
             from collectors import session_stash as SS
-            SS.save(chain)               # this session works on this network: keep it
+            SS.save(chain)               # archive every session that succeeds at least once
             self.saved.add(chain)
         spec = sum(r["store_specific"] for r in rows)
         print(f"  {chain} #{store['store_id']} {item['item_id']}: {n} rows ({spec} store-specific)", flush=True)

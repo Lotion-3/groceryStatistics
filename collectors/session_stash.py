@@ -1,28 +1,25 @@
-"""Local session stash: one stored session per chain per network (public IP).
+"""Session handling per chain and network (public IP) -- the simple policy
+(DECISIONS #44, the owner's rules):
 
-Why per IP. Bot-protection services (Imperva, PerimeterX) can bind a session
-to the IP it was created on. On a campus network the public IP changes from
-building to building, so a perfectly good session can be challenged simply
-because the machine moved. Keeping one session per (chain, IP) lets a run use
-the session that belongs to the network it is on, as an ordinary browser
-would.
+  * Every run starts with a FRESH session: stored session files are cleared so
+    the collector starts one the normal way. A fresh SPARE is also made at the
+    start of the run, before anything has been refused.
+  * The first session is used for as long as it works. If it is refused (an
+    explicit challenge, or a 6-failure streak), the runner switches ONCE to the
+    spare. If the spare's first request also fails, two sessions in a row have
+    been refused: stop and pause the chain (GS_BLOCK_COOLDOWN_HOURS, default
+    12) -- no session is made, swapped or reused during the pause.
+  * No session is ever created after a refusal (the owner's rule).
+  * Every session that completes at least one successful request is ARCHIVED
+    in data/sessions/<chain>/<network>/<timestamp>/ (kept for the record; not
+    reused).
+  * If the machine changed networks mid-run, the chain stops without a pause.
+  * The spare applies to Target, Costco (Instacart) and ALDI, whose sessions
+    can be swapped in place. Walmart (per-store browser scoping) and
+    Meijer/Kroger (no cookie session) stop at the first refusal.
 
-Rules (DECISIONS #42; the owner's line: no new sessions after a block):
-  * restore(chain) before a run: copy this IP's stored session into the place
-    the vendored collector reads it from. If there is none, the vendored code
-    creates one in the normal way, and save(chain) stores it after the first
-    successful request.
-  * Only ONE session per chain per IP is kept. Several sessions on the same
-    IP would only be useful for rotating around a block, which we do not do.
-  * After a block (record_block), the chain is in COOLDOWN for
-    GS_BLOCK_COOLDOWN_HOURS (default 12): restore() refuses, so no session is
-    created, swapped or reused for that chain until it ends.
-  * ip_changed() lets the runner tell "the machine moved networks mid-run"
-    (switch to this network's session once) from "the site refused us on the
-    same network" (a block: stop and cool down).
-
-Everything lives in data/sessions/ (gitignored). Nothing is read from or
-written to the production Supabase pool.
+Everything lives in data/sessions/ (gitignored). The production Supabase pool
+is never read or written.
 """
 from __future__ import annotations
 
@@ -96,63 +93,32 @@ def cooldown_left_hours(chain: str) -> float:
     return max(0.0, COOLDOWN_HOURS - (time.time() - float(b["at"])) / 3600.0)
 
 
-def _active_path(chain: str) -> Path:
-    return STASH / chain / "active.json"
-
-
-def active_ip(chain: str) -> Optional[str]:
-    """The IP the session currently in the vendored location belongs to."""
-    try:
-        return json.loads(_active_path(chain).read_text(encoding="utf-8"))["ip"]
-    except Exception:
-        return None
-
-
 def save(chain: str) -> None:
-    """Store the session now in use as THIS network's session for the chain."""
-    if chain not in FILES:
+    """Archive the session now in use (it has just had a successful request):
+    a new timestamped entry under this network. Kept for the record."""
+    if chain not in FILES or not any(f.exists() for f in FILES[chain]):
         return
     ip = public_ip()
-    d = _dir(chain, ip)
-    d.mkdir(parents=True, exist_ok=True)
+    base = _dir(chain, ip) / datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%f")
+    entry, k = base, 1
+    while entry.exists():                       # never overwrite an archived session
+        entry, k = base.with_name(f"{base.name}_{k}"), k + 1
+    entry.mkdir(parents=True)
     for f in FILES[chain]:
         if f.exists():
-            shutil.copy2(f, d / f.name)
-    (STASH / chain).mkdir(parents=True, exist_ok=True)
-    _active_path(chain).write_text(json.dumps({"ip": ip, "saved": time.time()}), encoding="utf-8")
+            shutil.copy2(f, entry / f.name)
+    (entry / "meta.json").write_text(json.dumps({"chain": chain, "ip": ip, "archived": time.time()}),
+                                     encoding="utf-8")
 
-
-def restore(chain: str) -> str:
-    """Put this network's stored session in place before a run.
-    Returns 'stash' (stored session restored), 'current' (the session in place
-    already belongs to this IP) or 'fresh' (none for this IP; the vendored
-    code will create one normally). Raises ChainBlocked during a cooldown."""
+def start_fresh(chain: str) -> str:
+    """Before a run: respect a pause, then clear the stored session files so
+    the collector starts a FRESH session the normal way."""
     left = cooldown_left_hours(chain)
     if left > 0:
         raise ChainBlocked(f"cooldown: blocked {COOLDOWN_HOURS:.0f} h ago or less; {left:.1f} h left")
     if chain not in FILES:
         return "n/a"
-    ip = public_ip()
-    if active_ip(chain) == ip:
-        return "current"
-    prev = active_ip(chain)
-    if prev and any(f.exists() for f in FILES[chain]):
-        # keep the session that belongs to the previous network
-        d = _dir(chain, prev)
-        d.mkdir(parents=True, exist_ok=True)
-        for f in FILES[chain]:
-            if f.exists():
-                shutil.copy2(f, d / f.name)
-    d = _dir(chain, ip)
-    if d.exists() and any((d / f.name).exists() for f in FILES[chain]):
-        for f in FILES[chain]:
-            if (d / f.name).exists():
-                shutil.copy2(d / f.name, f)
-            elif f.exists():
-                f.unlink()
-        _active_path(chain).write_text(json.dumps({"ip": ip, "saved": time.time()}), encoding="utf-8")
-        return "stash"
-    for f in FILES[chain]:          # no session for this network: let the collector start one normally
+    for f in FILES[chain]:
         if f.exists():
             f.unlink()
     return "fresh"
@@ -180,16 +146,17 @@ def has_spare(chain: str) -> bool:
     return chain in SPARE_CHAINS and any((d / f.name).exists() for f in FILES[chain])
 
 
-def ensure_spare(chain: str) -> str:
-    """Create this network's spare session through the collector's normal
-    session start, if there is none. Refused during a cooldown."""
+def make_spare(chain: str) -> str:
+    """Make a FRESH spare for this run through the collector's normal session
+    start (replacing any unused spare). Called at run start only, before any
+    refusal; refused during a pause."""
     if chain not in SPARE_CHAINS:
         return "n/a"
     if cooldown_left_hours(chain) > 0:
         raise ChainBlocked("cooldown: no spare session is created after a block")
-    if has_spare(chain):
-        return "exists"
     d = _spare_dir(chain)
+    if d.exists():
+        shutil.rmtree(d)
     d.mkdir(parents=True, exist_ok=True)
     now = time.time()
     if chain == "target":
@@ -251,9 +218,12 @@ def ip_changed() -> bool:
 def summary() -> dict:
     out = {}
     for chain in FILES:
-        nets = sorted(p.name for p in (STASH / chain).glob("*") if p.is_dir())
-        out[chain] = {"networks": nets, "active_ip": active_ip(chain),
-                      "cooldown_h_left": round(cooldown_left_hours(chain), 1)}
+        nets = {}
+        for net in (STASH / chain).glob("*"):
+            if net.is_dir():
+                nets[net.name] = {"archived_sessions": sum(1 for e in net.glob("*") if (e / "meta.json").exists()),
+                                  "spare_ready": any((net / "spare" / f.name).exists() for f in FILES[chain])}
+        out[chain] = {"networks": nets, "cooldown_h_left": round(cooldown_left_hours(chain), 1)}
     return out
 
 
@@ -261,7 +231,7 @@ if __name__ == "__main__":
     import argparse
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--seed", action="store_true",
-                    help="store the sessions currently in place as this network's sessions")
+                    help="archive the sessions currently in place under this network")
     a = ap.parse_args()
     if a.seed:
         for c in FILES:

@@ -1,4 +1,4 @@
-"""Session stash rules (DECISIONS #42), on temporary files only."""
+"""Simple session policy (DECISIONS #44), on temporary files only."""
 import pytest
 
 from collectors import session_stash as SS
@@ -16,39 +16,27 @@ def stash(tmp_path, monkeypatch):
     return vendor / ".target_http_session.json", net
 
 
-def test_session_follows_the_network(stash):
+def test_each_run_starts_fresh(stash):
+    live, _ = stash
+    live.write_text("old-cookie")
+    assert SS.start_fresh("target") == "fresh" and not live.exists()
+
+
+def test_every_successful_session_is_archived_per_network(stash):
     live, net = stash
-    assert SS.restore("target") == "fresh"            # nothing stored for 1.1.1.1
-    live.write_text("cookie-A")                       # collector starts a session normally
-    SS.save("target")
-    net["ip"] = "2.2.2.2"                             # move to another building
-    assert SS.restore("target") == "fresh" and not live.exists()
-    live.write_text("cookie-B")
-    SS.save("target")
-    net["ip"] = "1.1.1.1"                             # back again: A comes back, B is kept
-    assert SS.restore("target") == "stash" and live.read_text() == "cookie-A"
+    for cookie in ("A", "B"):
+        live.write_text(cookie)
+        SS.save("target")
     net["ip"] = "2.2.2.2"
-    assert SS.restore("target") == "stash" and live.read_text() == "cookie-B"
-    assert SS.restore("target") == "current"
-
-
-def test_cooldown_refuses_any_session_after_a_block(stash):
-    live, net = stash
-    live.write_text("cookie-A")
+    live.write_text("C")
     SS.save("target")
+    nets = SS.summary()["target"]["networks"]
+    assert nets["1_1_1_1"]["archived_sessions"] == 2 and nets["2_2_2_2"]["archived_sessions"] == 1
+
+
+def test_pause_blocks_fresh_sessions_and_spares(stash):
     SS.record_block("target", "explicit:px-captcha marker")
     with pytest.raises(ChainBlocked, match="cooldown"):
-        SS.restore("target")
-    net["ip"] = "3.3.3.3"                             # a new network does not lift the cooldown
+        SS.start_fresh("target")
     with pytest.raises(ChainBlocked, match="cooldown"):
-        SS.restore("target")
-
-
-def test_one_session_per_network(stash):
-    live, net = stash
-    live.write_text("cookie-A")
-    SS.save("target")
-    live.write_text("cookie-A2")                      # a refreshed session on the same network
-    SS.save("target")
-    files = list((SS.STASH / "target").glob("*/*.json"))
-    assert len(files) == 1 and files[0].read_text() == "cookie-A2"
+        SS.make_spare("target")
