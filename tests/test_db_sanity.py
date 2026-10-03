@@ -133,3 +133,19 @@ def test_pacer_success_resets_streak():
     p.call("x.com", lambda: 1)
     with pytest.raises(TransientError):
         p.call("x.com", bad)
+
+
+def test_balanced_visit_order_keeps_every_prefix_proportional():
+    import numpy as np
+    import pandas as pd
+    from sampling.visit_order import balanced_order, prefix_quality
+    rng = np.random.default_rng(0)
+    n = 200
+    sample = pd.DataFrame({"region": rng.choice(["Midwest", "South", "West", "Northeast"], n, p=[.2, .4, .3, .1]),
+                           "urbanicity": rng.choice(["urban", "suburban", "rural"], n, p=[.7, .1, .2]),
+                           "lat": rng.uniform(25, 48, n), "lon": rng.uniform(-123, -70, n),
+                           "state": rng.choice([f"S{i}" for i in range(40)], n)})
+    order = balanced_order(sample, seed=1)
+    assert sorted(order) == list(range(1, n + 1))
+    q = prefix_quality(sample, order, fracs=(0.1, 0.25, 0.5, 0.75))
+    assert (q["max_stratum_dev"] <= 1.0).all()

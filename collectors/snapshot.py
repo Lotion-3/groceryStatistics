@@ -75,9 +75,15 @@ def specificity_rule(chain: str, store_id: str) -> Callable[[dict], bool]:
 
 
 class Run:
-    def __init__(self, con, snapshot_id: int, chains: list[str]):
+    def __init__(self, con, snapshot_id: int, chains: list[str], budget: int = 0):
         self.con, self.snap = con, snapshot_id
         self.active = set(chains)
+        # Per-chain request budget for this run (0 = unlimited). Used to keep
+        # each session well below the volume at which a retailer has pushed
+        # back (Target: ~50-115 requests); the next run resumes where this one
+        # stopped (DECISIONS #41).
+        self.budget = budget
+        self.queries: dict[str, int] = {}
         self.sessions: dict = {}
         self.costco_done: set[str] = set()
         self.kroger_done: set[str] = set()
@@ -122,6 +128,12 @@ class Run:
         for it in items:
             if chain not in self.active or self.done(store_pk, it["item_id"]):
                 continue
+            if self.budget and self.queries.get(chain, 0) >= self.budget:
+                self.fail(chain, store_pk, it["item_id"],
+                          f"budget: planned stop after {self.budget} queries this run (resume later)")
+                self.active.discard(chain)
+                return
+            self.queries[chain] = self.queries.get(chain, 0) + 1
             try:
                 body = with_backoff(fetch, it)
             except ChainBlocked as e:
@@ -328,13 +340,13 @@ class Run:
                           lambda it: TJ.search(it["search_term"]))
 
 
-def run(chains: list[str], stores: list[dict], items: list[dict], db_path=DEFAULT_DB,
+def run(chains: list[str], stores: list[dict], items: list[dict], db_path=DEFAULT_DB, budget: int = 0,
         snapshot_id: Optional[int] = None, notes: str = "") -> int:
     con = connect(db_path)
     load_items(con)
     snap = snapshot_id or start_snapshot(con, notes)
     print(f"Snapshot {snap}: {len(stores)} anchor stores x {len(items)} items, chains={chains}", flush=True)
-    r = Run(con, snap, chains)
+    r = Run(con, snap, chains, budget)
     try:
         if "trader_joes" in chains:
             r.trader_joes(items)
@@ -362,6 +374,8 @@ def main(argv=None) -> int:
     ap.add_argument("--snapshot-id", type=int, default=None, help="resume this snapshot")
     ap.add_argument("--db", default=str(DEFAULT_DB))
     ap.add_argument("--notes", default="")
+    ap.add_argument("--budget", type=int, default=0,
+                    help="stop each chain after this many item queries in this run (0 = no limit)")
     ap.add_argument("--new-snapshot-only", action="store_true",
                     help="create a snapshot row, print its id and exit (for parallel per-chain runs)")
     a = ap.parse_args(argv)
@@ -383,7 +397,7 @@ def main(argv=None) -> int:
         stores = stores[: a.limit_stores]
     if a.limit_items:
         items = items[: a.limit_items]
-    snap = run(chains, stores, items, a.db, a.snapshot_id, a.notes)
+    snap = run(chains, stores, items, a.db, a.budget, a.snapshot_id, a.notes)
     print(f"Done. snapshot_id={snap}")
     return 0
 
