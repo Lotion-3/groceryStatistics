@@ -24,8 +24,17 @@ We study four things:
 ## 2. Data
 
 **Collection.** One cross-sectional snapshot [RESULTS PENDING: dates, start/end times] of
-online, store-specific prices from Walmart and Target. Costco prices come from its Instacart
-storefront and are analysed separately, because they may include a markup.
+online, store-specific prices from up to six chains, grouped by how the prices are obtained:
+
+- *Retailer websites:* Walmart, Target and Meijer.
+- *Instacart storefronts:* Costco, and ALDI's own Instacart-built site.
+- *Kroger's official developer API:* its test environment, for the 25 items its catalog
+  carries.
+
+Instacart and Kroger-test prices are analysed separately from retailer-website prices.
+[RESULTS PENDING: final per-chain store counts. Target, Walmart and Meijer each blocked
+collection partway through. Those chains have fewer stores, but because stores were
+visited in random order, the stores they have are a random subsample.]
 
 Collection reused the owner's existing price-lookup code. It was rate-limited to one
 request per site at a time, at least 5 seconds apart for Walmart and Target. Every raw

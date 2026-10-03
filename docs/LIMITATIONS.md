@@ -51,3 +51,15 @@
   roughly the ZIP scale.
 - **Kroger.** The supplied credentials work only on the certification (test) host, whose
   catalog covers about 10 of the 58 items. Kroger is therefore not in the main analysis.
+- **Instacart prices may not be a clean control.** In partial data, Costco via Instacart
+  had *more* dispersion than Walmart (73% vs 89% of prices exactly at the chain median).
+  One explanation is a markup that varies by location. If so, within-chain deviations for
+  Instacart-sourced chains (Costco, ALDI) mix retailer pricing with Instacart pricing. These
+  chains are reported separately, and the write-up must not treat them as uniform-price
+  benchmarks without checking.
+- **Blocked chains have partial coverage.** In snapshot 2, Walmart (after 42 stores) and
+  Meijer (after 3 stores; its store locator) were blocked and stopped, and Target was not
+  collected at all. Stores were visited in seeded random order, so each chain's stores are
+  a random subsample of the anchors, but they are far fewer than planned.
+- **Geographic outliers.** Hawaii (and Alaska) stores carry large real price premia, and
+  they dominate the extreme tail. Tail results are reported with and without them.
