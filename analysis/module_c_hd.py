@@ -61,13 +61,11 @@ def design(df: pd.DataFrame, chain: str) -> tuple[pd.DataFrame, list[str], list[
     cont = [c for c in LABELS if c not in dummies and c != f"log_km_{chain}"
             and c in df and df[c].notna().mean() > 0.9]
     main = cont + [d for d in dummies if df[d].nunique() > 1]
-    X = df[main].copy()
-    for c in cont:
-        X[f"{c}^2"] = df[c] ** 2
-    for a, b in itertools.combinations(cont, 2):
-        X[f"{a} x {b}"] = df[a] * df[b]
+    extra = {f"{c}^2": df[c] ** 2 for c in cont}
+    extra.update({f"{a} x {b}": df[a] * df[b] for a, b in itertools.combinations(cont, 2)})
     states = pd.get_dummies(df["state"], prefix="state", dtype=float)
-    X = pd.concat([X, states.loc[:, states.sum() >= 3]], axis=1)   # states with >= 3 stores
+    X = pd.concat([df[main], pd.DataFrame(extra, index=df.index),
+                   states.loc[:, states.sum() >= 3]], axis=1)       # states with >= 3 stores
     return X, main, list(X.columns)
 
 
@@ -292,7 +290,12 @@ def factor_analysis(dev: pd.DataFrame, cov: pd.DataFrame, chain: str):
             for k in range(2) for c in LABELS if c in sc and sc[c].notna().sum() >= 20]
     summary = {"chain": chain, "stores": M.shape[0], "products": M.shape[1],
                "share_observed": float(M.notna().mean().mean()), "rank_cv_min": best, "rank_1se": r1se,
-               "var_share_f1": float(var_share[0]), "var_share_f2": float(var_share[1])}
+               "var_share_f1": float(var_share[0]), "var_share_f2": float(var_share[1]),
+               # Two factors are always fitted for description; when CV prefers
+               # rank 0 they do not predict held-out cells and must not be
+               # interpreted as structure.
+               "note": ("CV chose rank 0: factors descriptive only, not supported by held-out fit"
+                        if best == 0 else "")}
     return summary, cv.assign(chain=chain), load, scores.merge(cov[["store_pk", "lat", "lon"]], on="store_pk"), \
         pd.DataFrame(corr)
 
