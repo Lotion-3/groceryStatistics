@@ -7,8 +7,10 @@
   * The first session is used for as long as it works. If it is refused (an
     explicit challenge, or a 6-failure streak), the runner switches ONCE to the
     spare. If the spare's first request also fails, two sessions in a row have
-    been refused: stop and pause the chain (GS_BLOCK_COOLDOWN_HOURS, default
-    12) -- no session is made, swapped or reused during the pause.
+    been refused: stop and PAUSE the chain -- no session is made, swapped or
+    reused during the pause. The pause escalates with repeated blocks
+    (GS_BLOCK_PAUSE_SCHEDULE, default 3,6,12,24 hours: 1st block 3 h, 2nd in a
+    row 6 h, ...), and a clean run (successes, no block) resets it.
   * No session is ever created after a refusal (the owner's rule).
   * Every session that completes at least one successful request is ARCHIVED
     in data/sessions/<chain>/<network>/<timestamp>/ (kept for the record; not
@@ -34,7 +36,8 @@ from typing import Optional
 from collectors.common import ROOT, VENDOR, ChainBlocked
 
 STASH = ROOT / "data" / "sessions"
-COOLDOWN_HOURS = float(os.environ.get("GS_BLOCK_COOLDOWN_HOURS", "12"))
+# Pause after the 1st, 2nd, 3rd, ... block in a row (hours); last value repeats.
+PAUSE_SCHEDULE = [float(x) for x in os.environ.get("GS_BLOCK_PAUSE_SCHEDULE", "3,6,12,24").split(",") if x.strip()]
 
 # Where each vendored collector keeps its session (it reads these on start).
 FILES = {
@@ -79,18 +82,39 @@ def _read_blocks() -> dict:
 
 
 def record_block(chain: str, reason: str) -> None:
+    """Record a block; the streak (blocks in a row without a clean run) sets
+    the length of the pause."""
     STASH.mkdir(parents=True, exist_ok=True)
     b = _read_blocks()
+    prev = b.get(chain) or {}
+    streak = int(prev.get("streak", 0)) + 1
     b[chain] = {"at": time.time(), "at_iso": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-                "ip": public_ip(), "reason": reason[:300]}
+                "ip": public_ip(), "reason": reason[:300], "streak": streak,
+                "pause_hours": pause_hours(streak)}
     _blocks_path().write_text(json.dumps(b, indent=1), encoding="utf-8")
+
+
+def mark_clean(chain: str) -> None:
+    """A run with successful requests and no block: reset the streak (the
+    next block gets the shortest pause). Past pauses already over are kept as
+    history in the file."""
+    b = _read_blocks()
+    if chain in b and b[chain].get("streak"):
+        if cooldown_left_hours(chain) == 0:
+            b[chain]["streak"] = 0
+            _blocks_path().write_text(json.dumps(b, indent=1), encoding="utf-8")
+
+
+def pause_hours(streak: int) -> float:
+    return PAUSE_SCHEDULE[min(max(streak, 1), len(PAUSE_SCHEDULE)) - 1]
 
 
 def cooldown_left_hours(chain: str) -> float:
     b = _read_blocks().get(chain)
-    if not b:
+    if not b or not b.get("streak", 1):
         return 0.0
-    return max(0.0, COOLDOWN_HOURS - (time.time() - float(b["at"])) / 3600.0)
+    hours = float(b.get("pause_hours") or pause_hours(int(b.get("streak", 1))))
+    return max(0.0, hours - (time.time() - float(b["at"])) / 3600.0)
 
 
 def save(chain: str) -> None:
@@ -115,7 +139,7 @@ def start_fresh(chain: str) -> str:
     the collector starts a FRESH session the normal way."""
     left = cooldown_left_hours(chain)
     if left > 0:
-        raise ChainBlocked(f"cooldown: blocked {COOLDOWN_HOURS:.0f} h ago or less; {left:.1f} h left")
+        raise ChainBlocked(f"cooldown: paused after a block; {left:.1f} h left")
     if chain not in FILES:
         return "n/a"
     for f in FILES[chain]:

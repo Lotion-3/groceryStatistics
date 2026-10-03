@@ -40,3 +40,24 @@ def test_pause_blocks_fresh_sessions_and_spares(stash):
         SS.start_fresh("target")
     with pytest.raises(ChainBlocked, match="cooldown"):
         SS.make_spare("target")
+
+
+def test_pause_escalates_and_resets_after_a_clean_run(stash, monkeypatch):
+    clock = {"t": 1_000_000.0}
+    monkeypatch.setattr(SS.time, "time", lambda: clock["t"])
+    SS.record_block("target", "explicit:a")
+    assert SS.cooldown_left_hours("target") == pytest.approx(3.0)        # 1st block: 3 h
+    clock["t"] += 3.5 * 3600
+    assert SS.cooldown_left_hours("target") == 0.0
+    SS.record_block("target", "explicit:b")                              # 2nd in a row: 6 h
+    assert SS.cooldown_left_hours("target") == pytest.approx(6.0)
+    clock["t"] += 7 * 3600
+    SS.mark_clean("target")                                              # clean run resets
+    SS.record_block("target", "explicit:c")
+    assert SS.cooldown_left_hours("target") == pytest.approx(3.0)
+
+
+def test_clean_run_does_not_cut_an_active_pause(stash, monkeypatch):
+    SS.record_block("target", "explicit:a")
+    SS.mark_clean("target")
+    assert SS.cooldown_left_hours("target") > 2.9

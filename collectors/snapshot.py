@@ -450,6 +450,11 @@ def run(chains: list[str], stores: list[dict], items: list[dict], db_path=DEFAUL
                         r.block(ch, None, None, e)
     finally:
         end_snapshot(con, snap)
+        # A chain that had successes and was not blocked this run resets its
+        # block streak, so a later block gets the shortest pause (DECISIONS #45).
+        from collectors import session_stash as SS
+        for ch in r.saved & r.active:
+            SS.mark_clean(ch)
     return snap
 
 
