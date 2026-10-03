@@ -32,3 +32,6 @@ venv/
 .idea/
 Thumbs.db
 desktop.ini
+
+# Local session stash (live cookies; DECISIONS #42)
+data/sessions/

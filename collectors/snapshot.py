@@ -84,6 +84,8 @@ class Run:
         # stopped (DECISIONS #41).
         self.budget = budget
         self.queries: dict[str, int] = {}
+        self.prepared: set[str] = set()     # chains whose session/cooldown check ran
+        self.saved: set[str] = set()        # chains whose session was stored in the stash
         self.sessions: dict = {}
         self.costco_done: set[str] = set()
         self.kroger_done: set[str] = set()
@@ -100,8 +102,38 @@ class Run:
         log_failure(self.con, self.snap, chain, store_pk, item_id, reason, raw_path)
 
     def block(self, chain: str, store_pk, item_id, err: Exception):
-        self.fail(chain, store_pk, item_id, f"BLOCKED (chain stopped for this run) {err}")
+        """Stop the chain for this run. If the machine changed networks
+        mid-run, the session simply belongs to the old IP: stop WITHOUT a
+        cooldown (the next run restores this network's session). Otherwise a
+        challenge/explicit refusal is a block: record it, which starts the
+        cooldown during which no session is created or reused (DECISIONS #42)."""
+        from collectors import session_stash as SS
+        msg = str(err)
+        if SS.ip_changed():
+            self.fail(chain, store_pk, item_id,
+                      f"IP-CHANGED mid-run (now {SS.public_ip()}); chain stopped without cooldown; "
+                      f"rerun to use this network's session. {msg}")
+        else:
+            self.fail(chain, store_pk, item_id, f"BLOCKED (chain stopped for this run) {msg}")
+            if msg.startswith(("explicit", "soft-streak")):
+                SS.record_block(chain, msg)
         self.active.discard(chain)
+
+    def session_ready(self, chain: str) -> bool:
+        """Once per chain per run: respect a cooldown, and put this network's
+        stored session in place (or let the collector start one normally)."""
+        if chain in self.prepared:
+            return chain in self.active
+        from collectors import session_stash as SS
+        self.prepared.add(chain)
+        try:
+            how = SS.restore(chain)
+        except ChainBlocked as e:
+            self.fail(chain, None, None, f"{e} (chain skipped this run)")
+            self.active.discard(chain)
+            return False
+        print(f"  [{chain}] session: {how} (network {SS.public_ip()})", flush=True)
+        return True
 
     def record(self, chain: str, store: dict, store_pk: int, item: dict, body: str, meta: dict) -> int:
         """Save the raw body (with full store/request context), parse, insert."""
@@ -118,6 +150,10 @@ class Run:
             self.fail(chain, store_pk, item["item_id"], "empty:no products in response", raw)
             return 0
         n = insert_observations(self.con, rows)
+        if chain not in self.saved:
+            from collectors import session_stash as SS
+            SS.save(chain)               # this session works on this network: keep it
+            self.saved.add(chain)
         spec = sum(r["store_specific"] for r in rows)
         print(f"  {chain} #{store['store_id']} {item['item_id']}: {n} rows ({spec} store-specific)", flush=True)
         return n
@@ -148,6 +184,8 @@ class Run:
 
     # -- chains --------------------------------------------------------------
     def target(self, srow: dict, items: list[dict]):
+        if not self.session_ready("target"):
+            return
         from collectors import target as T
         store = {"chain": "target", "store_id": srow["store_id"], "name": f"Target {srow.get('slug', '')}",
                  "lat": float(srow["lat"]), "lon": float(srow["lon"]), "zip": srow["zip"],
@@ -175,6 +213,8 @@ class Run:
                           on_first_body=relocate)
 
     def walmart(self, srow: dict, items: list[dict]):
+        if not self.session_ready("walmart"):
+            return
         from collectors import walmart as W
         try:
             sess = W.scoped_session(srow["zip"])
@@ -200,6 +240,8 @@ class Run:
                           lambda it: W.search(it["search_term"], sess))
 
     def costco(self, srow: dict, items: list[dict]):
+        if not self.session_ready("costco"):
+            return
         from collectors import costco_instacart as C
         if "csess" not in self.sessions:
             self.sessions["csess"] = C.session()
@@ -240,6 +282,8 @@ class Run:
         chain = K.CHAIN          # "kroger" (production) or "kroger_ce" (test host), set by KROGER_BASE_URL
         if chain not in self.active:
             return self.fail(chain, None, None, f"KROGER_BASE_URL selects {chain}; run with --chains {chain}")
+        if not self.session_ready(chain):
+            return
         if "ksess" not in self.sessions:
             self.sessions["ksess"] = K.Session()
         sess = self.sessions["ksess"]
@@ -273,6 +317,8 @@ class Run:
     def aldi(self, srow: dict, items: list[dict]):
         """ALDI shop assigned to the anchor ZIP (Instacart white-label, own
         domain). Location = anchor ZIP centroid, as for Costco."""
+        if not self.session_ready("aldi"):
+            return
         from collectors import aldi as AL
         if "asess" not in self.sessions:
             self.sessions["asess"] = AL.session()
@@ -304,6 +350,8 @@ class Run:
     def meijer(self, srow: dict, items: list[dict]):
         """Nearest full Meijer within 50 km of the anchor (Midwest only), from
         Meijer's own locator; never the upstream default store 130."""
+        if not self.session_ready("meijer"):
+            return
         from collectors import meijer as M
         z = zip_info(srow["zip"])
         lat, lon = z["lat"] or float(srow["lat"]), z["lon"] or float(srow["lon"])
