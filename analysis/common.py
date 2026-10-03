@@ -12,6 +12,7 @@ item is not on promotion); a promo-inclusive version uses the shelf price
 """
 from __future__ import annotations
 
+import re
 import sqlite3
 from pathlib import Path
 
@@ -67,6 +68,18 @@ def load_observations(db: Path = DB, snapshot_id: int | list[int] | None = None,
     return df
 
 
+_IC_ITEM = re.compile(r"^items_\d+-(\d+)$")
+
+
+def product_key(chain_product_id: str) -> str:
+    """Identifier of a product ACROSS stores. Instacart-style ids (Costco, ALDI)
+    embed the store: items_<locationId>-<productId>; the same product at two
+    stores shares only the productId part. Other chains' ids are already
+    store-independent."""
+    m = _IC_ITEM.match(str(chain_product_id))
+    return m.group(1) if m else str(chain_product_id)
+
+
 def product_panel(obs: pd.DataFrame, min_stores: int = 20) -> pd.DataFrame:
     """One row per (chain, product, store): the product's price at that store.
 
@@ -76,6 +89,7 @@ def product_panel(obs: pd.DataFrame, min_stores: int = 20) -> pd.DataFrame:
     cols = ["snapshot_id", "chain", "source", "chain_product_id", "store_pk", "store_id", "lat", "lon",
             "state", "region", "urbanicity", "product_name", "upc", "price", "regular_price",
             "is_promo", "category"]
+    obs = obs.assign(chain_product_id=obs["chain_product_id"].map(product_key))
     p = obs[cols].drop_duplicates(["snapshot_id", "chain", "chain_product_id", "store_pk"]).copy()
     p["department"] = p["category"].map(department)
     n = p.groupby(["snapshot_id", "chain", "chain_product_id"])["store_pk"].transform("nunique")

@@ -49,6 +49,7 @@ MIN_STORES = 20      # a product must be seen at this many stores to define its 
 B = 500              # bootstrap replicates
 BASKET_COVERAGE = 0.80
 BASKET_MAX = 40
+BASKET_MIN = 5
 RADIUS_KM = 100.0
 
 TAILS = ("abs", "upper", "lower")
@@ -202,8 +203,8 @@ def basket_costs(dev: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
         n_st = g["store_pk"].nunique()
         cov = g.groupby("chain_product_id")["store_pk"].nunique().sort_values(ascending=False)
         basket = cov[cov >= BASKET_COVERAGE * n_st].index[:BASKET_MAX]
-        if len(basket) == 0:
-            continue
+        if len(basket) < BASKET_MIN:
+            continue          # too few widely carried products for a meaningful basket
         names = g.drop_duplicates("chain_product_id").set_index("chain_product_id")["product_name"]
         defs += [{"chain": chain, "chain_product_id": p, "product_name": names.get(p), "stores": int(cov[p])}
                  for p in basket]
@@ -359,6 +360,10 @@ def run(snaps: list[int] | None = None, min_stores: int = MIN_STORES, min_n: int
         "module_a_tail_index_by_chain": tail_table(dev, min_n),
         "module_a_tail_index_by_category": tail_by_category(dev, min_n),
         "module_a_tail_index_by_department": tail_by_department(dev, min_n),
+        # Sensitivity: Hawaii and Alaska carry large real price premia
+        # (shipping); in a partial run of snapshot 2 the largest Walmart
+        # deviations were all one Honolulu store (milk $6.28 vs median $2.97).
+        "module_a_tail_index_excl_HI_AK": tail_table(dev[~dev["state"].isin(["HI", "AK"])], min_n),
         "module_a_cross_chain": cross_chain_table(panel, min_n),
         "module_a_store_index": idx,
         "module_a_spatial_clustering": clustering_table(idx),
