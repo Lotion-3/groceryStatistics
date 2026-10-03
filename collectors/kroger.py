@@ -21,6 +21,7 @@ import json
 import re
 import os
 import time
+from urllib.parse import urlparse
 from typing import Optional
 
 import requests
@@ -28,9 +29,10 @@ import requests
 from collectors.common import PACER, ChainBlocked, TransientError
 
 BASE_URL = os.environ.get("KROGER_BASE_URL", "https://api-ce.kroger.com/v1")
-DOMAIN = "api-ce.kroger.com"
+DOMAIN = urlparse(BASE_URL).netloc                 # pacing key: api-ce.kroger.com or api.kroger.com
 CHAIN = "kroger"
-SOURCE = "kroger_ce"
+# Test (certification) and production prices are kept apart in the data.
+SOURCE = "kroger_ce" if DOMAIN.startswith("api-ce.") else "kroger"
 LIMIT = 50            # API maximum page size
 # Same exclusion list as vendor/kroger_async._JUNK_LOCATION_TOKENS
 _JUNK_LOCATION_TOKENS = ("distribution", "fuel", "lab", "picking")
