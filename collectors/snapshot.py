@@ -87,6 +87,7 @@ class Run:
         self.prepared: set[str] = set()     # chains whose session/cooldown check ran
         self.saved: set[str] = set()        # chains whose session was stored in the stash
         self.switched: set[str] = set()     # chains that already used their spare this run
+        self.successes: dict = {}           # chain -> successful requests with the CURRENT session
         self.sessions: dict = {}
         self.costco_done: set[str] = set()
         self.kroger_done: set[str] = set()
@@ -141,10 +142,22 @@ class Run:
         for d in self.SPARE_DOMAINS[chain]:
             PACER.reset(d)
         self.switched.add(chain)
-        self.saved.discard(chain)          # the spare becomes this network's primary once it works
+        self.successes[chain] = 0
+        self.saved.discard(chain)          # archive the spare too once it has worked
         self.fail(chain, store_pk, item_id,
                   f"session-switch: primary session refused ({msg[:120]}); trying this network's spare once")
         return True
+
+    def rest(self, chain: str, store_pk, item_id, err) -> None:
+        """A session refused AFTER it had worked, with no spare left: stop the
+        chain for this run and rest briefly. Not counted as a block (#46)."""
+        from collectors import session_stash as SS
+        n = self.successes.get(chain, 0)
+        self.fail(chain, store_pk, item_id,
+                  f"REFUSED after {n} successful requests (not counted as a block); chain stopped, "
+                  f"resting {SS.REST_HOURS:g} h. {err}")
+        SS.record_rest(chain, str(err))
+        self.active.discard(chain)
 
     def session_ready(self, chain: str) -> bool:
         """Once per chain per run: respect a pause, start a FRESH session (the
@@ -206,19 +219,28 @@ class Run:
             try:
                 body = with_backoff(fetch, it)
             except ChainBlocked as e:
+                if not str(e).startswith(("explicit", "soft-streak")):
+                    return self.block(chain, store_pk, it["item_id"], e)          # session/cooldown errors
+                if self.successes.get(chain, 0) == 0:
+                    # A fresh session refused on its first request: a BLOCK (#46).
+                    return self.block(chain, store_pk, it["item_id"],
+                                      f"{e} (fresh session refused on its first request: counted as a block)")
+                # The session had worked: it aged out. Not a block.
                 if not self.try_spare(chain, store_pk, it["item_id"], e):
-                    return self.block(chain, store_pk, it["item_id"], e)
-                try:                       # the spare's first request: a second failure = the IP
+                    return self.rest(chain, store_pk, it["item_id"], e)
+                try:                       # the spare is fresh: refused on its first request = a block
                     body = with_backoff(fetch, it)
                 except ChainBlocked as e2:
                     return self.block(chain, store_pk, it["item_id"],
-                                      f"{e2} (second session in a row refused: treating as an IP block)")
+                                      f"{e2} (fresh spare refused on its first request: counted as a block)")
                 except TransientError as e2:
                     self.fail(chain, store_pk, it["item_id"], str(e2))
                     continue
+                self.successes[chain] = 1
             except TransientError as e:
                 self.fail(chain, store_pk, it["item_id"], str(e))
                 continue
+            self.successes[chain] = self.successes.get(chain, 0) + 1
             if on_first_body:
                 on_first_body(body)
                 on_first_body = None

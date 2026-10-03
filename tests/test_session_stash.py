@@ -61,3 +61,14 @@ def test_clean_run_does_not_cut_an_active_pause(stash, monkeypatch):
     SS.record_block("target", "explicit:a")
     SS.mark_clean("target")
     assert SS.cooldown_left_hours("target") > 2.9
+
+
+def test_rest_pauses_briefly_without_counting_a_block(stash, monkeypatch):
+    clock = {"t": 2_000_000.0}
+    monkeypatch.setattr(SS.time, "time", lambda: clock["t"])
+    SS.record_rest("target", "explicit:aged out")
+    assert SS.cooldown_left_hours("target") == pytest.approx(SS.REST_HOURS)
+    clock["t"] += SS.REST_HOURS * 3600 + 1
+    assert SS.cooldown_left_hours("target") == 0.0
+    SS.record_block("target", "explicit:first try")       # still the 1st block: 3 h
+    assert SS.cooldown_left_hours("target") == pytest.approx(3.0)

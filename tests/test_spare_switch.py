@@ -1,4 +1,6 @@
-"""The one-switch rule (DECISIONS #43), with fake fetches: no network."""
+"""Refusal rules (DECISIONS #43, #46), with fake fetches: no network.
+
+A block counts only when a FRESH session is refused on its first request."""
 import pytest
 
 from collectors import session_stash as SS
@@ -19,6 +21,7 @@ def run(tmp_path, monkeypatch):
     monkeypatch.setattr(SS, "has_spare", lambda chain: True)
     monkeypatch.setattr(SS, "load_spare", lambda chain: {"cookies": "spare"})
     monkeypatch.setattr(SS, "record_block", lambda chain, msg: blocks.append(msg))
+    monkeypatch.setattr(SS, "record_rest", lambda chain, msg: blocks.append("REST " + msg))
     return r, recorded, blocks
 
 
@@ -50,7 +53,15 @@ def test_two_sessions_in_a_row_is_an_ip_block(run):
     assert recorded == ["i0"] and len(blocks) == 1 and "target" not in r.active
 
 
-def test_only_one_switch_per_run(run):
+def test_fresh_session_refused_on_first_request_is_a_block(run):
     r, recorded, blocks = run
-    r._query_items("target", STORE, 1, ITEMS, fetcher(["block", "ok", "block"]))
-    assert recorded == ["i0"] and len(blocks) == 1 and "target" not in r.active
+    r._query_items("target", STORE, 1, ITEMS, fetcher(["block"]))
+    assert recorded == [] and len(blocks) == 1 and not blocks[0].startswith("REST")
+    assert "target" not in r.switched                 # no switch: it is a block
+
+
+def test_spare_worked_then_refused_is_a_rest_not_a_block(run):
+    r, recorded, blocks = run
+    r._query_items("target", STORE, 1, ITEMS, fetcher(["ok", "block", "ok", "block"]))
+    assert recorded == ["i0", "i1"] and len(blocks) == 1 and blocks[0].startswith("REST")
+    assert "target" not in r.active

@@ -36,6 +36,10 @@ from typing import Optional
 from collectors.common import ROOT, VENDOR, ChainBlocked
 
 STASH = ROOT / "data" / "sessions"
+# A BLOCK (DECISIONS #46) is counted only when a FRESH session is refused on
+# its first request. A session refused after it had worked has aged out: the
+# run stops for that chain and it rests briefly, without counting a block.
+REST_HOURS = float(os.environ.get("GS_REFUSAL_REST_HOURS", "1"))
 # Pause after the 1st, 2nd, 3rd, ... block in a row (hours); last value repeats.
 PAUSE_SCHEDULE = [float(x) for x in os.environ.get("GS_BLOCK_PAUSE_SCHEDULE", "3,6,12,24").split(",") if x.strip()]
 
@@ -94,6 +98,18 @@ def record_block(chain: str, reason: str) -> None:
     _blocks_path().write_text(json.dumps(b, indent=1), encoding="utf-8")
 
 
+def record_rest(chain: str, reason: str) -> None:
+    """A refusal that is not a block: rest REST_HOURS before the next run, so a
+    new session is not made straight after a refusal. The block streak is kept."""
+    STASH.mkdir(parents=True, exist_ok=True)
+    b = _read_blocks()
+    e = b.get(chain) or {"streak": 0}
+    e.update({"rest_until": time.time() + REST_HOURS * 3600, "rest_reason": reason[:300],
+              "rest_iso": datetime.now(timezone.utc).isoformat(timespec="seconds")})
+    b[chain] = e
+    _blocks_path().write_text(json.dumps(b, indent=1), encoding="utf-8")
+
+
 def mark_clean(chain: str) -> None:
     """A run with successful requests and no block: reset the streak (the
     next block gets the shortest pause). Past pauses already over are kept as
@@ -110,12 +126,18 @@ def pause_hours(streak: int) -> float:
 
 
 def cooldown_left_hours(chain: str) -> float:
+    """Hours left of the longer of: the pause after a counted block, or the
+    short rest after a refusal that was not a block."""
     b = _read_blocks().get(chain)
-    if not b or not b.get("streak", 1):
+    if not b:
         return 0.0
-    hours = float(b.get("pause_hours") or pause_hours(int(b.get("streak", 1))))
-    return max(0.0, hours - (time.time() - float(b["at"])) / 3600.0)
-
+    now = time.time()
+    pause = 0.0
+    if b.get("streak") and "at" in b:
+        hours = float(b.get("pause_hours") or pause_hours(int(b["streak"])))
+        pause = hours - (now - float(b["at"])) / 3600.0
+    rest = (float(b.get("rest_until", 0)) - now) / 3600.0
+    return max(0.0, pause, rest)
 
 def save(chain: str) -> None:
     """Archive the session now in use (it has just had a successful request):
