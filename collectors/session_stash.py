@@ -158,6 +158,90 @@ def restore(chain: str) -> str:
     return "fresh"
 
 
+# ---------------------------------------------------------------------------
+# Spare session (DECISIONS #43): one per chain per network, made in advance.
+# Owner's rule from basketBuddy testing: a genuine block hits the IP, not the
+# cookie, so one failing session can be bad luck. On a challenge the runner
+# may switch ONCE to this network's spare; if that also fails (two sessions
+# in a row), it is the IP: stop and cool down. Spares are only ever created
+# before any block (never during a cooldown), and only for chains whose
+# session can be swapped in place: Target, Costco (Instacart), ALDI.
+# ---------------------------------------------------------------------------
+
+SPARE_CHAINS = ("target", "costco", "aldi")
+
+
+def _spare_dir(chain: str, ip: Optional[str] = None) -> Path:
+    return _dir(chain, ip or public_ip()) / "spare"
+
+
+def has_spare(chain: str) -> bool:
+    d = _spare_dir(chain)
+    return chain in SPARE_CHAINS and any((d / f.name).exists() for f in FILES[chain])
+
+
+def ensure_spare(chain: str) -> str:
+    """Create this network's spare session through the collector's normal
+    session start, if there is none. Refused during a cooldown."""
+    if chain not in SPARE_CHAINS:
+        return "n/a"
+    if cooldown_left_hours(chain) > 0:
+        raise ChainBlocked("cooldown: no spare session is created after a block")
+    if has_spare(chain):
+        return "exists"
+    d = _spare_dir(chain)
+    d.mkdir(parents=True, exist_ok=True)
+    now = time.time()
+    if chain == "target":
+        import target_pricing as tp
+        sess = tp._warm_http_session()
+        (d / FILES["target"][0].name).write_text(
+            json.dumps({"cookies": sess["cookies"], "ua": sess["ua"], "saved_at": now}), encoding="utf-8")
+    elif chain == "costco":
+        import instacart_pricing as ic
+        cookies, qp, zone = ic._bootstrap("costco")
+        (d / FILES["costco"][0].name).write_text(json.dumps(
+            {"cookies": cookies, "qp": qp, "zone_id": zone, "expires_at": now + ic.SESSION_TTL}), encoding="utf-8")
+    elif chain == "aldi":
+        from collectors import aldi  # noqa: F401  (puts vendor/aldi on sys.path)
+        import aldi_pricing as ap
+        cookies, qp, zone, shop = ap._bootstrap()
+        ttl = ap.SESSION_TTL if ap.SESSION_TTL != float("inf") else 30 * 24 * 3600
+        (d / FILES["aldi"][0].name).write_text(json.dumps(
+            {"cookies": cookies, "qp": qp, "zone_id": zone, "shop_id": shop, "expires_at": now + ttl}),
+            encoding="utf-8")
+    return "created"
+
+
+def load_spare(chain: str):
+    """Put this network's spare in place as the primary session and load it
+    into the collector's memory WITHOUT any fallback that would create a new
+    session. The spare is consumed (it becomes the primary). Returns the
+    session object the wrapper uses, or None if there is no spare."""
+    if not has_spare(chain):
+        return None
+    d = _spare_dir(chain)
+    for f in FILES[chain]:
+        if (d / f.name).exists():
+            shutil.copy2(d / f.name, f)
+            (d / f.name).unlink()
+    if chain == "target":
+        import target_pricing as tp
+        sess = tp._load_http_session()          # disk only: no validation, no warm-up
+        tp._http_session = sess
+        return sess
+    data = json.loads(FILES[chain][0].read_text(encoding="utf-8"))
+    if chain == "costco":
+        import instacart_pricing as ic
+        ic._mem_cache, ic._session = data, None  # non-empty cache: _get_session builds, never bootstraps
+        return ic._get_session("costco")
+    from collectors import aldi  # noqa: F401
+    import aldi_pricing as ap
+    ap._mem_cache, ap._session = data, None
+    s, zone, _shop = ap._get_session()
+    return s, zone
+
+
 def ip_changed() -> bool:
     """True if the public IP differs from the one this process started on."""
     before = public_ip()

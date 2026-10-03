@@ -86,6 +86,7 @@ class Run:
         self.queries: dict[str, int] = {}
         self.prepared: set[str] = set()     # chains whose session/cooldown check ran
         self.saved: set[str] = set()        # chains whose session was stored in the stash
+        self.switched: set[str] = set()     # chains that already used their spare this run
         self.sessions: dict = {}
         self.costco_done: set[str] = set()
         self.kroger_done: set[str] = set()
@@ -119,6 +120,32 @@ class Run:
                 SS.record_block(chain, msg)
         self.active.discard(chain)
 
+    SPARE_DOMAINS = {"target": ("cdui-orchestrations.target.com",), "costco": ("www.instacart.com",),
+                     "aldi": ("www.aldi.us",)}
+    SESSION_KEYS = {"target": "tsess", "costco": "csess", "aldi": "asess"}
+
+    def try_spare(self, chain: str, store_pk, item_id, err: Exception) -> bool:
+        """Switch ONCE per run to this network's spare session (DECISIONS #43).
+        Not after a cooldown/session error, not if the machine changed network
+        (that is handled by block()), and never a newly created session."""
+        from collectors import session_stash as SS
+        from collectors.common import PACER
+        msg = str(err)
+        if (chain in self.switched or chain not in SS.SPARE_CHAINS
+                or not msg.startswith(("explicit", "soft-streak")) or SS.ip_changed() or not SS.has_spare(chain)):
+            return False
+        sess = SS.load_spare(chain)
+        if sess is None:
+            return False
+        self.sessions[self.SESSION_KEYS[chain]] = sess
+        for d in self.SPARE_DOMAINS[chain]:
+            PACER.reset(d)
+        self.switched.add(chain)
+        self.saved.discard(chain)          # the spare becomes this network's primary once it works
+        self.fail(chain, store_pk, item_id,
+                  f"session-switch: primary session refused ({msg[:120]}); trying this network's spare once")
+        return True
+
     def session_ready(self, chain: str) -> bool:
         """Once per chain per run: respect a cooldown, and put this network's
         stored session in place (or let the collector start one normally)."""
@@ -132,7 +159,13 @@ class Run:
             self.fail(chain, None, None, f"{e} (chain skipped this run)")
             self.active.discard(chain)
             return False
-        print(f"  [{chain}] session: {how} (network {SS.public_ip()})", flush=True)
+        spare = "n/a"
+        if chain in SS.SPARE_CHAINS:
+            try:
+                spare = SS.ensure_spare(chain)
+            except Exception as e:     # a spare is optional: never stop the run over it
+                spare = f"unavailable ({repr(e)[:80]})"
+        print(f"  [{chain}] session: {how}; spare: {spare} (network {SS.public_ip()})", flush=True)
         return True
 
     def record(self, chain: str, store: dict, store_pk: int, item: dict, body: str, meta: dict) -> int:
@@ -173,7 +206,16 @@ class Run:
             try:
                 body = with_backoff(fetch, it)
             except ChainBlocked as e:
-                return self.block(chain, store_pk, it["item_id"], e)
+                if not self.try_spare(chain, store_pk, it["item_id"], e):
+                    return self.block(chain, store_pk, it["item_id"], e)
+                try:                       # the spare's first request: a second failure = the IP
+                    body = with_backoff(fetch, it)
+                except ChainBlocked as e2:
+                    return self.block(chain, store_pk, it["item_id"],
+                                      f"{e2} (second session in a row refused: treating as an IP block)")
+                except TransientError as e2:
+                    self.fail(chain, store_pk, it["item_id"], str(e2))
+                    continue
             except TransientError as e:
                 self.fail(chain, store_pk, it["item_id"], str(e))
                 continue
@@ -271,7 +313,7 @@ class Run:
                  "source": "instacart", "anchor_zip": srow["zip"], "coord_quality": "anchor_zip"}
         store_pk = upsert_store(self.con, store)
         self._query_items("costco", store, store_pk, items,
-                          lambda it: C.search(it["search_term"], shop_id, zone, srow["zip"], sess),
+                          lambda it: C.search(it["search_term"], shop_id, zone, srow["zip"], self.sessions["csess"][0]),
                           meta={"shop_id": shop_id, "zone_id": zone, "zip": srow["zip"]})
 
     def kroger(self, srow: dict, items: list[dict]):
@@ -344,7 +386,7 @@ class Run:
                  "anchor_zip": srow["zip"], "coord_quality": "anchor_zip"}
         store_pk = upsert_store(self.con, store)
         self._query_items("aldi", store, store_pk, items,
-                          lambda it: AL.search(it["search_term"], shop_id, zone, srow["zip"], sess),
+                          lambda it: AL.search(it["search_term"], shop_id, zone, srow["zip"], self.sessions["asess"][0]),
                           meta={"shop_id": shop_id, "zip": srow["zip"]})
 
     def meijer(self, srow: dict, items: list[dict]):

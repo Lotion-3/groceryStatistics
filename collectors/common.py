@@ -98,6 +98,13 @@ class DomainPacer:
         with self._guard:
             return self._locks.setdefault(domain, threading.Lock())
 
+    def reset(self, domain: str) -> None:
+        """Clear a domain's failure streak and tripped state. Used only when the
+        runner switches to the network's spare session (DECISIONS #43)."""
+        with self._lock(domain):
+            self._tripped.pop(domain, None)
+            self._fails.pop(domain, None)
+
     def call(self, domain: str, fn: Callable, *args, **kwargs):
         with self._lock(domain):
             if domain in self._tripped:
