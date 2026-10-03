@@ -92,24 +92,35 @@ permutation test and Moran's I, with neighbours within 100 km. Basket risk is th
 a fixed basket per store, relative to the chain median, summarised by its 95% value at
 risk and expected shortfall.
 
-**Spatial model (Module B).** Three models for $y = \log p$:
-- M0: product effects, chain effects (identified only through UPCs shared across chains),
-  store effects with chain-specific scale, and Normal residuals.
-- M1: as M0, with Student-$t$ residuals.
-- M2: as M1, plus a Matérn-3/2 Gaussian-process field over store locations, fitted with a
-  Hilbert-space approximation.
+**Spatial model (Module B).** Most store prices equal the chain's list price exactly, and
+departures are mostly upward [RESULTS PENDING: shares]. Models with a single continuous
+residual cannot fit a point mass plus a skewed tail: a Student-$t$ residual and a latent
+two-component mixture both failed to converge on real data. Whether a price is at list is
+observed, so we use a **two-part model**. Let $\ell_j$ be the chain's modal price of
+product $j$ and $z_{sj} = 1$ if store $s$ charges exactly $\ell_j$.
 
-Inference is by NUTS (PyMC with NumPyro; 4 chains × 1,000 draws). We report R-hat, ESS,
-posterior predictive checks, PSIS-LOO and, for M2, the **spatial share**
-$\operatorname{var}_s f / (\operatorname{var}_s f + \sigma_u^2)$.
+- *Part 1 (how often):* $z_{sj} \sim \text{Bernoulli}(\pi_s)$, with
+  $\operatorname{logit}\pi_s = \alpha_c + w_s$ and store effects $w_s$.
+- *Part 2 (by how much):* for prices off list,
+  $\log(p_{sj}/\ell_j) \sim t_\nu(m_s, \sigma_1)$, with $m_s = \mu_c + u_s$ (M1). M2 adds
+  $f(\text{location}_s)$ to $m_s$, where $f$ is a Matérn-3/2 Gaussian-process field fitted
+  with a Hilbert-space approximation.
+- *Reference model M0:* product, chain and store effects with Normal residuals. It cannot
+  produce prices exactly at list and serves only as a baseline.
 
-A simulation at real Target locations checked the method:
-- M2 recovered the field's scale, the residual df and the chain effects.
-- It slightly under-estimated the spatial share (0.54 vs 0.62 for one chain, 0.60 vs 0.64
-  for the other).
-- Pointwise LOO barely separated M2 from M1 (ΔELPD 3 ± 1.8) even though the truth was
-  strongly spatial. We therefore treat LOO as a check on the residual model, not as
-  evidence about spatial structure.
+The models are fitted on the contiguous US; Hawaii and Alaska stores are excluded and
+counted, and their price premia are reported in Module A. Inference is by NUTS (PyMC with
+NumPyro; 4 chains × 1,000 draws). We report:
+- R-hat, ESS and divergences for every model;
+- posterior predictive checks, including the share of prices at list;
+- PSIS-LOO comparing M1 with M2;
+- the **spatial share** $\operatorname{var}_s f / (\operatorname{var}_s f + \sigma_u^2)$;
+- Moran's I of the stores' propensity to depart from list.
+
+A simulation from this data-generating process, at real Target locations, recovered 13 of
+16 parameters inside their 90% intervals; the other three were close. The spatial share was
+slightly underestimated for one chain (0.52 vs 0.62). LOO preferred the spatial model
+(ΔELPD 20 ± 7).
 
 **Shrinkage and factors (Module C).**
 - *Response:* each store's price index (its mean $d$).
