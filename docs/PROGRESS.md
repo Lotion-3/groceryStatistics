@@ -173,3 +173,35 @@ non-grocery national brands; after the Target block, pause and resume at ≥ 5 s
 **Item review aid:** `python -m scripts.item_review_sheet` → `config/item_review.csv`. It
 compares Walmart's pick with a UPC proposed independently from Meijer/Kroger search results
 (store brands excluded), flags agreement, and leaves `confirmed_*` columns for the owner.
+
+## Day 3–4 (2026-10-03)
+
+**Collection**
+- Costco and ALDI: **finished**, all 250 anchors, no blocks (Costco 174 warehouses, ALDI 205
+  stores).
+- Kroger production API: running, 84+ stores so far, no blocks.
+- Target: budgeted sessions (32 queries) on the new session code. The first session was
+  clean (one fresh session, no refusals). More sessions are scheduled tonight.
+- Walmart: 41 stores. Meijer: 3.
+
+**Analysis**
+- **Module E (pricing architecture):** point mass, price-list variogram, H0 persistence,
+  an exploratory urban/rural test.
+- **Dirichlet-process zone model** (`analysis/zone_model.py`): collapsed Gibbs plus
+  merge–split. It was validated on simulation only after three fixes, each found by the
+  check: an empirical-Bayes base measure, store-unique levels set aside, and merge–split
+  moves.
+- **Results (preliminary):**
+  - ALDI: 10 zones, with one national zone of 79 stores in 27 states.
+  - Walmart: 5 zones.
+  - Costco: 18 regional zones.
+  - Kroger: 17 zones, and **94% of stores sit in a zone dominated by their own banner**,
+    although the model is never given banners.
+- **Write-up restructured** around pricing architecture (`paper/writeup.md`); the plan is
+  in `docs/STUDY_PLAN.md`.
+
+**Pending**
+- The session-replacement code (DECISIONS #47) is in the working tree but uncommitted. The
+  owner will commit it when the public repo is created.
+- A Target test with budget 64 needs the owner's go-ahead.
+- Item review, for the cross-chain panel.
