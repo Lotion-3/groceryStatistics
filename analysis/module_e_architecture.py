@@ -270,6 +270,40 @@ def zone_summary(chain: str, st: pd.DataFrame, M: pd.DataFrame, D: np.ndarray, r
 
 
 # ---------------------------------------------------------------------------
+# 6. Kroger banners: an external check on the zones
+# ---------------------------------------------------------------------------
+
+def banners(store_pks) -> pd.Series:
+    """Kroger banner per store from the store name (e.g. 'RALPHS Ralphs - Main St')."""
+    import sqlite3
+    from analysis.common import DB
+    con = sqlite3.connect(DB)
+    names = pd.read_sql_query("SELECT store_pk, name FROM stores", con).set_index("store_pk")["name"]
+    con.close()
+    return names.reindex(store_pks).fillna("").str.split().str[0].str.upper()
+
+
+def banner_check(st: pd.DataFrame, F: np.ndarray, D: np.ndarray, z: np.ndarray) -> pd.DataFrame:
+    """Do the zones (found without banner labels) line up with banners?
+    purity = share of stores whose zone's most common banner is their own."""
+    from analysis.zone_model import adjusted_rand
+    b = banners(st.index).to_numpy()
+    purity = sum(pd.Series(b[z == k]).value_counts().iloc[0] for k in np.unique(z)) / len(z)
+    iu = np.triu_indices(len(z), 1)
+    same = (b[:, None] == b[None, :])[iu]
+    near = (D[iu] < 100) & ~np.isnan(F[iu])
+    f = F[iu]
+    return pd.DataFrame([{"stores": len(z), "banners": len(set(b)), "zones": len(np.unique(z)),
+                          "zone_banner_purity": float(purity),
+                          "ari_zone_vs_banner": adjusted_rand(pd.factorize(b)[0], z),
+                          "near_pairs_same_banner": int((near & same).sum()),
+                          "delta_near_same_banner": float(f[near & same].mean()) if (near & same).any() else np.nan,
+                          "near_pairs_diff_banner": int((near & ~same).sum()),
+                          "delta_near_diff_banner": float(f[near & ~same].mean()) if (near & ~same).any() else np.nan,
+                          "banner_counts": "; ".join(f"{k} {v}" for k, v in pd.Series(b).value_counts().items())}])
+
+
+# ---------------------------------------------------------------------------
 # Figures
 # ---------------------------------------------------------------------------
 
@@ -346,6 +380,7 @@ def run(snaps: list[int] | None = None) -> str:
     pm = point_mass(p)
     vg_rows, fits, h0, ur, bars, zmap = [], [], [], [], {}, {}
     zrows, zdetail = [], []
+    banner_tab = pd.DataFrame()
     for chain in CHAINS:
         st, M = chain_matrix(p, chain)
         if len(st) < MIN_STORES:
@@ -367,6 +402,8 @@ def run(snaps: list[int] | None = None) -> str:
             zrows.append(zr)
             zdetail.append(zd)
             zmap[chain] = (st.reset_index(), z)
+            if chain == "kroger":
+                banner_tab = banner_check(st, F, D, z)
         ur.append({"chain": chain, **urban_rural_test(F, D, (st["urbanicity"] != "urban").to_numpy(), rng)})
     note = (f"Snapshot(s) {snaps}; {int(p['store_pk'].nunique())} stores, {len(p):,} store-product prices "
             f"(regular prices, products at >= 10 stores). PRELIMINARY, cross-sectional.")
@@ -377,6 +414,7 @@ def run(snaps: list[int] | None = None) -> str:
               "module_e_variogram_fit": pd.DataFrame(fits), "module_e_h0_groups": pd.DataFrame(h0),
               "module_e_urban_rural": pd.DataFrame(ur),
               "module_e_zones": pd.DataFrame(zrows),
+              "module_e_kroger_banners": banner_tab,
               "module_e_zone_detail": pd.concat(zdetail, ignore_index=True) if zdetail else pd.DataFrame()}
     for name, t in tables.items():
         t.to_csv(TAB / f"{name}.csv", index=False)

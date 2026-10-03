@@ -1,173 +1,235 @@
-# Heavy Tails and Spatial Structure in Retail Price Dispersion: A Preliminary Cross-Section
+# How Retailers Price Across Space: National Lists, Pricing Zones and Local Departures
 
-*DRAFT, written before data collection. Sections marked **[RESULTS PENDING]** are filled in
-after snapshot 1. Every number will state its sample size, and every result is preliminary
-and cross-sectional.*
+*Preliminary draft. All numbers come from snapshot 2 (October 2026), one cross-section,
+with collection still finishing for some chains; they will be updated at the final run
+(marked **[update]**). Every result states its sample size. Nothing here is causal or
+dynamic.*
+
+## Abstract
+
+For identical products, how does a retail chain's price vary across its stores? We
+collected store-specific online prices for about 60 nationally distributed items at up to
+250 sampled locations for six US chains, from retailer websites, Instacart-built
+storefronts and Kroger's official API. Most prices sit **exactly** at a chain's list price
+(91% at ALDI and Walmart, 62% at Kroger), so dispersion is a point mass plus structured
+departures, not a continuous spread. We describe each chain's *pricing architecture* with
+four tools:
+- a price-list variogram;
+- the persistent homology of price-list dissimilarity;
+- a Dirichlet-process mixture that recovers pricing zones from prices alone;
+- a two-part Bayesian spatial model of departures.
+
+The chains differ sharply:
+- ALDI: a national list with a few regional zones.
+- Walmart: a slow geographic gradient.
+- Costco on Instacart: regional zones about 850 km across.
+- Kroger: highly local zones that coincide with its banners. 94% of stores fall in
+  banner-pure zones, although the model is never told the banners.
+
+Each method is first checked on simulated data with a known answer.
 
 ## 1. Question
 
-If a product is identical (same UPC), how much does its price vary across stores of the same
-chain and across chains? How heavy are the tails of that variation, and what geographic or
-latent structure lies behind it? Under the law of one price, identical goods sold by one
-firm would cost the same everywhere. Deviations from it, and especially their extremes, say
-something about how prices are set: zone pricing, local competition, store-level
-discretion, and promotions.
+Under the law of one price, a chain selling an identical product would charge the same
+everywhere. DellaVigna and Gentzkow (2019, *QJE*), using Nielsen scanner data, found that
+US chains price nearly uniformly across stores despite large differences in local
+demographics.
 
-We study four things:
-
-1. the distribution and tail index of within-chain price deviations (Module A);
-2. how much of a store's price level is a smooth geographic surface (Module B);
-3. which neighbourhood characteristics predict store price levels, and whether a few
-   latent factors describe the store × product price matrix (Module C);
-4. what a shopper could save by splitting a basket across nearby stores (Module D).
+We ask a complementary question with public data: **how is a chain's price list organised
+across space?** There are three candidate architectures: one national list, a few discrete
+zones, or a continuous gradient. Where do departures from the list occur, and how large
+are the extremes? The answer differs by chain, and the methods needed to see it are the
+contribution.
 
 ## 2. Data
 
-**Collection.** One cross-sectional snapshot [RESULTS PENDING: dates, start/end times] of
-online, store-specific prices from up to six chains, grouped by how the prices are obtained:
-
+**Sources.** Snapshot 2 [update: dates]. Store-specific prices came from three routes:
 - *Retailer websites:* Walmart, Target and Meijer.
 - *Instacart storefronts:* Costco, and ALDI's own Instacart-built site.
-- *Kroger's official developer API:* its test environment, for the 25 items its catalog
-  carries.
+- *Kroger's official Public API* (production), which covers its banners: Kroger, Ralphs,
+  Fry's, Fred Meyer, Smith's, Harris Teeter, Mariano's and others.
 
-Instacart and Kroger-test prices are analysed separately from retailer-website prices.
-[RESULTS PENDING: final per-chain store counts. Target, Walmart and Meijer each blocked
-collection partway through. Those chains have fewer stores, but because stores were
-visited in random order, the stores they have are a random subsample.]
+Instacart prices may include platform pricing, so Instacart chains are always reported
+separately.
 
-Collection reused the owner's existing price-lookup code. It was rate-limited to one
-request per site at a time, at least 5 seconds apart for Walmart and Target. Every raw
-response is archived, and the database can be rebuilt from that archive. When a site
-blocked a request, collection for that chain stopped; blocks were never worked around.
-Failures are logged with chain, store, item, time and reason.
+**Stores.** We drew a stratified random sample of 250 locations from Target's directory of
+1,893 stores. Strata are Census region × urbanicity, where urbanicity is the store ZIP's
+2020 USDA RUCA class. For every other chain, the store is the one that chain assigns to,
+or has nearest to, each sampled location.
 
-**Stores.** We drew a stratified random sample of 250 Target stores from Target's full
-directory of 1,893 stores. Strata are Census region × urbanicity class, where urbanicity is
-the 2020 USDA RUCA code of the store's ZIP: urban, suburban or rural. Allocation is
-proportional, the seed is fixed, and stores were visited in a seeded random order. Walmart
-and Costco stores are those each retailer assigns to the sampled Target ZIPs. That gives
-geographically paired stores, but it is not a random sample of those chains.
+Collection visits locations in a **balanced-prefix order**: systematic interleaving across
+strata with farthest-point order within each stratum. A chain that stops part-way
+therefore still has a stratified, geographically spread sample: at 25% of the list, every
+stratum is within one store of proportional, and 38 states are present.
 
-**Items.** 58 items: 37 national-brand packaged groceries, 15 national-brand non-grocery
-items (household, personal care, over-the-counter medicine, baby, pet) and 6 perishables,
-which are compared within chain only. Every product returned by each search is stored, not
-just the cheapest. Products are identical within a chain by the chain's product id, and
-across chains by a UPC read from each retailer's product page and confirmed by hand.
+Store counts [update]:
+
+| Chain | Stores | Source |
+|---|---|---|
+| ALDI | 205 | ALDI's Instacart-built site |
+| Costco | 174 | Instacart |
+| Kroger | 84 so far (target about 130) | official API |
+| Walmart | 41 | stopped at a captcha |
+| Meijer | 3 | stopped at a block |
+| Target | short budgeted sessions | website |
+
+**Items.** 58 items:
+- 37 national-brand packaged groceries;
+- 15 national-brand non-grocery items (household, personal care, over-the-counter, baby,
+  pet);
+- 6 perishables.
+
+Every product returned by each search is stored, not only the best match. Within a chain,
+a product is identified by the chain's own product id. Across chains, products are
+matched by UPC.
 
 **Prices.**
-- Main analysis: the regular (non-promotional) price. A row is a promotion if the retailer
-  reports a regular price above the current one.
-- Sensitivity analysis: the shelf price including markdowns.
-- Only rows the retailer itself ties to the requested store are used.
+- The main analysis uses regular (non-promotional) prices, to the cent, and only rows the
+  retailer itself ties to the requested store.
+- Promotions are flagged when the retailer reports a regular price above the current one.
+  Multi-buy offers are recorded but not treated as prices.
 
-**Coverage.** [RESULTS PENDING: table of intended vs collected store-item pairs by chain,
-region and urbanicity; the share of rows that are store-specific; failure reasons. Any
-chain below 60% coverage is flagged.]
+**Collection practice.**
+- One request at a time per site, at least 5 s apart for Walmart and Target, and 9 s for
+  Kroger (within its published daily limit).
+- Every raw response is archived, and the database can be rebuilt from the archive.
+- Every failure is logged.
+- A chain whose fresh session is refused on its first request is treated as blocked and
+  paused (3 h, then longer on repeats).
+- A session that fails after working is replaced at most twice per run.
+- Target and Walmart limited automated access at low volume, so those chains are partial.
 
 ## 3. Methods
 
-**Deviation.** For product $j$ at store $s$ of chain $c$,
-$d_{sj} = \log p_{sj} - \log \operatorname{median}_{s' \in c}\, p_{s'j}$. Only products
-seen at 20 or more stores are used. For UPC-matched products, a cross-chain version uses
-the median over all chains.
+**3.1 Point mass and departures.** For each chain and product, the list price $\ell_j$ is
+the modal price. We report:
+- the share of store prices equal to $\ell_j$;
+- for departures, their direction and size, $\log(p_{sj}/\ell_j)$.
 
-**Tails (Module A).** For $|d|$, and for the upper and lower tails separately, we report:
-- the Hill estimator of the tail index $\alpha$ at $k = 5\%$ of the nonzero observations,
-  with the stability-rule $k$ and $k = 10\%$ as sensitivity checks;
-- a generalised Pareto fit above the 90% quantile, reported as the shape $\xi$. Here
-  $\xi \le 0$ means no power-law tail.
+**3.2 Price-list variogram.** For stores $s, t$ of a chain, the dissimilarity $\delta_{st}$
+is the fraction of products both carry (at least 20) that they price differently. The
+variogram is the mean of $\delta$ by distance band. Its 95% bands come from a
+**store bootstrap**, because pairs sharing a store are dependent. We fit
+$\gamma(h) = \text{nugget} + (\text{sill} - \text{nugget})(1 - e^{-h/r})$:
+- the nugget measures local departures;
+- the range $r$ is the scale over which price lists diverge;
+- when the curve has no plateau within US distances, we report that rather than an
+  unidentified range.
 
-Confidence intervals come from a **store-cluster bootstrap**, which resamples whole stores
-because deviations within a store are correlated. The estimators were checked first on
-simulated data:
-- On exact Pareto data with $n = 250$, the $k = 5\%$ Hill interval covered at 94–97%.
-- On $|t_3|$ data, whose tail is only asymptotically Pareto, coverage was 84–92%.
-- A data-driven stability rule covered only 22–78% there, because it chose $k$ too deep
-  into the body of the distribution.
+**3.3 Zones, two ways.**
+- *Persistent homology.* Linking stores with $\delta_{st} \le t$ and growing $t$ gives the
+  0-dimensional barcode of the single-linkage filtration. Long bars indicate discrete
+  zones.
+- *Dirichlet-process mixture.* Each store's price list is coded product by product as
+  which of the product's observed price levels it charges. The model is
+  $z_s \sim \mathrm{CRP}(\alpha)$ and
+  $c_{sj} \mid z_s = k \sim \mathrm{Cat}(\theta_{kj})$, with
+  $\theta_{kj} \sim \mathrm{Dir}(\gamma\, g_j)$, where $g_j$ is the chain-wide level
+  frequency (an empirical-Bayes base measure).
+  - Price levels charged by only one store say nothing about which stores belong
+    together. They are set aside as local departures, and their share is reported.
+  - Inference is collapsed Gibbs (Neal 2000) plus sequentially allocated merge–split
+    moves (Dahl 2005), with Escobar–West updates for $\alpha$.
+  - We run two chains from different starts and compare them (adjusted Rand index, ARI).
+  - Zones with identical estimated lists are merged, because they are not identifiable.
+  - Spatial coherence is tested by comparing how often nearby stores (< 250 km) share a
+    zone against permuted zone labels.
 
-We report the share of deviations that are exactly zero, since much of a chain's pricing
-is uniform. We test whether extreme stores cluster geographically using a join-count
-permutation test and Moran's I, with neighbours within 100 km. Basket risk is the cost of
-a fixed basket per store, relative to the chain median, summarised by its 95% value at
-risk and expected shortfall.
+**3.4 Two-part spatial model** (validated on simulated data with a known answer).
+1. *Part 1:* $z_{sj} = 1\{p_{sj} = \ell_j\} \sim \mathrm{Bernoulli}(\pi_s)$, with store
+   effects on the logit scale.
+2. *Part 2:* for prices off list, $\log(p_{sj}/\ell_j) \sim t_\nu(m_s, \sigma_1)$, with
+   $m_s = \mu + u_s$ in M1. M2 adds a Matérn-3/2 Gaussian-process field, fitted with a
+   Hilbert-space approximation.
 
-**Spatial model (Module B).** Most store prices equal the chain's list price exactly, and
-departures are mostly upward [RESULTS PENDING: shares]. Models with a single continuous
-residual cannot fit a point mass plus a skewed tail: a Student-$t$ residual and a latent
-two-component mixture both failed to converge on real data. Whether a price is at list is
-observed, so we use a **two-part model**. Let $\ell_j$ be the chain's modal price of
-product $j$ and $z_{sj} = 1$ if store $s$ charges exactly $\ell_j$.
+Inference is by NUTS (PyMC with NumPyro). We report R-hat, ESS, posterior predictive
+checks, PSIS-LOO for M1 against M2, and the spatial share
+$\operatorname{var}_s f / (\operatorname{var}_s f + \sigma_u^2)$. The model is fitted on
+the contiguous US.
 
-- *Part 1 (how often):* $z_{sj} \sim \text{Bernoulli}(\pi_s)$, with
-  $\operatorname{logit}\pi_s = \alpha_c + w_s$ and store effects $w_s$.
-- *Part 2 (by how much):* for prices off list,
-  $\log(p_{sj}/\ell_j) \sim t_\nu(m_s, \sigma_1)$, with $m_s = \mu_c + u_s$ (M1). M2 adds
-  $f(\text{location}_s)$ to $m_s$, where $f$ is a Matérn-3/2 Gaussian-process field fitted
-  with a Hilbert-space approximation.
-- *Reference model M0:* product, chain and store effects with Normal residuals. It cannot
-  produce prices exactly at list and serves only as a baseline.
+Two simpler models failed to converge on real data: a single Student-$t$ residual, and a
+latent two-component mixture that label-switched. Those failures are what revealed the
+point-mass structure.
 
-The models are fitted on the contiguous US; Hawaii and Alaska stores are excluded and
-counted, and their price premia are reported in Module A. Inference is by NUTS (PyMC with
-NumPyro; 4 chains × 1,000 draws). We report:
-- R-hat, ESS and divergences for every model;
-- posterior predictive checks, including the share of prices at list;
-- PSIS-LOO comparing M1 with M2;
-- the **spatial share** $\operatorname{var}_s f / (\operatorname{var}_s f + \sigma_u^2)$;
-- Moran's I of the stores' propensity to depart from list.
+**3.5 Extremes.** Hill and generalised-Pareto estimates of the departure tail are reported
+with store-cluster bootstrap intervals, with and without Hawaii and Alaska. The estimators
+were first calibrated on simulated data: at $n = 250$, the $k = 5\%$ Hill interval covered
+the true value 84–97% of the time.
 
-A simulation from this data-generating process, at real Target locations, recovered 13 of
-16 parameters inside their 90% intervals; the other three were close. The spatial share was
-slightly underestimated for one chain (0.52 vs 0.62). LOO preferred the spatial model
-(ΔELPD 20 ± 7).
+**3.6 Predictors and law of one price.**
+- Store-level departures are regressed on 2023 ACS neighbourhood variables, RUCA class and
+  competitor distances, with their squares and interactions (p ≈ 100–150). We compare OLS,
+  lasso, elastic net and a regularised horseshoe by cross-validation with whole states held
+  out.
+- Same-UPC price gaps across chains at the same locations, and an exact integer program
+  for the cheapest multi-store basket, use the matched-item panel.
 
-**Shrinkage and factors (Module C).**
-- *Response:* each store's price index (its mean $d$).
-- *Predictors:* ACS 2023 5-year ZCTA variables (income, density, age, housing costs,
-  poverty, education, transit, car ownership), RUCA class, and distances to competing
-  chains from OpenStreetMap. We add their squares, pairwise interactions and state
-  dummies, which gives about 100–150 predictors for about 250 stores.
-- *Models:* OLS, lasso, elastic net and a regularised horseshoe prior.
-- *Evaluation:* out-of-sample error by repeated 5-fold cross-validation with **whole
-  states held out**, so a model is always judged on states it has not seen.
-- *Factor model:* the store × product matrix of $d$ is fitted by EM-PCA, with the rank
-  chosen by predicting 10% of cells held out at random.
+**3.7 Validation summary.**
 
-**Basket optimisation (Module D).** For each sampled location we take Target and Walmart
-stores within 25 km and ask: what is the cheapest way to buy a fixed basket while visiting
-at most $k \in \{1, 2, 3\}$ stores? We solve this exactly as an integer program (HiGHS) and
-compare it with a greedy heuristic. The saving that exists only because the chains price
-differently is the gap between the best same-chain plan and the unrestricted optimum.
-Travel cost is not modelled.
+| Method | Check on simulated data |
+|---|---|
+| Hill / GPD tails | 95% interval coverage 84–97% (k = 5%) |
+| Two-part spatial model | 13 of 16 parameters inside their 90% intervals; spatial share slightly underestimated |
+| Zone model | exact recovery of 3–6 zones down to a 3% product difference; one zone when there are none; ARI 0.78 at a 1% difference |
+| Zone model on real data | recovers Kroger's banner structure without being told it (94% purity) |
 
-## 4. Results [RESULTS PENDING]
+## 4. Results (preliminary)
 
-Planned figures, at most 5:
-1. Survival function of $|d|$ (log-log) by chain, with Hill estimates and 95% CIs. Table:
-   tail index by chain, department, and regular vs shelf price.
-2. Hill plots with the chosen $k$ marked.
-3. Posterior mean of the spatial surface (M2) and the spatial share by chain.
-4. Out-of-sample RMSE by model, and horseshoe coefficients with 90% intervals.
-5. Distribution of basket savings from visiting 2 or 3 stores.
+| | ALDI (205) | Walmart (41) | Costco/Instacart (174) | Kroger (84) |
+|---|---|---|---|---|
+| Prices at list | 91% | 91% | 76% | 62% |
+| Departures upward (median) | 19% (−7.9%) | 76% (+4.8%) | 50% (+0.3%) | 65% (+4.9%) |
+| $\delta$, stores < 50 km apart → > 2,000 km apart | 6.5% → 20% | 5.3% → 21% | 8.9% → 36% | 22% → 64% |
+| Variogram range | no plateau | no plateau | ≈ 850 km | ≈ 190 km |
+| Zones (posterior) | 10; largest 79 stores in 27 states | 5 | 18 regional | 17, banner-aligned |
+| Nearby stores in the same zone vs chance | 50% vs 20% | 78% vs 25% | 50% vs 6% | 49% vs 6% |
+
+All spatial-coherence p-values are 0.001.
+
+**Four architectures.**
+- **ALDI** runs one national list over most of the country, with regional zones (California,
+  Mid-Atlantic, Texas, Arizona/Nevada). It departs mostly *downward*, to local markdowns.
+- **Walmart** has no identical store lists. Instead, dissimilarity rises slowly with
+  distance, with distinct West Coast and Mountain zones. Departures are mostly *upward*.
+- **Costco on Instacart** forms about 18 regional zones on a scale of about 850 km.
+- **Kroger** is the most local. Its zones follow its banners, and within a banner, its
+  divisions:
+  - Stores < 100 km apart differ on 8% of shared products within a banner and 78% across
+    banners.
+  - 94% of stores are in a zone dominated by their own banner, although the zone model
+    never sees banner labels.
+
+**Extremes.** The extreme upper tail is mostly geographic. One Honolulu Walmart charges
+\$6.28 for milk against a chain median of \$2.97. Without Hawaii and Alaska, the
+generalised-Pareto shape of Walmart's departures is about 0, meaning no power-law tail
+[update].
+
+**Urban and rural.** We find no urban–rural difference in price *levels* in any chain.
+Nearby urban and rural Walmarts differ on more products than same-type pairs (7.4% vs
+5.4%, p = 0.03, 41 stores). This hypothesis was suggested by the same data, so it is
+exploratory.
+
+[update: Module B spatial share and posterior predictive checks; Module C cross-validation
+comparison; cross-chain gaps on the matched panel (Meijer +5.6%, Kroger about +23% vs
+Walmart on 12–17 items, preliminary).]
 
 ## 5. Limitations
 
-- **Cross-sectional.** One snapshot (two if the repeat is collected). Nothing here is causal
-  or dynamic.
-- **Online prices.** These are the prices each website shows for a selected store, not
-  shelf audits. Costco prices are Instacart storefront prices.
-- **Sampling.** Target is a stratified random sample. Walmart and Costco are the stores
-  those retailers assign to the Target ZIPs, so they over-represent where Target operates.
-  Items are hand-picked, nationally distributed brands, not a random sample of either
-  chain's range.
-- **Collection.** A full snapshot takes many hours, so prices within it were not observed
-  at the same moment. Chains that blocked collection were stopped, not worked around, and
-  their coverage is reported as is. Kroger's official test environment covered too few
-  items to include.
-- **Location.** Most store coordinates are ZIP centroids, which blurs spatial structure
-  below the ZIP scale. ZIPs are matched to ZCTAs.
-- **Tails at this sample size.** With a few hundred stores per chain, tail indices are
-  imprecise. Intervals are wide, and the estimates are best read as an order of magnitude.
-- **Promotions.** Only markdowns are flagged; multi-buy and coupon offers are not converted
-  into prices.
+- **One cross-section.** There is no dynamics and nothing is causal. A second snapshot or
+  Kroger daily panel would test whether stores in a zone change prices together.
+- **Website prices**, not shelf audits. Instacart chains may carry platform pricing, so
+  Costco's local structure may partly be Instacart's.
+- **Partial chains.** Walmart and Target restricted automated access at low volume.
+  Walmart (41 stores) and Target are small, though spread across strata by design.
+- **Sampling.** Locations come from Target's footprint, which over-represents urban areas
+  for the other chains. Items are hand-picked national brands.
+- **Zone model assumptions.** Products are treated as independent within a zone, so
+  posterior certainty about the number of zones is probably overstated. "Zones" are
+  groups sharing most price levels, not necessarily identical lists.
+- **Location.** Most coordinates are ZIP centroids.
+
+## 6. Reproducibility
+
+The raw archive rebuilds the database (`python -m collectors.reparse`), and
+`python run_all.py` regenerates every table and figure. Simulation checks live in
+`simulation/`, and design decisions are logged in `docs/DECISIONS.md`.
