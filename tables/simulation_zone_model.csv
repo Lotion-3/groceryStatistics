@@ -1,0 +1,7 @@
+scenario,stores,products,true_zones,post_mean_zones_ge2,post_q05,post_q95,point_zones,ARI,start_agreement_ari
+"3 zones, clean",50,300,3,3.0,3.0,3.0,3,1.0,1.0
+"3 zones, noisy stores",50,300,3,3.0,3.0,3.0,3,1.0,1.0
+"6 zones, noisy",80,300,6,6.0,6.0,6.0,6,1.0,1.0
+1 national list + noise (no zones),50,300,1,1.0,1.0,1.0,1,1.0,1.0
+"3 zones, subtle (3% of products), noisier",50,300,3,3.0,3.0,3.0,3,1.0,1.0
+"3 zones, very subtle (1% of products)",50,300,3,2.815,2.0,3.0,3,0.782706428892552,0.8311824729891957

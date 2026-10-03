@@ -67,6 +67,26 @@ Reading:
 - **Costco on Instacart:** highly local. This may reflect Instacart's pricing as much as
   Costco's.
 
+## Zones (Dirichlet-process mixture; snapshot 2 partial; PRELIMINARY)
+
+The model was checked on simulated price lists first (`tables/simulation_zone_model.csv`).
+It recovers 3–6 zones exactly, even when zones differ on only 3% of products and stores
+add their own noise. It finds one zone when there are none, and degrades gracefully when
+zones differ on 1% of products (ARI 0.78).
+
+| | ALDI (53 stores) | Walmart (41) | Costco/Instacart (101) |
+|---|---|---|---|
+| Distinct zones | 7 | 5 | 15 |
+| Largest zone | 28 stores, 16 states | 17 stores, 9 states | 15 stores (Upper Midwest) |
+| Notable zones | CA (9), AZ (4), TX (3), Mid-Atlantic (5) | CA (9), Mountain/Southwest (8) | NE corridor, Southeast, TX, several CA |
+| Nearby stores (< 250 km) in the same zone | 78% vs 32% permuted (p = 0.001) | 78% vs 25% (p = 0.001) | 50% vs 7% (p = 0.001) |
+
+Caveats:
+- **The posterior number of zones is very concentrated.** The model treats products as
+  independent within a zone, so this certainty is probably overstated.
+- **Not every zone is contiguous.** One Walmart zone spans the Mountain West and the
+  Northeast, which suggests market type as well as geography.
+
 ## Next
 
 1. Dirichlet-process mixture zone model with a simulation check (Q2).

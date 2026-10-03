@@ -21,6 +21,12 @@ differently, to the cent (regular prices). From it:
      at each t is the H0 barcode of the single-linkage filtration. A chain
      with a national list plus a few regional zones shows a few long bars; a
      gradient shows bars dying gradually.
+  5. Zones by Bayesian nonparametrics (analysis/zone_model.py): a Dirichlet-
+     process mixture over store price lists, collapsed Gibbs + merge-split,
+     two starts. Reported: posterior number of distinct zones, zone sizes,
+     share of store-unique prices (local departures, set aside), agreement of
+     the two starts, and spatial coherence (are stores < COHERENCE_KM apart in
+     the same zone more often than under permuted zone labels?).
   4. Urban vs rural. Among stores < NEAR_KM apart: do mixed urban/non-urban
      pairs differ more than same-type pairs? Permutation test (urbanicity
      labels permuted across the chain's stores; 4,999 permutations).
@@ -44,6 +50,8 @@ MIN_SHARED = 20          # products two stores must share for a dissimilarity
 NEAR_KM = 300.0
 BINS_KM = [0, 50, 100, 250, 500, 1000, 2000, 6000]
 THRESHOLDS = (0.0, 0.01, 0.02, 0.05, 0.10)
+ZONE_CHAINS = ("aldi", "walmart", "costco", "kroger")
+COHERENCE_KM = 250.0
 B = 300
 CHAINS = ("aldi", "walmart", "costco", "kroger", "meijer", "target")     # kroger_ce (test host) excluded
 EXTRA_COLORS = {"aldi": "#8a5cf6", "kroger": "#e87ba4", "meijer": "#008300"}
@@ -231,6 +239,37 @@ def urban_rural_test(F: np.ndarray, D: np.ndarray, urban: np.ndarray, rng: np.ra
 
 
 # ---------------------------------------------------------------------------
+# 5. Zones (DP mixture)
+# ---------------------------------------------------------------------------
+
+def zone_summary(chain: str, st: pd.DataFrame, M: pd.DataFrame, D: np.ndarray, rng: np.random.Generator) -> tuple:
+    from analysis.zone_model import encode, fit_zones
+    _, _, unique_share = encode(M.to_numpy(float), return_unique_share=True)
+    r = fit_zones(M.to_numpy(float), n_sweeps=800, burn=300, thin=5, gamma=1.0, seed=SEED)
+    z = r["partition"]
+    sizes = np.sort(np.bincount(z))[::-1]
+    iu = np.triu_indices(len(z), 1)
+    near = D[iu] < COHERENCE_KM
+    same = (z[:, None] == z[None, :])[iu][near]
+    obs = float(same.mean()) if near.any() else np.nan
+    perm = np.array([((pz := rng.permutation(z))[:, None] == pz[None, :])[iu][near].mean()
+                     for _ in range(999)]) if near.any() else np.array([])
+    urban = (st["urbanicity"] == "urban").to_numpy()
+    zones = [{"zone": k, "stores": int((z == k).sum()), "share_urban": float(urban[z == k].mean()),
+              "states": ",".join(sorted(st["state"][z == k].unique()))} for k in np.argsort(-np.bincount(z))]
+    row = {"chain": chain, "stores": len(z), "share_store_unique_prices": unique_share,
+           "zones_post_mean": float(r["k_ge2"].mean()), "zones_q05": float(np.quantile(r["k_ge2"], 0.05)),
+           "zones_q95": float(np.quantile(r["k_ge2"], 0.95)), "point_zones_ge2": int((np.bincount(z) >= 2).sum()),
+           "singletons": int((np.bincount(z) == 1).sum()), "largest_zone": int(sizes[0]),
+           "zone_sizes": " ".join(map(str, sizes[sizes >= 2])), "start_agreement_ari": r["start_agreement_ari"],
+           "alpha_post_mean": float(r["alpha"].mean()),
+           "near_pairs": int(near.sum()), "same_zone_share_near": obs,
+           "same_zone_share_near_perm": float(perm.mean()) if len(perm) else np.nan,
+           "coherence_p": float((1 + (perm >= obs).sum()) / (1 + len(perm))) if len(perm) else np.nan}
+    return row, z, pd.DataFrame(zones).assign(chain=chain)
+
+
+# ---------------------------------------------------------------------------
 # Figures
 # ---------------------------------------------------------------------------
 
@@ -275,19 +314,19 @@ def figures(vg: pd.DataFrame, bars: dict, zones_map: dict, note: str) -> list[st
         for k, z in enumerate(big):
             m = lab == z
             ax.scatter(st["lon"][m], st["lat"][m], s=22, color=palette[k], edgecolors="white", linewidths=0.4,
-                       label=f"group {k + 1} ({m.sum()} stores)")
+                       label=f"zone {k + 1} ({m.sum()} stores)")
         m = ~np.isin(lab, big)
         ax.scatter(st["lon"][m], st["lat"][m], s=14, color=MUTED, alpha=0.6, label=f"singletons ({m.sum()})")
         ax.set_aspect(1.25)
         ax.set_xlabel("longitude")
         ax.set_ylabel("latitude")
-        ax.set_title(f"{name(chain)}: stores with near-identical price lists (t = 0.01)", loc="left")
-        ax.legend(fontsize=6, loc="lower left")
+        ax.set_title(f"{name(chain)}: price-list zones (Dirichlet-process mixture)", loc="left")
+        ax.legend(fontsize=6, loc="upper left", bbox_to_anchor=(1.01, 1.0))
         caption(fig, note)
-        name = f"fig_e3_zones_{chain}.png"
-        fig.savefig(FIG / name)
+        fname = f"fig_e3_zones_{chain}.png"
+        fig.savefig(FIG / fname)
         plt.close(fig)
-        out.append(name)
+        out.append(fname)
     return out
 
 
@@ -306,6 +345,7 @@ def run(snaps: list[int] | None = None) -> str:
     rng = np.random.default_rng(SEED)
     pm = point_mass(p)
     vg_rows, fits, h0, ur, bars, zmap = [], [], [], [], {}, {}
+    zrows, zdetail = [], []
     for chain in CHAINS:
         st, M = chain_matrix(p, chain)
         if len(st) < MIN_STORES:
@@ -322,7 +362,11 @@ def run(snaps: list[int] | None = None) -> str:
                    **{f"groups_at_t{t:g}": components_at(deaths, len(st), t) for t in THRESHOLDS},
                    "largest_group_t0.01": int(pd.Series(zones_at(F, 0.01)).value_counts().iloc[0]),
                    "median_death": float(np.median(deaths)) if len(deaths) else np.nan})
-        zmap[chain] = (st.reset_index(), zones_at(F, 0.01))
+        if chain in ZONE_CHAINS:
+            zr, z, zd = zone_summary(chain, st, M, D, rng)
+            zrows.append(zr)
+            zdetail.append(zd)
+            zmap[chain] = (st.reset_index(), z)
         ur.append({"chain": chain, **urban_rural_test(F, D, (st["urbanicity"] != "urban").to_numpy(), rng)})
     note = (f"Snapshot(s) {snaps}; {int(p['store_pk'].nunique())} stores, {len(p):,} store-product prices "
             f"(regular prices, products at >= 10 stores). PRELIMINARY, cross-sectional.")
@@ -331,7 +375,9 @@ def run(snaps: list[int] | None = None) -> str:
     tables = {"module_e_point_mass": pm,
               "module_e_variogram": pd.concat(vg_rows, ignore_index=True) if vg_rows else pd.DataFrame(),
               "module_e_variogram_fit": pd.DataFrame(fits), "module_e_h0_groups": pd.DataFrame(h0),
-              "module_e_urban_rural": pd.DataFrame(ur)}
+              "module_e_urban_rural": pd.DataFrame(ur),
+              "module_e_zones": pd.DataFrame(zrows),
+              "module_e_zone_detail": pd.concat(zdetail, ignore_index=True) if zdetail else pd.DataFrame()}
     for name, t in tables.items():
         t.to_csv(TAB / f"{name}.csv", index=False)
     figs = figures(tables["module_e_variogram"], bars, {c: v for c, v in zmap.items() if c in ("aldi", "walmart")},
