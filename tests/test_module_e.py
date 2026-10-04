@@ -38,3 +38,26 @@ def test_zone_model_recovers_two_zones_and_merges_identical_lists():
     assert adjusted_rand(truth, r["partition"]) == 1.0 and r["start_agreement_ari"] == 1.0
     same = np.array([base] * 15, float)               # one list everywhere -> one zone
     assert len(np.unique(fit_zones(same, n_sweeps=40, burn=10, thin=2, seed=0)["partition"])) == 1
+
+
+def test_module_f_detects_zone_synchronised_changes():
+    """Synthetic panel: zone A changes several prices together on day 2, zone B does not."""
+    from analysis import module_f_dynamics as F
+    rows = []
+    stores = {1: "A", 2: "A", 3: "A", 4: "B", 5: "B", 6: "B"}
+    for day in (10, 11):
+        for s, z in stores.items():
+            for prod in range(8):
+                price = 2.0 + prod
+                if day == 11 and z == "A" and prod < 5:
+                    price += 0.30                      # zone A's coordinated change
+                if day == 11 and z == "B" and prod == s:  # zone B: isolated store changes
+                    price += 0.10 * s
+                rows.append({"store_pk": s, "chain_product_id": f"p{prod}", "snapshot_id": day, "regular_price": price})
+    P = F.price_panel(pd.DataFrame(rows), "regular_price")
+    pairs = F.pair_cochange(F.change_events(P))
+    zones = pd.Series({s: z for s, z in stores.items()})
+    banner = pd.Series({s: "KROGER" for s in stores})
+    res = F.zone_test(pairs.assign(either=pairs["either"].clip(lower=3)), zones, banner,
+                      np.random.default_rng(0), n_perm=199)
+    assert res["rate_same_zone"] > res["rate_diff_zone"]

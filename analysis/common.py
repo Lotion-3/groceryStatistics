@@ -61,6 +61,9 @@ def load_observations(db: Path = DB, snapshot_id: int | list[int] | None = None,
         params.extend(ids)
     if store_specific_only:
         conds.append("o.store_specific = 1")
+    # Not stores: e.g. a Kroger Delivery "spoke" (fulfilment hub) returned by the
+    # Locations API in snapshot 2.
+    conds.append("lower(coalesce(s.name, '')) NOT LIKE '%spoke%'")
     if conds:
         q += " WHERE " + " AND ".join(conds)
     df = pd.read_sql_query(q, con, params=params)

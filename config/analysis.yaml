@@ -3,3 +3,6 @@
 # (2 stores, never part of the analysis). Fill in the ids of the full runs
 # once they exist; the first listed is the primary cross-section.
 main_snapshots: [2]
+
+# Kroger daily panel days (scripts/kroger_panel.py run), used by Module F.
+panel_snapshots: []

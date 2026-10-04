@@ -379,7 +379,7 @@ def run(snaps: list[int] | None = None) -> str:
     rng = np.random.default_rng(SEED)
     pm = point_mass(p)
     vg_rows, fits, h0, ur, bars, zmap = [], [], [], [], {}, {}
-    zrows, zdetail = [], []
+    zrows, zdetail, store_zones = [], [], []
     banner_tab = pd.DataFrame()
     for chain in CHAINS:
         st, M = chain_matrix(p, chain)
@@ -402,6 +402,7 @@ def run(snaps: list[int] | None = None) -> str:
             zrows.append(zr)
             zdetail.append(zd)
             zmap[chain] = (st.reset_index(), z)
+            store_zones.append(pd.DataFrame({"chain": chain, "store_pk": st.index, "zone": z}))
             if chain == "kroger":
                 banner_tab = banner_check(st, F, D, z)
         ur.append({"chain": chain, **urban_rural_test(F, D, (st["urbanicity"] != "urban").to_numpy(), rng)})
@@ -415,7 +416,9 @@ def run(snaps: list[int] | None = None) -> str:
               "module_e_urban_rural": pd.DataFrame(ur),
               "module_e_zones": pd.DataFrame(zrows),
               "module_e_kroger_banners": banner_tab,
-              "module_e_zone_detail": pd.concat(zdetail, ignore_index=True) if zdetail else pd.DataFrame()}
+              "module_e_zone_detail": pd.concat(zdetail, ignore_index=True) if zdetail else pd.DataFrame(),
+              # per-store zone labels (used by Module F: do zones change prices together?)
+              "module_e_store_zones": pd.concat(store_zones, ignore_index=True) if store_zones else pd.DataFrame()}
     for name, t in tables.items():
         t.to_csv(TAB / f"{name}.csv", index=False)
     figs = figures(tables["module_e_variogram"], bars, {c: v for c, v in zmap.items() if c in ("aldi", "walmart")},

@@ -38,7 +38,7 @@ CHAIN = "kroger" if PRODUCTION else "kroger_ce"
 SOURCE = "kroger" if PRODUCTION else "kroger_ce"
 LIMIT = 50            # API maximum page size
 # Same exclusion list as vendor/kroger_async._JUNK_LOCATION_TOKENS
-_JUNK_LOCATION_TOKENS = ("distribution", "fuel", "lab", "picking")
+_JUNK_LOCATION_TOKENS = ("distribution", "fuel", "lab", "picking", "spoke")   # + delivery spokes
 
 
 class Session:
