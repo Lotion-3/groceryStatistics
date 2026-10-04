@@ -193,10 +193,24 @@ the true value 84–97% of the time.
 | Departures upward (median) | 19% (−7.9%) | 76% (+4.8%) | 50% (+0.3%) | 65% (+4.9%) |
 | $\delta$, stores < 50 km apart → > 2,000 km apart | 6.5% → 20% | 5.3% → 21% | 8.9% → 36% | 22% → 64% |
 | Variogram range | no plateau | no plateau | ≈ 850 km | ≈ 190 km |
-| Zones (posterior) | 10; largest 79 stores in 27 states | 5 | 18 regional | 17, banner-aligned |
+| Zones (posterior) | 10; largest 79 stores in 27 states | 5 (not robust, see below) | 18 regional | 17, banner-aligned |
 | Nearby stores in the same zone vs chance | 50% vs 20% | 78% vs 25% | 50% vs 6% | 49% vs 6% |
+| Split-half replication (ARI) | [pending] | 0.41–0.53 | [pending] | 0.86–0.93 |
 
 All spatial-coherence p-values are 0.001.
+
+**Robustness of the zones.** Two checks do not rely on the zone model's (overconfident)
+posterior:
+- *Split-half replication:* fit the model separately on two random, disjoint halves of the
+  products. If the zones are real, both halves recover the same zones.
+- *Prior sensitivity:* vary the prior strength $\gamma$ from 0.5 to 5.
+
+Results:
+- **Kroger's zones replicate:** split-half ARI 0.86–0.93. Moving $\gamma$ from 0.5 to 1
+  changes little (ARI 0.93); a much stronger prior ($\gamma = 5$) merges zones (18 → 11).
+- **Walmart's specific zones do not replicate at 41 stores:** split-half ARI 0.41–0.53, and
+  4–6 zones depending on $\gamma$. Walmart's broad pattern (a slow gradient, a distinct
+  West Coast) stands, but its zone map is not firm.
 
 **Four architectures.**
 - **ALDI** runs one national list over most of the country, with regional zones (California,
