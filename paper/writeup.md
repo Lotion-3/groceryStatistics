@@ -215,6 +215,31 @@ Nearby urban and rural Walmarts differ on more products than same-type pairs (7.
 5.4%, p = 0.03, 41 stores). This hypothesis was suggested by the same data, so it is
 exploratory.
 
+**Spatial structure of departures (two-part model, M2).** The model uses Kroger (94
+stores) and Walmart (41), contiguous US: 5,380 prices, 74% at list. It converges (R-hat
+1.014, ESS 391).
+- **Spatial share:** about **70%** of the store-level variation in departure size is a
+  smooth geographic surface. Kroger 0.72 (90% interval 0.54–0.89); Walmart 0.70
+  (0.40–0.99).
+- **Scale agreement:** the field's length-scale (about 170 km) matches the Kroger variogram
+  range (about 190 km), from a different method.
+- **Departures:** they average +5.1% at Kroger and about 0 at Walmart. Stores' propensity
+  to depart clusters in space (Moran's I = 0.46 and 2.08, p = 0.0002).
+- **LOO:** PSIS-LOO does not separate M1 from M2, as the simulation predicted.
+- **Misfit:** posterior predictive checks reproduce the share of prices at list, but the
+  most extreme departures (99th percentile 0.37 observed vs about 0.29 replicated) are
+  heavier than the model's $t_{
+u pprox 1.9}$.
+- **Reference model:** M0 does not converge (R-hat 1.46). It is misspecified, and with
+  only 3 UPCs shared between chains its chain effect is barely identified.
+
+**Basket arbitrage.** Basket of 12 items (about \$60) at 62 locations with 142 nearby
+stores; the exact integer program and the greedy heuristic agree at every location.
+Splitting the basket across 2–3 stores saves a median of **0.05%** (90th percentile
+0.12%), although the cheapest split mixes chains 71% of the time. Cross-chain gaps are
+level differences, not item-specific ones: one chain is cheapest on nearly every item, so
+law-of-one-price violations leave almost no basket arbitrage.
+
 **Law of one price.** Matches use confirmed product identities (§2). On identical UPCs in
 the contiguous US, each chain's median regular price compared with Walmart's:
 
@@ -225,8 +250,7 @@ the contiguous US, each chain's median regular price compared with Walmart's:
 | Kroger | 15 | 93 | +9.8% (+6.2 to +18.0) |
 
 [update: Target and Meijer store counts after more sessions; Module B spatial share and
-posterior predictive checks; Module C cross-validation comparison; basket savings
-(Module D).]
+Module C cross-validation comparison.]
 
 ## 5. Limitations
 
