@@ -70,6 +70,14 @@ def load_observations(db: Path = DB, snapshot_id: int | list[int] | None = None,
         q += " WHERE " + " AND ".join(conds)
     df = pd.read_sql_query(q, con, params=params)
     con.close()
+    # Stores excluded for data-quality reasons, e.g. Instacart fallback shops
+    # whose prices do not apply where we located them (DECISIONS #50).
+    excl = ROOT / "config" / "excluded_stores.csv"
+    if excl.exists():
+        x = pd.read_csv(excl, dtype=str)
+        if len(x):
+            bad = set(zip(x["chain"], x["store_id"]))
+            df = df[~pd.Series(list(zip(df["chain"], df["store_id"].astype(str))), index=df.index).isin(bad)]
     return df
 
 
