@@ -79,6 +79,22 @@ rows Walmart ties to the store are used, and those still cover 99% of store-item
 Missing data is mostly structural: locations with no store of the chain, and items a store
 does not carry. All failures are logged with their reason.
 
+**Do requests reach the intended stores?** We checked this in four ways:
+1. *The retailer's own attribution.* Each retailer states, per product, where a price
+   applies. For every chain, the number of distinct pricing locations equals the number of
+   stores requested (ALDI 205/205, Costco 175/175, Kroger 108/108, Walmart 42/42).
+2. *No silent fallback.* No two stores more than 1,000 km apart have identical price lists,
+   and price-list dissimilarity rises with distance in every chain (Spearman 0.29–0.68).
+   Neither would hold if requests fell back to a default store.
+3. *Locations.* For Target, Walmart, Kroger and Meijer, a store's location comes from the
+   retailer's own response or locator. Instacart (Costco, ALDI) returns no address, so the
+   anchor ZIP stands in:
+   - Costco anchors lie a median of 7 km from a real Costco (OpenStreetMap), and ZIPs that
+     reach the same Costco are a median of 17 km apart.
+4. *A fallback found and removed.* One ALDI location was returned for 37 ZIPs without a
+   nearby ALDI, from Washington to Hawaii. It is a fallback shop, not a local store, and is
+   excluded by a documented rule.
+
 **Items.** 58 items:
 - 37 national-brand packaged groceries;
 - 15 national-brand non-grocery items (household, personal care, over-the-counter, baby,
