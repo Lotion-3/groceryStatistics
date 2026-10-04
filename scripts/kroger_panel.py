@@ -18,8 +18,13 @@ Steps
            every panel store x every item. Resumable with --snapshot-id.
            NEEDS THE OWNER'S GO-AHEAD (retailer API traffic).
 
+  probe    like run, but only the (store, item) pairs in config/kroger_event_probe.csv
+           (promotions scheduled to end at the Oct 7 event; DECISIONS #51), so the
+           price can be read just before and after the scheduled expiry.
+
   python -m scripts.kroger_panel select [--n 60]
-  python -m scripts.kroger_panel run [--snapshot-id N]
+  python -m scripts.kroger_panel run [--snapshot-id N] [--note TEXT]
+  python -m scripts.kroger_panel probe [--note TEXT]
 Afterwards add the panel snapshot ids to `panel_snapshots` in config/analysis.yaml.
 """
 from __future__ import annotations
@@ -37,6 +42,7 @@ from collectors.common import ROOT
 from db.init_db import DEFAULT_DB
 
 PANEL = ROOT / "config" / "kroger_panel.csv"
+PROBE = ROOT / "config" / "kroger_event_probe.csv"
 SEED = 20261004
 
 
@@ -71,7 +77,7 @@ def select(n: int = 60, snapshot: int = 2) -> pd.DataFrame:
     return panel
 
 
-def run_day(snapshot_id: int | None = None) -> int:
+def run_day(snapshot_id: int | None = None, note: str | None = None, probe: bool = False) -> int:
     from collectors import kroger as K
     from collectors.common import start_snapshot, end_snapshot
     from collectors.snapshot import Run, read_csv
@@ -80,9 +86,17 @@ def run_day(snapshot_id: int | None = None) -> int:
         raise SystemExit("KROGER_BASE_URL must point at the production API (api.kroger.com) for the panel")
     con = connect(DEFAULT_DB)
     load_items(con)
-    snap = snapshot_id or start_snapshot(con, f"kroger panel {datetime.now(timezone.utc).date()}")
+    label = note or ("kroger event probe" if probe else "kroger panel")
+    snap = snapshot_id or start_snapshot(con, f"{label} {datetime.now(timezone.utc).isoformat(timespec='minutes')}")
     items = read_csv(ROOT / "config" / "items.csv")
     panel = read_csv(PANEL)
+    wanted = None
+    if probe:
+        pairs = read_csv(PROBE)
+        wanted = {}
+        for q in pairs:
+            wanted.setdefault(str(q["store_pk"]), set()).add(q["item_id"])
+        panel = [p for p in panel if str(p["store_pk"]) in wanted]
     r = Run(con, snap, [K.CHAIN])
     if not r.session_ready(K.CHAIN):
         return snap
@@ -94,7 +108,8 @@ def run_day(snapshot_id: int | None = None) -> int:
             store = dict(zip(cols, row))
             print(f"[{i}/{len(panel)}] Kroger {store['store_id']} {store.get('name')}", flush=True)
             loc = store["store_id"]
-            r._query_items(K.CHAIN, store, store["store_pk"], items, lambda it: K.search_item(it, loc, sess))
+            its = [it for it in items if it["item_id"] in wanted[str(p["store_pk"])]] if wanted else items
+            r._query_items(K.CHAIN, store, store["store_pk"], its, lambda it: K.search_item(it, loc, sess))
             if K.CHAIN not in r.active:
                 break
     finally:
@@ -104,7 +119,8 @@ def run_day(snapshot_id: int | None = None) -> int:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("step", choices=["select", "run"])
+    ap.add_argument("step", choices=["select", "run", "probe"])
+    ap.add_argument("--note", default=None)
     ap.add_argument("--n", type=int, default=60)
     ap.add_argument("--snapshot-id", type=int, default=None)
     a = ap.parse_args(argv)
@@ -113,7 +129,7 @@ def main(argv=None) -> int:
         print(f"wrote {PANEL.relative_to(ROOT)}: {len(p)} stores")
         print(p["banner"].value_counts().to_string())
     else:
-        print("panel snapshot:", run_day(a.snapshot_id))
+        print("panel snapshot:", run_day(a.snapshot_id, note=a.note, probe=a.step == "probe"))
     return 0
 
 

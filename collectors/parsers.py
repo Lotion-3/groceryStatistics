@@ -444,6 +444,7 @@ def parse_kroger(body: str) -> list[dict]:
             "priced_store_id": loc if price is not None else None,
             "search_rank": i,
             "extra": {"stock_level": stock, "price_effective": _get(pr, "effectiveDate", "value"),
+                      "price_expiration": _get(pr, "expirationDate", "value"),
                       "fulfillment": it.get("fulfillment"), "sold_by": it.get("soldBy"),
                       "term": env.get("term"), "http_status": env.get("status")},
         })
