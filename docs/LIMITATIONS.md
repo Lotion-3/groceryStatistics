@@ -29,11 +29,24 @@
 - **Promotions.** Only markdowns (regular > current) are flagged. Multi-buy and coupon
   offers are recorded as text but not converted into prices.
 - **Collection method and access.** Data were collected with the owner's existing tooling
-  (browser-minted sessions replayed over HTTP), rate-limited, without escalating past
-  blocks. Chains that block are dropped for that run, and that missingness is logged.
-  Trader Joe's returned HTTP 403 on day 1 and was dropped. Target soft-blocked (HTTP 435)
-  on day 2 at a 2 s pace, so Target is now collected at ≥ 5 s per request, and a
-  circuit breaker stops any chain after 6 consecutive failures.
+  (browser-made sessions replayed over HTTP), rate-limited, plus Kroger's official API.
+  - **Blocks** (a fresh session refused on its first request) stop the chain and pause it.
+  - **Session faults** (a session refused after it had worked) are replaced by a fresh
+    session, at most twice per run.
+  - **Counts.** All refusals, replacements and blocks are logged and reported.
+  - **Pushback.** Target and Walmart limited automated access at low volume (about 47–115
+    requests per session), so those chains are partial.
+  - **Trader Joe's** returned HTTP 403 on day 1 and was dropped.
+- **Zone model.** Products are treated as independent within a zone, so the posterior
+  certainty about the number of zones is overstated. Robustness is checked by prior
+  sensitivity and split-half replication (`analysis/zone_sensitivity.py`). Zones are groups
+  sharing most price levels, not necessarily identical lists.
+- **Item matching.** 37 of 52 cross-chain items have a canonical UPC (Kroger/Meijer). Target
+  products are matched by name and size only. 15 items have no confirmed cross-chain
+  identity and are within-chain only.
+- **Model misfit.** The two-part model under-predicts the most extreme departures, and the
+  simple Normal reference model does not converge with Kroger and Walmart together (only 3
+  shared UPCs identify the chain effect).
 - **Snapshot window.** A full snapshot takes many hours, not "a few", so prices within
   one snapshot were not all observed at the same moment. `observed_at` is kept per row.
 - **Item scope.** 37 packaged grocery items, 15 non-grocery national brands and 6
