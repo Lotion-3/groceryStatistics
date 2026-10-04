@@ -121,8 +121,9 @@ observed price levels it charges. The model is a Dirichlet-process mixture:
   frequency (an empirical-Bayes base measure).
 
 Price levels charged by a single store are set aside as local departures. Inference is
-collapsed Gibbs plus merge–split moves (Dahl 2005), with Escobar–West updates for
-$\alpha$. We run two starts and compare them with the adjusted Rand index (ARI).
+collapsed Gibbs (Neal 2000) plus merge–split moves (Dahl 2005), with Escobar–West (1995)
+updates for $\alpha$. We run two starts and compare them with the adjusted Rand index
+(ARI; Hubert and Arabie 1985).
 
 Robustness checks that do not rely on the model's posterior:
 - *split-half replication:* fit two disjoint random halves of the products separately;
@@ -132,10 +133,11 @@ Robustness checks that do not rely on the model's posterior:
 1. Part 1: whether a price is at list, $1\{p_{sj} = \ell_j\} \sim \mathrm{Bernoulli}(\pi_s)$,
    with store effects.
 2. Part 2: for prices off list, $\log(p_{sj}/\ell_j) \sim t_\nu(\mu_c + u_s + f(x_s), \sigma)$,
-   where $f$ is a Matérn-3/2 Gaussian process (Hilbert-space approximation).
+   where $f$ is a Matérn-3/2 Gaussian process (Hilbert-space approximation; Solin and
+   Särkkä 2020).
 
-Inference is by NUTS (NumPyro). We report the spatial share
-$\operatorname{var} f / (\operatorname{var} f + \sigma_u^2)$, PSIS-LOO against the same
+Inference is by NUTS (Hoffman and Gelman 2014; NumPyro). We report the spatial share
+$\operatorname{var} f / (\operatorname{var} f + \sigma_u^2)$, PSIS-LOO (Vehtari et al. 2017) against the same
 model without $f$, and posterior predictive checks.
 
 **Timing.** Kroger's effective timestamps give, for each store-product, when the current
@@ -283,9 +285,9 @@ paradox). Each correction relies on a different invariance:
 | Estimator | Mean (days) | Assumes |
 |---|---|---|
 | Naive mean of planned lengths | 28.5 | nothing (length-biased) |
-| Renewal theory from ages, $\mu = 1/f_A(0)$ | 18.3 | stationarity |
+| Renewal theory from ages, $\mu = 1/f_A(0)$ (Cox 1962) | 18.3 | stationarity |
 | Length-bias correction, $1/\mathbb{E}[1/L]$ | 12.7 (12.4–12.9) | equal weekly cohorts |
-| Lynden-Bell product-limit, left-truncated at age | 9.4 (9.1–9.9) | same length mix each week |
+| Lynden-Bell (1971) product-limit, left-truncated at age (Woodroofe 1985) | 9.4 (9.1–9.9) | same length mix each week |
 
 Intervals are 95% store bootstrap.
 
@@ -344,6 +346,40 @@ The raw archive rebuilds the database (`python -m collectors.reparse`), and
 `simulation/`, decisions are logged in `docs/DECISIONS.md`, and the event
 pre-registration is in `docs/PREREGISTRATION_EVENT.md`.
 
+## References
+
+- Cox, D. R. (1962). *Renewal Theory*. Methuen.
+- Dahl, D. B. (2005). Sequentially-allocated merge-split sampler for conjugate and
+  nonconjugate Dirichlet process mixture models. Technical report, Texas A&M University.
+- DellaVigna, S., and Gentzkow, M. (2019). Uniform pricing in U.S. retail chains.
+  *Quarterly Journal of Economics* 134(4), 2011–2084.
+- Edelsbrunner, H., and Harer, J. (2010). *Computational Topology: An Introduction*.
+  American Mathematical Society.
+- Escobar, M. D., and West, M. (1995). Bayesian density estimation and inference using
+  mixtures. *Journal of the American Statistical Association* 90(430), 577–588.
+- Hill, B. M. (1975). A simple general approach to inference about the tail of a
+  distribution. *Annals of Statistics* 3(5), 1163–1174.
+- Hoffman, M. D., and Gelman, A. (2014). The No-U-Turn sampler. *Journal of Machine
+  Learning Research* 15, 1593–1623.
+- Hubert, L., and Arabie, P. (1985). Comparing partitions. *Journal of Classification* 2,
+  193–218.
+- Lynden-Bell, D. (1971). A method of allowing for known observational selection in small
+  samples applied to 3CR quasars. *Monthly Notices of the Royal Astronomical Society* 155,
+  95–118.
+- Neal, R. M. (2000). Markov chain sampling methods for Dirichlet process mixture models.
+  *Journal of Computational and Graphical Statistics* 9(2), 249–265.
+- Pickands, J. (1975). Statistical inference using extreme order statistics. *Annals of
+  Statistics* 3(1), 119–131.
+- Piironen, J., and Vehtari, A. (2017). Sparsity information and regularization in the
+  horseshoe and other shrinkage priors. *Electronic Journal of Statistics* 11(2),
+  5018–5051.
+- Solin, A., and Särkkä, S. (2020). Hilbert space methods for reduced-rank Gaussian process
+  regression. *Statistics and Computing* 30, 419–446.
+- Vehtari, A., Gelman, A., and Gabry, J. (2017). Practical Bayesian model evaluation using
+  leave-one-out cross-validation and WAIC. *Statistics and Computing* 27, 1413–1432.
+- Woodroofe, M. (1985). Estimating a distribution function with truncated data. *Annals of
+  Statistics* 13(1), 163–177.
+
 ---
 
 ## Appendix A. Data checks
@@ -383,7 +419,7 @@ completed every run, and no test triggered a counted block.
 Pairs sharing a store are dependent, so bands come from a store bootstrap.
 
 **Zones.**
-- H0 persistent homology of the single-linkage filtration of $\delta$ gives a
+- H0 persistent homology (Edelsbrunner and Harer 2010) of the single-linkage filtration of $\delta$ gives a
   model-free view of the zones.
 - In the Dirichlet-process model, zones with identical estimated lists are merged,
   because they are not identifiable.
@@ -404,11 +440,11 @@ Pairs sharing a store are dependent, so bands come from a store bootstrap.
 Those failures revealed the point mass. The reference normal model (M0) still does not
 converge. With only 2 UPCs shared between chains, the chain effect is omitted.
 
-**Tails.** Hill ($k = 5\%$, with stable-$k$ and $k = 10\%$ sensitivity) and
-generalised-Pareto estimates with store-cluster bootstrap intervals. At $n = 250$, the
+**Tails.** Hill (1975) ($k = 5\%$, with stable-$k$ and $k = 10\%$ sensitivity) and
+generalised-Pareto (Pickands 1975) estimates with store-cluster bootstrap intervals. At $n = 250$, the
 $k = 5\%$ Hill interval covered the true value 84–97% of the time.
 
-**Predictors.** We compare OLS, lasso, elastic net and a regularised horseshoe. Low-rank
+**Predictors.** We compare OLS, lasso, elastic net and a regularised horseshoe (Piironen and Vehtari 2017). Low-rank
 factor structure in the store × product deviation matrix is supported for ALDI (rank 4),
 Costco (3) and Kroger (8), but not for Walmart (cross-validation picks rank 0).
 
