@@ -43,7 +43,7 @@ def main_snapshots(db: Path = DB) -> list[int]:
 
 
 def load_observations(db: Path = DB, snapshot_id: int | list[int] | None = None,
-                      store_specific_only: bool = True) -> pd.DataFrame:
+                      store_specific_only: bool = True, include_test_sources: bool = False) -> pd.DataFrame:
     """Observations joined to stores and items. snapshot_id may be one id or a
     list (e.g. main_snapshots()); None loads every snapshot."""
     con = sqlite3.connect(db)
@@ -64,6 +64,8 @@ def load_observations(db: Path = DB, snapshot_id: int | list[int] | None = None,
     # Not stores: e.g. a Kroger Delivery "spoke" (fulfilment hub) returned by the
     # Locations API in snapshot 2.
     conds.append("lower(coalesce(s.name, '')) NOT LIKE '%spoke%'")
+    if not include_test_sources:
+        conds.append("s.chain != 'kroger_ce'")    # Kroger's test host is not analysis data (DECISIONS #39)
     if conds:
         q += " WHERE " + " AND ".join(conds)
     df = pd.read_sql_query(q, con, params=params)

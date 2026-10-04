@@ -27,12 +27,14 @@ from analysis.module_e_architecture import chain_matrix
 from analysis.zone_model import adjusted_rand, fit_zones
 
 CHAINS = ("aldi", "walmart", "costco", "kroger")
-GAMMAS = (0.5, 1.0, 2.0, 5.0)
-N_SPLITS = 3
-SWEEPS = dict(n_sweeps=500, burn=200, thin=5)
+GAMMAS = (0.5, 1.0, 5.0)
+N_SPLITS = 2
+SWEEPS = dict(n_sweeps=300, burn=100, thin=4)
 
 
-def run(snaps: list[int] | None = None) -> str:
+def run(snaps: list[int] | None = None, chains=CHAINS) -> str:
+    """Writes tables/zone_sensitivity_{prior,split_half}_<chain>.csv after each
+    chain (so a long run keeps what it finished)."""
     snaps = snaps or main_snapshots()[:1]
     obs = load_observations(snapshot_id=snaps)
     p = product_panel(obs, min_stores=10)
@@ -40,7 +42,7 @@ def run(snaps: list[int] | None = None) -> str:
     p["cents"] = p["regular_price"].round(2)
     rng = np.random.default_rng(SEED)
     prior_rows, split_rows = [], []
-    for chain in CHAINS:
+    for chain in chains:
         st, M = chain_matrix(p, chain)
         if len(st) < 15:
             continue
@@ -63,6 +65,11 @@ def run(snaps: list[int] | None = None) -> str:
                                "zones_half2": int((np.bincount(z2) >= 2).sum()),
                                "ari_half1_vs_half2": adjusted_rand(z1, z2),
                                "ari_half1_vs_full": adjusted_rand(z1, ref), "ari_half2_vs_full": adjusted_rand(z2, ref)})
+        TAB.mkdir(exist_ok=True)
+        pd.DataFrame([r for r in prior_rows if r["chain"] == chain]).to_csv(
+            TAB / f"zone_sensitivity_prior_{chain}.csv", index=False)
+        pd.DataFrame([r for r in split_rows if r["chain"] == chain]).to_csv(
+            TAB / f"zone_sensitivity_split_half_{chain}.csv", index=False)
         print(f"  {chain}: done", flush=True)
     TAB.mkdir(exist_ok=True)
     pr, sp = pd.DataFrame(prior_rows), pd.DataFrame(split_rows)
@@ -73,5 +80,13 @@ def run(snaps: list[int] | None = None) -> str:
 
 
 if __name__ == "__main__":
-    print(run())
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--chains", default=",".join(CHAINS))
+    ap.add_argument("--out", default="")
+    a = ap.parse_args()
+    if a.out:
+        from pathlib import Path
+        TAB = Path(a.out)
+    print(run(chains=tuple(a.chains.split(","))))
     sys.exit(0)

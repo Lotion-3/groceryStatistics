@@ -112,7 +112,8 @@ def fit_enet(Xtr, ytr, Xte):
     return m.predict(Xte), m.coef_
 
 
-def horseshoe_idata(Xtr: np.ndarray, ytr: np.ndarray, p0: int = 5, draws: int = 1000, seed: int = SEED):
+def horseshoe_idata(Xtr: np.ndarray, ytr: np.ndarray, p0: int = 5, draws: int = 1000, seed: int = SEED,
+                    tune: int = 1000, chains: int = 4):
     """Regularised horseshoe on standardised X and y (non-centred):
         beta_j = z_j * tau * lambda~_j,  lambda~_j^2 = c^2 lambda_j^2 / (c^2 + tau^2 lambda_j^2)
         z_j ~ N(0,1), lambda_j ~ C+(0,1), tau ~ C+(0, tau0), c^2 ~ InvGamma(2, 8)
@@ -135,13 +136,15 @@ def horseshoe_idata(Xtr: np.ndarray, ytr: np.ndarray, p0: int = 5, draws: int = 
         pm.Normal("y", a + pm.math.dot(Xtr, beta), sigma, observed=yz)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            idata = pm.sample(draws, tune=1000, chains=4, target_accept=0.99, nuts_sampler="numpyro",
+            idata = pm.sample(draws, tune=tune, chains=chains, target_accept=0.99, nuts_sampler="numpyro",
                               random_seed=seed, progressbar=False)
     return idata, ym, ys
 
 
 def fit_horseshoe(Xtr, ytr, Xte):
-    idata, ym, ys = horseshoe_idata(Xtr, ytr)
+    # Inside cross-validation only the posterior mean is used for prediction,
+    # so a lighter run suffices; the reported full-data fit keeps 4 x 1000.
+    idata, ym, ys = horseshoe_idata(Xtr, ytr, draws=500, tune=500, chains=2)
     post = idata.posterior
     b = post["beta"].mean(("chain", "draw")).values
     a = float(post["a"].mean())
@@ -402,7 +405,8 @@ def run(snaps: list[int] | None = None) -> str:
     FIG.mkdir(exist_ok=True)
 
     cv_rows, sel_rows, coef_tabs, diag = [], [], {}, []
-    for chain, g in data.groupby("chain"):
+    # Kroger's test host (kroger_ce) is not a chain for analysis (DECISIONS #39).
+    for chain, g in data[data["chain"] != "kroger_ce"].groupby("chain"):
         X, main, _ = design(g, chain)
         ok = X.notna().all(axis=1).to_numpy() & g["index"].notna().to_numpy()
         X, y, groups = X[ok], g["index"].to_numpy()[ok], g["state"].to_numpy()[ok]
