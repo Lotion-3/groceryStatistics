@@ -62,16 +62,22 @@ strata with farthest-point order within each stratum. A chain that stops part-wa
 therefore still has a stratified, geographically spread sample: at 25% of the list, every
 stratum is within one store of proportional, and 38 states are present.
 
-Store counts [update]:
+Store counts and coverage [update at final run]:
 
-| Chain | Stores | Source |
-|---|---|---|
-| ALDI | 205 | ALDI's Instacart-built site |
-| Costco | 174 | Instacart |
-| Kroger | 84 so far (target about 130) | official API |
-| Walmart | 41 | stopped at a captcha |
-| Meijer | 3 | stopped at a block |
-| Target | short budgeted sessions | website |
+| Chain | Stores | Store-item pairs collected | Rows tied to the store | Source; note |
+|---|---|---|---|---|
+| ALDI | 205 | 100% | 100% | ALDI's Instacart-built site |
+| Costco | 175 | 100% | 100% | Instacart |
+| Kroger | 99 so far | 94% | 98% | official API; 102 sampled locations have no Kroger-family store within 15 mi |
+| Walmart | 42 | 99% | 30%* | website; stopped at a captcha after 42 stores |
+| Meijer | 3 | 100% | 100% | website; store locator blocked after 51 locations (Midwest only) |
+| Target | 9 so far | 16 of 58 items by design | 99% | website; short budgeted sessions on the 16 matched items |
+
+\*Walmart search results are dominated by marketplace and fulfilment-centre listings. Only
+rows Walmart ties to the store are used, and those still cover 99% of store-item pairs.
+
+Missing data is mostly structural: locations with no store of the chain, and items a store
+does not carry. All failures are logged with their reason.
 
 **Items.** 58 items:
 - 37 national-brand packaged groceries;
