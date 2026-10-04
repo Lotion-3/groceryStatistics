@@ -2,8 +2,9 @@
 
 Data: log regular price of the products each chain carries widely (seen at
 >= 80% of the chain's stores, at most 40 per chain: Module A's basket rule),
-store-specific rows only, retailer-direct chains only (Instacart-sourced
-Costco/ALDI and the Kroger certification feed are analysed elsewhere),
+store-specific rows only, from retailer websites and Kroger's official
+production API (Instacart-sourced Costco/ALDI and the Kroger test host are
+analysed elsewhere),
 contiguous US only (Hawaii/Alaska stores are excluded and counted; their
 premia are reported by Module A).
 
@@ -66,6 +67,7 @@ HSGP_C = 1.5            # boundary factor
 MIN_SHARED_UPCS = 3
 AT_LIST_TOL = 0.0005    # |log(price/list)| below this = same price to the cent
 NON_CONTIGUOUS = ("HI", "AK")   # fitted area: contiguous US (+ DC)
+MODEL_SOURCES = ("direct", "kroger")
 
 
 # ---------------------------------------------------------------------------
@@ -75,7 +77,9 @@ NON_CONTIGUOUS = ("HI", "AK")   # fitted area: contiguous US (+ DC)
 def model_data(dev: pd.DataFrame) -> pd.DataFrame:
     """Rows for the model: widely carried products per chain, direct source only,
     with the chain's list (modal) price, the at-list indicator z and dl."""
-    d = dev[(dev["source"] == "direct") & dev["regular_price"].gt(0) & dev["lat"].notna()].copy()
+    # Retailer websites and Kroger's official production API (source "kroger");
+    # Instacart storefronts and the Kroger test host are analysed separately.
+    d = dev[dev["source"].isin(MODEL_SOURCES) & dev["regular_price"].gt(0) & dev["lat"].notna()].copy()
     keep = []
     for chain, g in d.groupby("chain"):
         n = g["store_pk"].nunique()

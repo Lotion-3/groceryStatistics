@@ -1,7 +1,8 @@
 """Module D: cheapest way to buy a fixed basket, visiting at most k stores (Lee, Song).
 
-Setting. For each sampled anchor location (a sampled Target store), the
-candidate stores are all sampled Target and Walmart stores within RADIUS_KM.
+Setting. Anchors are the Walmart and Kroger store locations (contiguous US);
+the candidate stores for an anchor are all collected Walmart, Target, Kroger
+and Meijer stores within RADIUS_KM.
 A shopper must buy one unit of every basket item; item i at store s costs
 p_is (regular shelf price; promo prices as a sensitivity). Which <= k stores
 should they visit, and what do they save versus the best single store?
@@ -17,13 +18,15 @@ lowers the basket cost most). Reported: the greedy-vs-optimal gap.
 
 Cross-chain decomposition: the optimum when all visited stores must belong to
 ONE chain, versus the unrestricted optimum. The difference is the part of the
-saving that exists only because the two chains price differently (a
-law-of-one-price violation a shopper can exploit).
+saving that exists only because chains price differently (a law-of-one-
+price violation a shopper can exploit).
 
-Item identity: the owner-confirmed product ids (items.walmart_id /
-items.target_tcin). Until those are filled in, the best automatic candidate
-from config/items_resolved.csv is used and every output is marked
-PROVISIONAL. Costco is excluded (its pack sizes rarely match).
+Item identity (DECISIONS #48): Walmart and Target through their confirmed
+product ids (items.walmart_id / items.target_tcin); Kroger and Meijer through
+the item's canonical UPC, which both report for every product. The basket is
+the items priced at >= MIN_BASKET_COVERAGE of BOTH Walmart's and Kroger's
+stores (the two large chains); Target and Meijer stores join wherever they
+are near. Costco and ALDI are excluded (pack sizes / own brands).
 
 Not modelled: travel cost and time (k caps the number of visits instead),
 taxes, availability beyond what the search returned. PRELIMINARY.
@@ -42,8 +45,10 @@ from analysis.estimators import haversine_km
 
 RADIUS_KM = 25.0
 KS = (1, 2, 3)
-CHAINS = ("target", "walmart")
-MIN_BASKET_COVERAGE = 0.80     # an item enters the basket if priced at >= 80% of each chain's stores
+CHAINS = ("walmart", "target", "kroger", "meijer")
+BASKET_CHAINS = ("walmart", "kroger")
+MIN_BASKET_COVERAGE = 0.60     # an item enters the basket if priced at >= 60% of each BASKET_CHAINS chain's stores
+NON_CONTIGUOUS = ("HI", "AK")
 
 
 # ---------------------------------------------------------------------------
@@ -70,18 +75,27 @@ def item_product_ids(db=DB) -> tuple[pd.DataFrame, bool]:
     return r[["item_id", "chain", "chain_product_id"]], True
 
 
-def price_matrix(obs: pd.DataFrame, ids: pd.DataFrame, col: str = "regular_price") -> pd.DataFrame:
-    """Stores x items of the identified product's price (store-specific rows)."""
-    o = obs[obs["chain"].isin(CHAINS)].merge(ids, on=["item_id", "chain", "chain_product_id"])
-    o = o.dropna(subset=[col])
-    return o.pivot_table(index="store_pk", columns="item_id", values=col, aggfunc="min")
+def price_matrix(obs: pd.DataFrame, ids: pd.DataFrame, col: str = "regular_price", db=DB) -> pd.DataFrame:
+    """Stores x items: the identified product's price (store-specific rows).
+    Walmart/Target via confirmed product ids; Kroger/Meijer via the item's UPC
+    (whichever search returned it)."""
+    import sqlite3
+    o = obs[obs["chain"].isin(CHAINS)].dropna(subset=[col])
+    by_id = o[o["chain"].isin(["walmart", "target"])].merge(ids, on=["item_id", "chain", "chain_product_id"])
+    con = sqlite3.connect(db)
+    upcs = pd.read_sql_query("SELECT item_id AS upc_item, upc FROM items WHERE upc IS NOT NULL AND upc != ''", con)
+    con.close()
+    by_upc = o[o["chain"].isin(["kroger", "meijer"])].merge(upcs, on="upc")
+    long = pd.concat([by_id[["store_pk", "item_id", col]],
+                      by_upc[["store_pk", "upc_item", col]].rename(columns={"upc_item": "item_id"})])
+    return long.pivot_table(index="store_pk", columns="item_id", values=col, aggfunc="min")
 
 
 def basket_items(P: pd.DataFrame, stores: pd.DataFrame) -> list[str]:
-    """Items priced at >= MIN_BASKET_COVERAGE of the stores of EACH chain."""
+    """Items priced at >= MIN_BASKET_COVERAGE of the stores of each BASKET_CHAINS chain."""
     ch = stores.set_index("store_pk").loc[P.index, "chain"]
     cov = P.notna().groupby(ch.values).mean()
-    ok = (cov.reindex(list(CHAINS)) >= MIN_BASKET_COVERAGE).all(axis=0)
+    ok = (cov.reindex(list(BASKET_CHAINS)) >= MIN_BASKET_COVERAGE).all(axis=0)
     return list(ok[ok].index)
 
 
@@ -233,12 +247,12 @@ def run(snaps: list[int] | None = None) -> str:
         return "Module D: no item -> product ids (confirm items or run collectors.resolve_items)."
     P = price_matrix(obs, ids)
     stores = obs.drop_duplicates("store_pk")[["store_pk", "chain", "lat", "lon", "state", "region", "urbanicity"]]
-    stores = stores[stores["store_pk"].isin(P.index) & stores["lat"].notna()]
+    stores = stores[stores["store_pk"].isin(P.index) & stores["lat"].notna() & ~stores["state"].isin(NON_CONTIGUOUS)]
     P = P.loc[stores["store_pk"]]
     items = basket_items(P, stores)
     if len(items) < 5:
-        return f"Module D: only {len(items)} items priced widely at both chains; need >= 5."
-    anchors = stores[stores["chain"] == "target"]
+        return f"Module D: only {len(items)} items priced widely at Walmart and Kroger; need >= 5."
+    anchors = stores[stores["chain"].isin(BASKET_CHAINS)]
     t = anchors_table(P, items, stores, anchors)
     if t.empty:
         return "Module D: no anchor has >= 2 candidate stores within the radius."
