@@ -228,8 +228,7 @@ stores) and Walmart (41), contiguous US: 5,380 prices, 74% at list. It converges
 - **LOO:** PSIS-LOO does not separate M1 from M2, as the simulation predicted.
 - **Misfit:** posterior predictive checks reproduce the share of prices at list, but the
   most extreme departures (99th percentile 0.37 observed vs about 0.29 replicated) are
-  heavier than the model's $t_{
-u pprox 1.9}$.
+  heavier than the model's $t_{\nu \approx 1.9}$.
 - **Reference model:** M0 does not converge (R-hat 1.46). It is misspecified, and with
   only 3 UPCs shared between chains its chain effect is barely identified.
 
