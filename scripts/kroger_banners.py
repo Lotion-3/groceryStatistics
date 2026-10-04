@@ -32,14 +32,14 @@ import sys
 import numpy as np
 import pandas as pd
 
-from collectors.common import ROOT, save_raw
+from collectors.common import ROOT, TransientError, save_raw, with_backoff
 from db.init_db import DEFAULT_DB
 
 UNIVERSE = ROOT / "data" / "processed" / "kroger_store_universe.csv"
 SAMPLE = ROOT / "config" / "kroger_banner_sample.csv"
 PER_BANNER = 12
 SEED = 20261004
-NON_STORE = ("fuel", "distribution", "lab", "picking", "spoke", "pharmacy only")
+NON_STORE = ("fuel", "distribution", "lab", "picking", "spoke", "pharmacy only", "vitacost")  # vitacost: online-only
 
 
 def grid_points(step: float = 1.0) -> pd.DataFrame:
@@ -69,7 +69,12 @@ def enumerate_stores() -> pd.DataFrame:
         key = f"{c.clat:.2f},{c.clon:.2f}"
         if key in done:
             continue
-        r = K._get("/locations", {"filter.latLong.near": key, "filter.radiusInMiles": 50, "filter.limit": 200}, sess)
+        try:     # a 5xx on one cell is retried (backoff), then logged and skipped; never fatal
+            r = with_backoff(K._get, "/locations",
+                             {"filter.latLong.near": key, "filter.radiusInMiles": 50, "filter.limit": 200}, sess)
+        except TransientError as e:
+            print(f"  cell {key}: {e} after retries; skipped (rerun enumerate to retry)", flush=True)
+            continue
         if r.status_code != 200:
             print(f"  cell {key}: http {r.status_code}", flush=True)
             continue
@@ -84,7 +89,7 @@ def enumerate_stores() -> pd.DataFrame:
                          "lat": g.get("latitude"), "lon": g.get("longitude")})
         if not data:
             rows.append({"_cell": key, "_capped": 0})
-        if i % 25 == 0:
+        if i % 5 == 0:
             pd.DataFrame(rows).to_csv(UNIVERSE, index=False)
             print(f"  {i}/{len(cells)} cells", flush=True)
     u = pd.DataFrame(rows)

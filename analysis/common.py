@@ -158,7 +158,8 @@ def sample_size_note(df: pd.DataFrame) -> str:
 
 # Colour follows the chain, never its rank (validated categorical slots 1-3;
 # every figure also has a legend and a matching table in tables/).
-CHAIN_COLORS = {"target": "#2a78d6", "walmart": "#eb6834", "costco": "#1baf7a"}
+CHAIN_COLORS = {"target": "#2a78d6", "walmart": "#eb6834", "costco": "#1baf7a", "kroger": "#8b5cc7",
+                "aldi": "#c2a01e", "meijer": "#d6457a"}  # validated: scripts/validate_palette.js, light mode
 INK, MUTED, GRID = "#1f1f1e", "#6b6a63", "#e4e3dc"
 
 

@@ -67,6 +67,12 @@ def tail_values(d: np.ndarray, tail: str) -> np.ndarray:
     return x[x > 0]
 
 
+def _alpha(x, k: int) -> float:
+    """Hill alpha = 1/gamma; undefined (NaN) when the top order statistics tie."""
+    g = hill_gamma(x, k)
+    return 1.0 / g if g > 0 else np.nan
+
+
 def k_frac(n: int, frac: float) -> int:
     return max(10, int(frac * n))
 
@@ -75,7 +81,8 @@ def alpha_at(frac: float, tail: str):
     """Statistic for the bootstrap: Hill alpha at k = frac * n of the resample."""
     def stat(d):
         x = tail_values(d, tail)
-        return 1.0 / hill_gamma(x, k_frac(len(x), frac))
+        g = hill_gamma(x, k_frac(len(x), frac))
+        return 1.0 / g if g > 0 else np.nan     # tied top order statistics: alpha undefined
     return stat
 
 
@@ -99,8 +106,8 @@ def tail_row(d: np.ndarray, stores: np.ndarray, tail: str, min_n: int = MIN_N) -
     path = hill_path(x)
     ks = stable_k(path)
     row.update(k=k, alpha_hill=a, alpha_ci_lo=lo, alpha_ci_hi=hi,
-               k_stable=ks, alpha_stable_k=1.0 / hill_gamma(x, ks),
-               k_10pct=k_frac(len(x), 0.10), alpha_k10=1.0 / hill_gamma(x, k_frac(len(x), 0.10)),
+               k_stable=ks, alpha_stable_k=_alpha(x, ks),
+               k_10pct=k_frac(len(x), 0.10), alpha_k10=_alpha(x, k_frac(len(x), 0.10)),
                gpd_threshold=float(np.quantile(x, 0.90)), gpd_n_exceed=int(np.sum(x > np.quantile(x, 0.90))))
     try:
         xi, xlo, xhi = cluster_bootstrap_ci(d, stores, xi_at_q90(tail), B=B, seed=SEED)
@@ -238,7 +245,7 @@ def basket_risk(bc: pd.DataFrame) -> pd.DataFrame:
         up = up[up > 0]
         if len(up) >= 100:
             k = k_frac(len(up), 0.05)
-            row.update(hill_k=k, alpha_hill_upper=1.0 / hill_gamma(up, k))
+            row.update(hill_k=k, alpha_hill_upper=_alpha(up, k))
         else:
             row["hill_note"] = f"tail index not reported ({len(up)} stores above the median; need >= 100)"
         rows.append(row)

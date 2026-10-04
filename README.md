@@ -1,13 +1,14 @@
-# How Retailers Price Across Space
+# How Retailers Price Across Space and Time
 
 For identical products (matched by UPC), how does a chain's price vary across its stores,
 and how is its price list organised across space: one national list, discrete pricing
 zones, or a continuous gradient? Where do departures from the list occur, and how extreme
-are they?
+are they? And when do prices change: do stores in the same zone change prices together?
 
 **Status:** preliminary. One cross-section (snapshot 2, October 2026) covering ALDI,
 Costco (Instacart), Kroger (official API), Walmart, and partly Target and Meijer. Write-up:
-`paper/writeup.md`. Plan and first results: `docs/STUDY_PLAN.md`. Day-by-day log:
+`paper/writeup.md`. Pre-registered event study (Kroger promotion expiry, Oct 6, 2026):
+`docs/PREREGISTRATION_EVENT.md`. Plan and first results: `docs/STUDY_PLAN.md`. Day-by-day log:
 `docs/PROGRESS.md`. Every design choice: `docs/DECISIONS.md`.
 
 ## Layout
@@ -25,8 +26,11 @@ sampling/     frame, stratified draw, balanced-prefix visit order, external refe
 analysis/     coverage; module_a (tails), module_b (two-part Bayesian spatial model),
               module_c (shrinkage regression + factor model), module_d (basket MILP),
               module_e (pricing architecture: variogram, H0 persistence, zones),
+              module_f (daily-panel synchronisation), module_g (price timing from Kroger
+              effective/expiration timestamps), module_h (pre-registered event analysis),
               zone_model.py (Dirichlet-process mixture), zone_sensitivity.py
-simulation/   SYNTHETIC-data checks of the tail estimators, Module B and the zone model
+simulation/   SYNTHETIC-data checks of the tail estimators, Module B, the zone model and the
+              promotion-length estimators
 scripts/      parallel snapshot runner, item review tools, smoke test
 figures/ tables/  outputs
 docs/         STUDY_PLAN, DECISIONS, PROGRESS, LIMITATIONS, SAMPLING, REPO_NOTES
@@ -51,10 +55,11 @@ pytest
 
 ```
 python -m collectors.reparse        # data/raw/**  ->  data/grocery.sqlite
-python run_all.py                   # coverage + modules A-E -> figures/, tables/
+python run_all.py                   # coverage + modules A-H -> figures/, tables/
 python run_all.py --sim             # also re-run the estimator simulations
 python simulation/validate_module_b.py       # two-part spatial model check
 python simulation/validate_zone_model.py     # zone model check
+python -m simulation.validate_promo_lengths  # one-snapshot promotion-length estimators
 python -m analysis.zone_sensitivity          # zone prior sensitivity + split-half replication (slow)
 python -m scripts.auto_item_review           # item matching decisions (writes config/items.csv)
 ```
@@ -75,6 +80,15 @@ Then list the snapshot under `main_snapshots` in `config/analysis.yaml`. Runs ar
 resumable (`-SnapshotId N`). Stores are visited in balanced-prefix order, so a partial run
 still yields a stratified, geographically spread sample. `--budget N` stops a chain
 cleanly after N queries.
+
+Kroger banner sample and event panel (official API, one process, ≤ 10,000 calls/day):
+
+```
+Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File scripts\run_kroger_event.ps1" -WindowStyle Hidden
+```
+
+Log: `data/raw/logs/kroger_event.log`. Pass times and the definitions are in
+`docs/PREREGISTRATION_EVENT.md`.
 
 ## Data collection and terms of use
 

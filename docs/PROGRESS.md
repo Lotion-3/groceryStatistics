@@ -221,3 +221,217 @@ compares Walmart's pick with a UPC proposed independently from Meijer/Kroger sea
   per session), and a fresh session continued cleanly. This is consistent with the owner's
   hypothesis. One confound remains: the 5-minute wait alone might also have been enough.
   One event; sessions 2–3 follow.
+
+## Module G: price timing (2026-10-04)
+- **New:** `analysis/module_g_timing.py`, also wired into `run_all.py`. It uses Kroger's
+  `price_effective` field from snapshot 2. No new collection.
+- **Weekday:** 89% of promotional prices and 54% of regular prices start on a Wednesday.
+- **Renewal-theory spell durations from ages:**
+  - regular prices: mean about 32 days;
+  - promotions: mean about 18 days;
+  - age-tail Hill α about 2.3.
+- **Zone co-dating:** 0.87 same zone vs 0.62 different zone (same banner, 906 pairs),
+  p = 0.0003. It holds with the price held fixed (0.88 vs 0.72).
+- The numbers will move slightly while the banner run adds stores to snapshot 2. Rerun after
+  it finishes.
+
+**Session 2 (2026-10-04, 00:28–00:40)**
+- Ran on a fresh session made at run start. No pause was active (no `blocks.json`).
+- **51 successful requests**, then HTTP 435 at anchor 12 (Target #2152, store_pk 624). Six
+  failures in a row tripped the circuit breaker. One item was lost (Prego).
+- This was a refusal after successes, not a counted block. A **session-replace** followed
+  after the 5-minute wait. The **fresh replacement worked**: 12 more queries, no further
+  refusal, then the planned budget stop at 64.
+- **Total 63 successful queries out of 64** (anchors 1–12). No counted block
+  (`blocks.json` still absent); `mints.json` shows one run-start session and one
+  replacement.
+- The vendored cookie loader logged a check of the Supabase pool and loaded 0 cookies.
+  The production pool was not used.
+- **Reading:** both sessions were refused after almost exactly the same number of
+  successes (50 and 51). That looks like a fixed per-session request allowance at Target
+  (about 50 requests) rather than random bad cookies. A fresh session continued cleanly
+  both times. The 5-minute-wait confound is still there. Session 3 follows.
+
+## Night of 2026-10-04: time hypotheses (owner: "plan 8 hours ... get started")
+- **Kroger expiration times discovered.** Every promotion has a scheduled end; regular
+  prices carry 9999-12-31. 9,326 promotions expire at the same instant nationwide:
+  2026-10-07T03:59:59Z, which is **Tue Oct 6, 23:59 Eastern**. Earlier messages said
+  "Tue Oct 7"; Oct 7 is the Wednesday.
+- **Pre-registration** (`docs/PREREGISTRATION_EVENT.md`, committed af68714 at 01:38
+  Eastern): predictions H1–H7, frozen zones, panel, probe list and Module H code. Module H
+  is tested on synthetic data. Addendum 1 (about 02:10, uncommitted) adds the "cohort
+  observed when it starts" length estimand.
+- **Pipeline:** `scripts/run_kroger_event.ps1` (pid 44200) replaces `run_kroger_banners.ps1`
+  (stopped while it was still waiting).
+  - Banner sample until Mon 09:30.
+  - Event passes: control Mon 10:00, before Tue 11:00, probes Tue 22:30 / Wed 00:15 /
+    Wed 05:00, after Wed 10:00, late Thu 10:00.
+  - The banner sample resumes after the late pass.
+  - Log: `data/raw/logs/kroger_event.log`. DECISIONS #51.
+- **Parser** keeps `price_expiration`. Snapshot-2 rows get it at the next reparse;
+  Module G reads it from raw for now.
+- **Module G extended:**
+  - local time of day (2.5% of regular price starts between noon and 21:00 local);
+  - same-minute zone test (0.14 vs 0.03, p = 0.0003);
+  - promotion lengths: whole weeks, 80% ending on Tuesday;
+  - three one-snapshot estimators of mean promotion length: ages 18.3, harmonic 12.7,
+    Lynden-Bell 9.5 days;
+  - stock levels;
+  - figure `fig_g2`.
+- **New simulation** `simulation/validate_promo_lengths.py`: the estimators agree under
+  stationarity and split in the observed order when one cohort's length mix differs.
+- **Module C** had finished its fits but crashed drawing figures (no colour for ALDI).
+  Fixed `CHAIN_COLORS`, which now covers 6 chains and passes the palette validator. Figures
+  rebuilt from the saved tables. Results are in the write-up: out-of-sample R² ≈ 0 for
+  ALDI, 0.11 for Kroger, 0.19 for Costco.
+- The write-up's timing section was rewritten, and Module C was added.
+- **Not done (blocked by the permission classifier):** a commit of Module G, and deleting
+  the empty stray file `data/grocery.db`, which a typo in a query created. Left for the
+  owner.
+
+**Session 3 (2026-10-04, 03:07–03:19)**
+- Ran on a fresh session made at run start. No pause was active (no `blocks.json`).
+- **51 successful requests**, then HTTP 435 at store_pk 639. Six failures in a row tripped
+  the circuit breaker. One item was lost (Barilla).
+- This was a refusal after successes, not a counted block. A **session-replace** followed
+  after the 5-minute wait. The **fresh replacement worked**: 12 more queries, no further
+  refusal, then the planned budget stop at 64.
+- **Total 63 successful queries out of 64.** No counted block (`blocks.json` still
+  absent); `mints.json` shows one run-start session and one replacement.
+
+### Summary of the Target session tests (PRELIMINARY; one network, about 6 hours)
+
+| Session | Gap | Successes before refusal | Replacement | Result |
+|---|---|---|---|---|
+| Oct 2 locate pass (old code) | 2 s | about 115 | none (stopped) | blocked; 12 h pause |
+| Oct 2 resume (old code) | 5 s | about 47 | none (stopped) | stopped |
+| Oct 3, 32-query budget | 5 s | none: 32 of 32 | not needed | clean |
+| 64-query test, session 1 (Oct 3, 21:07) | 5 s | 50 | fresh, after 5 min: worked (13 queries) | 63 of 64 |
+| 64-query test, session 2 (Oct 4, 00:28) | 5 s | 51 | fresh, after 5 min: worked (12 queries) | 63 of 64 |
+| 64-query test, session 3 (Oct 4, 03:07) | 5 s | 51 | fresh, after 5 min: worked (12 queries) | 63 of 64 |
+
+**Did refusals occur?** Yes. Every session that ran past about 50 requests was refused,
+and the 32-query session stayed below that.
+
+**Did a fresh session fix them?** Yes, 3 out of 3. Each replacement ran the rest of its
+budget without a refusal.
+
+**Counted blocks** (a fresh session refused on its first request): **zero** in all four
+sessions under the current policy. `blocks.json` was never created. No pause was triggered.
+
+**Reading.** The evidence supports the owner's hypothesis that a refusal after a run of
+successes is tied to the *session*, not the IP, and a fresh session fixes it. The refusals
+are not random "bad cookies", though: they arrive after **50, 51 and 51 successes**, at
+three different times of day and at different stores. That points to a fixed allowance of
+about 50 requests per Target session (at our 5 s gap), after which the session is
+refused. The IP stayed in good standing throughout.
+
+**Practical implication.** A Target run yields about 63 queries per run start plus one
+replacement, with one item lost at the refusal. Retiring the session just before about
+50 requests would avoid even that loss. That is a design change for the owner to decide;
+we have not made it.
+
+**Caveats:**
+- n = 3 refusals, one network, one night.
+- Every replacement came after the 5-minute wait, so a pause alone could also explain the
+  rescue. This was not tested.
+- Sessions were 2.5–3 h apart; shorter gaps were not tested.
+
+**04:13 night check**
+- **Snapshot-2 Kroger pass finished** (log ends with "Done.").
+- **The banner steps had failed at 03:10.**
+  - Store listing crashed after about 16 Locations calls on a single HTTP 500. The
+    exception wasn't caught, and nothing was saved: progress was written every 25 cells.
+  - The select step then failed (no store list), and the pipeline skipped the banner run.
+    It was found waiting for Monday's control pass.
+  - **Fix** (`scripts/kroger_banners.py`): each cell is retried with backoff
+    (`with_backoff`), then logged and skipped if it still fails. Progress is saved every
+    5 cells.
+  - Pipeline restarted at 04:13 (pid 47108); listing is under way (904 cells, about
+    2.3 h). The banner run follows until Mon 09:30, then the event schedule is unchanged.
+  - Failed logs kept as `kroger_event_failed0310_*`. About 1 h of banner time was lost.
+- `run_all.py` started detached at 04:15 (pid 21240; output in the scratchpad).
+- **run_all (final snapshot 2), 04:18–05:16.**
+  - The first attempt crashed in Module A: a bootstrap resample with tied top order
+    statistics gave Hill gamma = 0. Fixed: alpha is undefined (NaN) for that resample,
+    and the bootstrap drops it.
+  - Second run: every module ran. Module F and Module H are waiting for panel data.
+  - **Module B M2:** R-hat 1.007, no divergences, minimum bulk ESS 354 (below the 400
+    target; consider more draws). M1 R-hat 1.028. M0 (reference) does not converge.
+  - **Module B results:**
+    - Kroger spatial share 0.99 (with 121 stores, its store effects are almost entirely
+      regional; banner territories);
+    - length-scale about 93 km;
+    - nu ≈ 3.5;
+    - Module B's chain term is omitted: only 2 UPCs are matched across chains inside
+      Module B.
+  - **Module E, Kroger:** 121 stores, 21 zones, 94% banner purity; within 100 km, 11%
+    differ within a banner vs 77% across banners; variogram range about 240 km.
+  - **Module D:** 88 locations, saving 0.05%.
+  - **Target law-of-one-price gap** now +0.5% (16 stores; it was +3.2% at 4 stores).
+  - The write-up and STUDY_PLAN numbers are updated.
+- **Commit:** not attempted again. The permission classifier denied the last two commits
+  tonight; tables, figures, paper and docs are left for the owner to commit.
+
+**07:47 morning check (Kroger event pipeline, pid 47108)**
+- **Store listing finished at 06:41:** 904 grid cells, none skipped.
+- **Selection:** 271 stores across 21 banners, 121 already priced in snapshot 2. New
+  banners include Bakers, City Market, Dillons, Gerbes, Jay C, Metro Market, Pay Less,
+  Pick 'n Save, QFC and Ruler.
+- **Banner run started at 06:41.** By 07:47, 5 new stores were priced (2,958 rows), for
+  127 Kroger stores in snapshot 2.
+- **Pacing:** median gap 10.4 s, minimum 9.9 s (≥ 9 s holds). No 401/403/429 responses
+  and no blocks.
+- **Expected finish:** about 150 new stores at about 10 min each is about 25 h, just
+  before the Mon 09:30 hard stop. The run resumes after the event if it is cut.
+- **Vitacost removed.** The selection included 2 "VITACOST" locations, which are Vitacost
+  fulfilment warehouses (online only, not stores).
+  - Removed from `config/kroger_banner_sample.csv`, and "vitacost" added to `NON_STORE`
+    in `scripts/kroger_banners.py`.
+  - The running process loaded the old list. Vitacost comes last alphabetically, so it
+    is unlikely to be reached before the stop. If it is, add those store_pks to
+    `config/excluded_stores.csv`.
+- **run_all (04:18–05:16)** finished; it was reviewed and the write-up updated at the
+  04:13 check (see above).
+
+**Afternoon of 2026-10-04 ("keep working")**
+- **Write-up restructured to fit 5–6 pages.** The main text is 2,738 words with 5
+  figures and 3 tables. Data checks and method details moved to appendices. The previous
+  version is backed up in the session scratchpad.
+  - New framing: space *and* time. Results are split into §4 Space and §5 Time, and §5.4
+    covers the pre-registered event.
+  - Figures:
+    1. variogram, now chains with ≥ 30 stores only;
+    2. ALDI zones;
+    3. **new** `fig_e4_kroger_banners_zones` (stores by banner, and banner × zone
+       counts; almost block-diagonal);
+    4. Module B spatial field;
+    5. timing and promotion-length estimators.
+- **Module E** draws the Kroger banner/zone figure (`kroger_banner_figure`) and uses real
+  banner names (Harris Teeter, Pick 'n Save, ...).
+- **Module B:** the colour bar no longer overlaps the title. Draws and tune are
+  configurable (`GS_MODB_DRAWS`, `GS_MODB_TUNE`). A 2,000-draw / 1,500-tune rerun started
+  15:23 (pid 16996) to reach ESS ≥ 400. The write-up has an [update] for its ESS, and the
+  figure is redrawn from that run.
+- **README** updated for Modules F–H, the event pipeline and the promotion-length
+  simulation.
+- **Kroger banner run:** sample row 53/271 at 15:27, no 401/403/429. On pace to finish
+  before the Mon 09:30 stop.
+- **Module B rerun** (2,000 draws, 1,500 tune; 15:27–15:39).
+  - M2: R-hat 1.005, minimum bulk ESS 877, no divergences, so the ESS target is met.
+  - It used **160 Kroger stores**, because the banner run is adding stores to snapshot 2.
+  - Results: Kroger spatial share 0.996; Walmart 0.51 (0.35–0.68); length-scale about
+    92 km; nu ≈ 2.2; Kroger mean departure +3.0%.
+  - LOO now slightly favours M1 (30 ± 22), still not decisive.
+  - The write-up states n per result and says all Kroger numbers are rerun after the
+    banner sample. The figure has no overlap.
+- **Kroger zone robustness** (split-half and prior) rerunning on the current Kroger set
+  (pid 4340; output in the scratchpad).
+- `docs/LIMITATIONS.md` updated: Kroger and Target entries corrected; timing, promotion
+  length and frozen-zone caveats added.
+- **Kroger zone robustness on 160 stores** (15:42):
+  - split-half ARI 0.98 and 0.83 (mean 0.91);
+  - prior: gamma 0.5 vs 1 gives ARI 0.92 (28 vs 25 zones); gamma 5 merges to 14;
+  - start agreement 0.96–0.97.
+  - Tables `zone_sensitivity_*_kroger.csv` and the combined files are updated; the
+    write-up is updated.

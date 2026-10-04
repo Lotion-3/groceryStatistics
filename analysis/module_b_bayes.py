@@ -51,6 +51,7 @@ PRELIMINARY, cross-sectional; associations only. Seeds fixed.
 """
 from __future__ import annotations
 
+import os
 import sys
 import warnings
 
@@ -60,7 +61,9 @@ import pandas as pd
 from analysis.common import (CHAIN_COLORS, FIG, MUTED, SEED, TAB, add_deviations, attach_upcs, caption,
                              load_observations, main_snapshots, product_panel, sample_size_note, style)
 
-DRAWS, TUNE, CHAINS = 1000, 1000, 4
+DRAWS = int(os.environ.get("GS_MODB_DRAWS", "1000"))     # 2000 for the final run (ESS target 400)
+TUNE = int(os.environ.get("GS_MODB_TUNE", "1000"))
+CHAINS = 4
 BASKET_COVERAGE, BASKET_MAX = 0.80, 40
 HSGP_M = (20, 20)       # basis functions per dimension
 HSGP_C = 1.5            # boundary factor
@@ -317,12 +320,12 @@ def figures(d: pd.DataFrame, ix: dict, idata_sp, ppc: pd.DataFrame, note: str) -
     if idata_sp is not None:
         from analysis.module_c_hd import _diverging_cmap
         fm = idata_sp.posterior["f"].mean(("chain", "draw")).values
-        fig, ax = plt.subplots(figsize=(5.6, 3.4))
+        fig, ax = plt.subplots(figsize=(6.4, 3.4))
         lim = np.max(np.abs(fm)) or 1
         sc = ax.scatter(ix["store_lon"], ix["store_lat"], c=100 * fm, cmap=_diverging_cmap(),
                         vmin=-100 * lim, vmax=100 * lim, s=16, edgecolors="white", linewidths=0.4)
-        fig.colorbar(sc, ax=ax, shrink=0.85, label="spatial effect on departure size (%)")
-        ax.set_title("Where off-list prices are higher (M2, posterior mean of f)", loc="left")
+        fig.colorbar(sc, ax=ax, shrink=0.8, pad=0.03, label="effect on departure size (%)")
+        ax.set_title("Where off-list prices are higher (M2, mean of f)", loc="left")
         ax.set_xlabel("longitude")
         ax.set_ylabel("latitude")
         ax.set_aspect(1.25)

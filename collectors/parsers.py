@@ -140,6 +140,21 @@ def walmart_find_items(o: Any) -> list[dict]:
     return []
 
 
+def _walmart_time_fields(it: dict, store_id) -> dict:
+    """Earliest pickup/delivery slot from the priced store (ISO time; the
+    observation time gives the lead time), plus badge texts: "Only N left" /
+    "Low stock" (store-level) and "N+ bought since yesterday" (national)."""
+    slots = {}
+    for fs in it.get("fulfillmentSummary") or []:
+        if store_id and str(fs.get("storeId")) == str(store_id) and fs.get("deliveryDate"):
+            slots[f"slot_{str(fs.get('fulfillment') or '').lower()}"] = fs.get("deliveryDate")
+    txt = json.dumps(it.get("groupsV2") or [])
+    m_left = re.search(r"Only (\d+) left", txt)
+    m_bought = re.search(r"(\d+K?\+) bought since yesterday", txt)
+    return {**slots, "only_n_left": int(m_left.group(1)) if m_left else None,
+            "low_stock": int("Low stock" in txt), "bought_since_yesterday": m_bought.group(1) if m_bought else None}
+
+
 def _walmart_line(pi: dict, line_type: str, key: str) -> Optional[str]:
     for line in _get(pi, "priceDetails", "priceLines", default=[]) or []:
         if line.get("lineType") == line_type:
@@ -197,6 +212,9 @@ def parse_walmart_item(it: dict, rank: int) -> Optional[dict]:
             "sold_by_weight": int(bool(pi.get("finalCostByWeight"))),
             "shipping_price": money(_walmart_line(pi, "SHIPPING", "PRICE")),
             "sponsored": int(bool(it.get("isSponsoredFlag"))),
+            # time-related signals (DECISIONS #51 notes): earliest slot from the
+            # priced store, and the store-level stock / national demand badges
+            **_walmart_time_fields(it, priced_at),
         },
     }
 

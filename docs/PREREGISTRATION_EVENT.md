@@ -110,3 +110,26 @@ Each is a one-sided permutation test, at α = 0.05 per test.
 All seven predictions are reported whether they hold or not, with n and preliminary
 labels. Missed passes (API errors, hard stops) are reported. Units not observed in both
 passes of a comparison are dropped and counted.
+
+## Addendum 1 (2026-10-04, about 02:10 Eastern; after commit af68714, before any event data)
+
+**Added estimand: the promotion cohort observed when it starts.**
+
+New promotions in the *after* pass are those with `effectiveDate` between 2026-10-06
+22:00 and 2026-10-07 12:00 Eastern. Their planned lengths (expiration − effective) are
+observed in full when they start: no truncation and no length bias. We will report:
+- their mean length and length distribution, with a store-cluster bootstrap CI;
+- a comparison with the three one-snapshot estimators from snapshot 2 (ages-only 18.4,
+  harmonic 12.7, Lynden-Bell 9.4 days).
+
+No directional prediction. The simulation (`simulation/validate_promo_lengths.py`)
+expects the cohort mean to lie between the Lynden-Bell and ages-only values if cohorts
+differ in length mix. That cohort is a single week, so it describes this week's mix, not
+the long-run mean.
+
+## Addendum 2 (2026-10-04, about 02:05 Eastern; before any event data): bug fix
+
+A dry run of `module_h_event.py` on real snapshot-2 rows (every pass set to snapshot 2,
+so nothing changes) showed a bug: when both the control and the event change rates were
+0, H3's ratio was infinite and counted as holding. The ratio is now undefined (not
+holding) in that case. No prediction, definition or threshold changed.

@@ -27,7 +27,8 @@ def _synthetic(seed=0, renew=0.4):
                 z = zones[s]
                 renewed = rng.random() < renew
                 new_shelf = round(reg * (0.75 if z % 2 else 0.7), 2) if renewed else reg
-                rows_a.append({**base, "shelf": new_shelf, "promo": renewed, "eff": zone_time[z], "exp_raw": "", "scheduled": False})
+                exp_new = (zone_time[z].normalize() + pd.Timedelta(days=14, hours=3, minutes=59)).isoformat() if renewed else ""
+                rows_a.append({**base, "shelf": new_shelf, "promo": renewed, "eff": zone_time[z], "exp_raw": exp_new, "scheduled": False})
             else:
                 rows_a.append({**base, "shelf": shelf, "promo": False, "eff": BEFORE_EFF, "exp_raw": exp, "scheduled": False})
     df = lambda r: pd.DataFrame(r)
@@ -50,3 +51,5 @@ def test_module_h_recovers_known_answers():
     assert abs(ren.value - 0.4) < 0.1 and ren.ci_lo < ren.value < ren.ci_hi
     assert np.isinf(get("H3", "control")["value"])  # control->before has no changes
     assert EXPIRY.hour == 3
+    coh = est[est.estimate.str.startswith("new cohort: mean")].iloc[0]
+    assert abs(coh.value - 14) < 0.7      # renewals planned to the expiry two weeks on

@@ -42,9 +42,10 @@ is collected is a stratified, spread-out sample.
 | Q1 | Architecture: one list, zones or gradient? | point mass; **price-list variogram** with store-bootstrap bands | E | done (first pass) |
 | Q2 | Can zones be recovered from prices alone? | **H0 persistence** of price-list dissimilarity; Dirichlet-process mixture over store price lists (simulation-checked) | E (+ new) | H0 done; DP model next |
 | Q3 | Departures and extremes | two-part Bayesian model with spatial field; extreme values of departure size; Hawaii | B, A | built, validated |
-| Q4 | Dynamics: do stores in a zone change prices together? | Kroger daily panel; within- vs across-zone synchronisation | new | needs the daily panel |
+| Q4 | Dynamics: do stores in a zone change prices together? | effective/expiration timestamps (dates, minutes, timing-only clustering); **pre-registered promotion-expiry event** panel | G, H | timestamps done (strong); event Oct 5–8 |
 | Q5 | Law of one price across chains | same-UPC spreads at paired anchors; basket MILP | A, D | needs the item review |
-| Q6 | What predicts departures and zones? | horseshoe vs lasso vs elastic net, CV blocked by state; factor model | C | built |
+| Q6 | What predicts departures and zones? | horseshoe vs lasso vs elastic net, CV blocked by state; factor model | C | done: covariates weak (out-of-sample R² 0–0.19) |
+| Q7 | Price timing: when do prices change, and how long do they last? | local time of day; renewal theory vs length-bias vs Lynden-Bell under left truncation (simulation-checked); a cohort observed when it starts | G, H | one-snapshot results done; cohort at the event |
 
 ## First results (snapshot 2, partial; PRELIMINARY)
 
@@ -87,9 +88,38 @@ Caveats:
 - **Not every zone is contiguous.** One Walmart zone spans the Mountain West and the
   Northeast, which suggests market type as well as geography.
 
-## Next
+## Final snapshot-2 numbers (run_all, 2026-10-04 04:18; PRELIMINARY)
 
-1. Dirichlet-process mixture zone model with a simulation check (Q2).
-2. Kroger: finish the pass, then the daily panel for Q4. That depends on the owner's go-ahead.
-3. Item review, then the cross-chain panel (Q5).
-4. Restructure the write-up around Q1–Q6.
+The tables above are from partial passes. The final pass covers ALDI 204, Walmart 41,
+Costco 174, Kroger 121 and Target 16 stores (contiguous US). See `paper/writeup.md` §4.
+
+| | ALDI | Walmart | Costco/Instacart | Kroger |
+|---|---|---|---|---|
+| Prices at list | 91% | 91% | 76% | 59% |
+| Variogram range | no plateau | no plateau | ≈ 850 km | ≈ 240 km |
+| Zones | 10 | 5 | 18 | 21; 94% banner purity |
+
+Other results:
+- **Module B (M2):** R-hat 1.007, minimum ESS 354. Spatial share: Kroger 0.99, Walmart 0.74.
+  Length-scale about 93 km. LOO favours M2 by 20 ± 12 elpd.
+- **Module C:** covariates weak; out-of-sample R² −0.03 (ALDI), 0.11 (Kroger), 0.19
+  (Costco).
+- **Module D:** splitting a basket saves a median of 0.05%.
+- **Law of one price, gap vs Walmart:** Target +0.5% (16 stores), Meijer +5.6%, Kroger +9.8%.
+- **Module G (timing):**
+  - same start date within vs across zones 0.87 vs 0.66; same minute 0.16 vs 0.03;
+  - timing-only clusters vs price zones: ARI 0.58 vs a 0.43 baseline, p = 0.001;
+  - 2.5% of regular price starts fall between noon and 21:00 local.
+
+## Next (updated 2026-10-04 night)
+
+1. **Kroger event (Q4, Q7):** control pass Mon Oct 5, before Tue Oct 6, probes around the
+   expiry at Tue 23:59 Eastern, after Wed Oct 7, late Thu Oct 8. Then run Module H,
+   unchanged, and report all seven predictions.
+2. Kroger banner sample: until Mon 09:30, resuming after the event. Then refit the zones
+   (reported separately from the frozen pre-registered zones).
+3. Owner decisions pending:
+   - a Meijer store sample (about 5,000 searches);
+   - a small Walmart repeat-visit panel (T2/T3; the parser now keeps slot and stock
+     fields).
+4. Final write-up around Q1–Q7, about Oct 9.

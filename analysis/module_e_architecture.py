@@ -41,7 +41,7 @@ import sys
 import numpy as np
 import pandas as pd
 
-from analysis.common import (CHAIN_COLORS, FIG, MUTED, SEED, TAB, caption, load_observations, main_snapshots,
+from analysis.common import (CHAIN_COLORS, FIG, INK, MUTED, SEED, TAB, caption, load_observations, main_snapshots,
                              product_panel, style)
 from analysis.estimators import haversine_km
 
@@ -307,6 +307,62 @@ def banner_check(st: pd.DataFrame, F: np.ndarray, D: np.ndarray, z: np.ndarray) 
 # Figures
 # ---------------------------------------------------------------------------
 
+BANNER_NAMES = {"HART": "Harris Teeter", "FRED": "Fred Meyer", "PICK": "Pick 'n Save", "FOOD4LESS": "Food 4 Less",
+                "KINGSOOPERS": "King Soopers", "FRYS": "Fry's", "SMITHS": "Smith's", "MARIANOS": "Mariano's",
+                "FOODSCO": "Foods Co", "JAYC": "Jay C", "CITYMARKET": "City Market", "METRO": "Metro Market",
+                "PAYLESS": "Pay Less", "QFC": "QFC", "GERBES": "Gerbes", "DILLONS": "Dillons", "BAKERS": "Baker's",
+                "RULER": "Ruler", "KROGER": "Kroger", "RALPHS": "Ralphs"}
+
+
+def banner_name(code: str) -> str:
+    return BANNER_NAMES.get(code, code.title())
+
+
+def kroger_banner_figure(st: pd.DataFrame, z: np.ndarray, note: str) -> str:
+    """(a) Kroger-family stores by banner; (b) banner x zone counts. The zone
+    model never sees banners, so mass on one banner per zone column is evidence
+    that zones follow banners."""
+    plt = style()
+    b = banners(st.index).to_numpy()
+    order = pd.Series(b).value_counts()
+    top = list(order.index[:6])                     # six validated categorical hues, rest folded into Other
+    pal = ["#2a78d6", "#eb6834", "#1baf7a", "#8b5cc7", "#c2a01e", "#d6457a"]
+    fig, axes = plt.subplots(1, 2, figsize=(9.6, 4.0), gridspec_kw={"width_ratios": [1.05, 1]})
+    fig.subplots_adjust(wspace=0.32, bottom=0.27)
+    ax = axes[0]
+    other = ~np.isin(b, top)
+    ax.scatter(st["lon"][other], st["lat"][other], s=14, color=MUTED, alpha=0.7, label=f"other ({other.sum()})")
+    for k, ban in enumerate(top):
+        m = b == ban
+        ax.scatter(st["lon"][m], st["lat"][m], s=22, color=pal[k], edgecolors="white", linewidths=0.4,
+                   label=f"{banner_name(ban)} ({m.sum()})")
+    ax.set_aspect(1.25)
+    ax.set_xlabel("longitude")
+    ax.set_ylabel("latitude")
+    ax.set_title("Kroger-family stores by banner", loc="left")
+    ax.legend(fontsize=6.5, loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=4, frameon=False)
+    ct = pd.crosstab(pd.Series(b, name="banner"), pd.Series(z, name="zone"))
+    ct = ct.loc[order.index]
+    dom = ct.idxmax(axis=0).map({ban: i for i, ban in enumerate(order.index)})
+    ct = ct[dom.sort_values(kind="stable").index]   # zones ordered by their dominant banner
+    ax = axes[1]
+    ax.imshow((ct > 0) * np.log1p(ct.to_numpy()), cmap="Blues", aspect="auto")
+    for i in range(ct.shape[0]):
+        for j in range(ct.shape[1]):
+            if ct.iat[i, j]:
+                ax.text(j, i, str(ct.iat[i, j]), ha="center", va="center", fontsize=5.5,
+                        color="white" if ct.iat[i, j] >= 5 else INK)
+    ax.set_yticks(range(ct.shape[0]), [banner_name(x) for x in ct.index], fontsize=7)
+    ax.set_xticks(range(ct.shape[1]), range(1, ct.shape[1] + 1), fontsize=6)
+    ax.set_xlabel("zone (Dirichlet-process mixture, no banner labels given)")
+    ax.set_title("Each zone sits inside one banner", loc="left")
+    ax.grid(False)
+    caption(fig, note)
+    fig.savefig(FIG / "fig_e4_kroger_banners_zones.png")
+    plt.close(fig)
+    return "fig_e4_kroger_banners_zones.png"
+
+
 def figures(vg: pd.DataFrame, bars: dict, zones_map: dict, note: str) -> list[str]:
     plt = style()
     out = []
@@ -314,6 +370,8 @@ def figures(vg: pd.DataFrame, bars: dict, zones_map: dict, note: str) -> list[st
         fig, ax = plt.subplots(figsize=(5.4, 3.4))
         for chain, g in vg.groupby("chain"):
             g = g.dropna(subset=["mean_dissimilarity"])
+            if g["stores"].iloc[0] < 30:                 # too few stores for a readable curve (table keeps it)
+                continue
             ax.fill_between(g["mid_km"], g["ci_lo"], g["ci_hi"], color=color(chain), alpha=0.15, linewidth=0)
             ax.plot(g["mid_km"], g["mean_dissimilarity"], marker="o", markersize=4, color=color(chain),
                     label=f"{name(chain)} ({int(g['stores'].iloc[0])} stores)")
@@ -381,6 +439,7 @@ def run(snaps: list[int] | None = None) -> str:
     vg_rows, fits, h0, ur, bars, zmap = [], [], [], [], {}, {}
     zrows, zdetail, store_zones = [], [], []
     banner_tab = pd.DataFrame()
+    kroger_fig = None
     for chain in CHAINS:
         st, M = chain_matrix(p, chain)
         if len(st) < MIN_STORES:
@@ -405,6 +464,7 @@ def run(snaps: list[int] | None = None) -> str:
             store_zones.append(pd.DataFrame({"chain": chain, "store_pk": st.index, "zone": z}))
             if chain == "kroger":
                 banner_tab = banner_check(st, F, D, z)
+                kroger_fig = (st, z)
         ur.append({"chain": chain, **urban_rural_test(F, D, (st["urbanicity"] != "urban").to_numpy(), rng)})
     note = (f"Snapshot(s) {snaps}; {int(p['store_pk'].nunique())} stores, {len(p):,} store-product prices "
             f"(regular prices, products at >= 10 stores). PRELIMINARY, cross-sectional.")
@@ -423,6 +483,8 @@ def run(snaps: list[int] | None = None) -> str:
         t.to_csv(TAB / f"{name}.csv", index=False)
     figs = figures(tables["module_e_variogram"], bars, {c: v for c, v in zmap.items() if c in ("aldi", "walmart")},
                    note)
+    if kroger_fig is not None:
+        figs.append(kroger_banner_figure(*kroger_fig, note))
     return f"Module E: wrote {len(tables)} tables and {len(figs)} figures. {note}"
 
 

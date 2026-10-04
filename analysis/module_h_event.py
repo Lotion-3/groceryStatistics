@@ -180,10 +180,25 @@ def analyse(passes: dict[str, pd.DataFrame], zones: pd.Series, banner: pd.Series
         for b, gb in g[g["scheduled_a"]].groupby("banner"):
             est.append({"estimate": f"renewal share, banner {b}", "value": float(gb.loc[gb["old_promo_gone"], "promo_b"].mean()),
                         "ci_lo": np.nan, "ci_hi": np.nan, "n": int(gb["old_promo_gone"].sum())})
+    if "after" in P:                                   # Addendum 1: the new cohort, seen when it starts
+        a = P["after"]
+        exp = pd.to_datetime(a["exp_raw"].where(~a["exp_raw"].str.startswith("9999")), utc=True, errors="coerce", format="ISO8601")
+        new = a[a["promo"] & a["eff"].between(pd.Timestamp("2026-10-07T02:00Z"), pd.Timestamp("2026-10-07T16:00Z")) & exp.notna()]
+        L = (exp[new.index] - new["eff"]).dt.total_seconds() / 86400
+        if len(L):
+            lo, hi = cluster_ci(L, new["store_pk"], rng)
+            est.append({"estimate": "new cohort: mean planned promotion length (days)", "value": float(L.mean()),
+                        "ci_lo": lo, "ci_hi": hi, "n": int(len(L))})
+            for w, share in (np.round(L / 7).value_counts(normalize=True).sort_index()).items():
+                est.append({"estimate": f"new cohort: share {int(w)} wk", "value": float(share), "ci_lo": np.nan,
+                            "ci_hi": np.nan, "n": int(len(L))})
     if ba is not None and "control" in P:
         cb = pair(P["control"], P["before"])
         rc, re_ = rate(cb["price_changed"]), rate(ba["price_changed"])
-        ratio = re_["rate"] / rc["rate"] if rc["rate"] else np.inf
+        if rc["rate"]:
+            ratio = re_["rate"] / rc["rate"]
+        else:                                   # no control changes: ratio infinite only if the event had some
+            ratio = np.inf if re_["rate"] else np.nan
         add("H3", "change rate before->after >= 3 x control->before", float(ratio), re_["n"], ratio >= 3,
             f"event {re_['rate']:.4f} (n={re_['n']}), control {rc['rate']:.4f} (n={rc['n']})")
         if "late" in P:

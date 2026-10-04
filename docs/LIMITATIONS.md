@@ -62,8 +62,10 @@
   about 0.1 but tended to be slightly low.
 - **Store coordinates are mostly ZIP centroids,** which blurs spatial structure below
   roughly the ZIP scale.
-- **Kroger.** The supplied credentials work only on the certification (test) host, whose
-  catalog covers about 10 of the 58 items. Kroger is therefore not in the main analysis.
+- **Kroger.** *(Superseded 2026-10-03, DECISIONS #39.)* The first credentials worked only
+  on the certification host, whose catalogue was partial. Those rows are labelled
+  `kroger_ce` and excluded. Kroger now comes from the production API: 121 stores in
+  snapshot 2, plus a banner sample in progress.
 - **Instacart prices may not be a clean control.** In partial data, Costco via Instacart
   had *more* dispersion than Walmart (73% vs 89% of prices exactly at the chain median).
   One explanation is a markup that varies by location. If so, within-chain deviations for
@@ -71,8 +73,22 @@
   chains are reported separately, and the write-up must not treat them as uniform-price
   benchmarks without checking.
 - **Blocked chains have partial coverage.** In snapshot 2, Walmart (after 42 stores) and
-  Meijer (after 3 stores; its store locator) were blocked and stopped, and Target was not
-  collected at all. Stores were visited in seeded random order, so each chain's stores are
-  a random subsample of the anchors, but they are far fewer than planned.
+  Meijer (after 3 stores; its store locator) were blocked and stopped. Target comes from
+  short budgeted sessions (16 stores, 16 matched items); Target allows about 50 requests
+  per session. Stores are visited in balanced-prefix order, so each partial chain is a
+  stratified, spread-out subsample, but far smaller than planned.
 - **Geographic outliers.** Hawaii (and Alaska) stores carry large real price premia, and
   they dominate the extreme tail. Tail results are reported with and without them.
+- **Timing comes from the retailer's timestamps, for Kroger only.**
+  - `effectiveDate` is when Kroger's system says the current price began. If an unchanged
+    price is re-entered, the date may reset, which would make prices look younger and
+    more synchronised.
+  - The pre-registered event panel (Module H) checks timestamps against observed changes.
+  - Store-local times use each store's state time zone; a few states span two zones.
+- **Promotion-length estimates from one snapshot depend on assumptions.** Four
+  estimators give 9–28 days. A simulation shows which assumption each needs, but one
+  snapshot cannot tell which one holds. The event's new promotions are observed when they
+  start.
+- **Zones are frozen from snapshot-2 prices** for the pre-registered tests. Zones refitted
+  on the larger banner sample are reported separately and are not used for the
+  pre-registered predictions.
