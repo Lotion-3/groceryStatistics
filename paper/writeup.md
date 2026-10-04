@@ -195,7 +195,7 @@ the true value 84–97% of the time.
 | Variogram range | no plateau | no plateau | ≈ 850 km | ≈ 190 km |
 | Zones (posterior) | 10; largest 79 stores in 27 states | 5 (not robust, see below) | 18 regional | 17, banner-aligned |
 | Nearby stores in the same zone vs chance | 50% vs 20% | 78% vs 25% | 50% vs 6% | 49% vs 6% |
-| Split-half replication (ARI) | [pending] | 0.41–0.53 | [pending] | 0.86–0.93 |
+| Split-half replication (ARI) | 0.52–0.54 | 0.41–0.53 | 0.96 | 0.86–0.93 |
 
 All spatial-coherence p-values are 0.001.
 
@@ -208,6 +208,12 @@ posterior:
 Results:
 - **Kroger's zones replicate:** split-half ARI 0.86–0.93. Moving $\gamma$ from 0.5 to 1
   changes little (ARI 0.93); a much stronger prior ($\gamma = 5$) merges zones (18 → 11).
+- **Costco's zones replicate almost perfectly:** split-half ARI 0.96, and the partition is
+  nearly unchanged for $\gamma$ = 0.5 (ARI 0.99).
+- **ALDI's are moderate:** split-half ARI 0.52–0.54, and 7–11 zones depending on $\gamma$.
+  With 91% of prices at list and only 0.6% unique to one store, each store carries little
+  information about its zone. The national zone and the California zone are clear; the
+  finer split is not.
 - **Walmart's specific zones do not replicate at 41 stores:** split-half ARI 0.41–0.53, and
   4–6 zones depending on $\gamma$. Walmart's broad pattern (a slow gradient, a distinct
   West Coast) stands, but its zone map is not firm.
