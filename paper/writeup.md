@@ -81,7 +81,13 @@ Store counts [update]:
 
 Every product returned by each search is stored, not only the best match. Within a chain,
 a product is identified by the chain's own product id. Across chains, products are
-matched by UPC.
+matched by UPC:
+- The canonical UPC comes from Kroger and Meijer, which report a UPC for every product.
+  Both chains agree on it for 22 items, and 37 of 52 cross-chain items have one.
+- Walmart products are confirmed by the UPC on their product page (17 items).
+- Target products are matched by name and size only (21 items; weaker evidence).
+- Variant, multipack and store-brand candidates are rejected by rule, and seven fields
+  were vetoed by hand (all documented).
 
 **Prices.**
 - The main analysis uses regular (non-promotional) prices, to the cent, and only rows the
@@ -209,9 +215,18 @@ Nearby urban and rural Walmarts differ on more products than same-type pairs (7.
 5.4%, p = 0.03, 41 stores). This hypothesis was suggested by the same data, so it is
 exploratory.
 
-[update: Module B spatial share and posterior predictive checks; Module C cross-validation
-comparison; cross-chain gaps on the matched panel (Meijer +5.6%, Kroger about +23% vs
-Walmart on 12–17 items, preliminary).]
+**Law of one price.** Matches use confirmed product identities (§2). On identical UPCs in
+the contiguous US, each chain's median regular price compared with Walmart's:
+
+| Chain | Shared UPCs | Its stores | Gap vs Walmart (IQR) |
+|---|---|---|---|
+| Target | 11 | 4 | +3.2% (+0.9 to +6.2) |
+| Meijer | 17 | 3 | +5.6% (+2.3 to +8.1) |
+| Kroger | 15 | 93 | +9.8% (+6.2 to +18.0) |
+
+[update: Target and Meijer store counts after more sessions; Module B spatial share and
+posterior predictive checks; Module C cross-validation comparison; basket savings
+(Module D).]
 
 ## 5. Limitations
 
