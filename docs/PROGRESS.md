@@ -205,3 +205,19 @@ compares Walmart's pick with a UPC proposed independently from Meijer/Kroger sea
   owner will commit it when the public repo is created.
 - A Target test with budget 64 needs the owner's go-ahead.
 - Item review, for the cross-chain panel.
+
+## Target 64-query test (DECISIONS #47; owner-approved)
+
+**Session 1 (2026-10-03, 21:07–21:19)**
+- Ran on a fresh session made at run start.
+- **50 successful requests**, then HTTP 435 at store 607: six failures in a row, so the
+  circuit breaker tripped. One item (Prego) was lost.
+- This was a refusal after successes, not a counted block. A **session-replace** followed
+  after a 5-minute wait. The **fresh replacement worked**: the rest of the budget went
+  through with no further refusal.
+- **Total 63 successful queries out of 64.** No counted block (`blocks.json` unchanged);
+  `mints.json` shows one run-start session and one replacement.
+- **Reading:** the refusal came at about the same volume as before (about 47–115 requests
+  per session), and a fresh session continued cleanly. This is consistent with the owner's
+  hypothesis. One confound remains: the 5-minute wait alone might also have been enough.
+  One event; sessions 2–3 follow.
