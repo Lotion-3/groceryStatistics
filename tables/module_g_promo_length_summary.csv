@@ -1,0 +1,2 @@
+promotions,stores,sampled_mean_days,length_bias_corrected_mean_days,corrected_ci_lo,corrected_ci_hi,lynden_bell_mean_days,lynden_ci_lo,lynden_ci_hi,mean_age_over_length,share_whole_weeks,share_expiring_tuesday_et,ages_only_days
+16232,121,28.51038110624746,12.671921097751417,12.441116214310277,12.931569454872385,9.440711547489611,9.114467040690968,9.915517565845876,0.5581709474609,0.908637259733859,0.7991005421389847,18.319316900273883

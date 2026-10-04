@@ -1,0 +1,6 @@
+chain,note,pairs_near,pairs_mixed,pairs_same,mean_mixed,mean_same,difference,p_value_one_sided,n_perm
+aldi,EXPLORATORY: hypothesis suggested by an earlier look at the same snapshot; confirm on stores collected later or on snapshot 3,1694,338.0,1356.0,0.07898470088669152,0.09309781265194543,-0.014113111765253913,0.701,4999.0
+walmart,EXPLORATORY: hypothesis suggested by an earlier look at the same snapshot; confirm on stores collected later or on snapshot 3,41,14.0,27.0,0.07428722583112933,0.05370451258195962,0.020582713249169708,0.03120624124824965,4998.0
+costco,EXPLORATORY: hypothesis suggested by an earlier look at the same snapshot; confirm on stores collected later or on snapshot 3,1053,136.0,917.0,0.1108208465850279,0.13225281363184657,-0.02143196704681867,0.9536,4999.0
+kroger,EXPLORATORY: hypothesis suggested by an earlier look at the same snapshot; confirm on stores collected later or on snapshot 3,701,25.0,676.0,0.06254044432368366,0.3885272714087213,-0.3259868270850376,0.9988,4999.0
+target,too few mixed or same-type pairs,4,,,,,,,
