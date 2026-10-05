@@ -28,6 +28,7 @@ analysis/     coverage; module_a (tails), module_b (two-part Bayesian spatial mo
               module_e (pricing architecture: variogram, H0 persistence, zones),
               module_f (daily-panel synchronisation), module_g (price timing from Kroger
               effective/expiration timestamps), module_h (pre-registered event analysis),
+              module_i (Walmart repeat-visit panel),
               zone_model.py (Dirichlet-process mixture), zone_sensitivity.py
 simulation/   SYNTHETIC-data checks of the tail estimators, Module B, the zone model and the
               promotion-length estimators
@@ -55,7 +56,7 @@ pytest
 
 ```
 python -m collectors.reparse        # data/raw/**  ->  data/grocery.sqlite
-python run_all.py                   # coverage + modules A-H -> figures/, tables/
+python run_all.py                   # coverage + modules A-I -> figures/, tables/
 python run_all.py --sim             # also re-run the estimator simulations
 python simulation/validate_module_b.py       # two-part spatial model check
 python simulation/validate_zone_model.py     # zone model check
@@ -89,6 +90,16 @@ Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File
 
 Log: `data/raw/logs/kroger_event.log`. Pass times and the definitions are in
 `docs/PREREGISTRATION_EVENT.md`.
+
+Other panels (each owner-approved, DECISIONS #52–53; one process per site):
+
+```
+python -m scripts.meijer_sample enumerate|select|run      # Meijer footprint sample (snapshot 2)
+scripts\run_meijer_event.ps1                              # Meijer control/before/after passes
+scripts\run_walmart_panel.ps1                             # Walmart: 10 stores x 17 items, 3 visits/day
+scripts\keep_awake.ps1                                    # stop Windows idle sleep while collecting
+scripts\final_rerun.ps1                                   # final analysis rerun (run_all + zone robustness)
+```
 
 ## Data collection and terms of use
 
