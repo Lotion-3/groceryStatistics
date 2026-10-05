@@ -501,3 +501,8 @@ we have not made it.
   - The Module E/G rerun also refit Kroger on 191 stores (banner sample partial). The
     write-up's Kroger figures stay at 121/160 until the final rerun after the banner
     sample.
+
+**Mon 2026-10-05 evening, reproducibility:** `simulation.validate_tail_estimators`,
+`validate_promo_lengths` and `validate_zone_model` were rerun from scratch. All three
+reproduce the committed `tables/simulation_*.csv` exactly (no content diff). The Module B
+simulation was not rerun because it is slow.
