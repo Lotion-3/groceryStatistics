@@ -158,3 +158,32 @@ No prediction, definition or threshold changed.
 **Also noted:** the laptop entered Modern Standby with the network off from 01:36 to
 09:34 on Oct 5, which froze the collectors. A pass delayed by standby still runs, and
 probe windows that are missed are reported as missed.
+
+## Addendum 4 (2026-10-05, about 19:20 Eastern; before any Meijer event data): Meijer arm
+
+The owner approved Meijer event passes (DECISIONS #53). The 15 Meijer stores are the
+first 15 rows of `config/meijer_sample.csv` (farthest-point order). Each pass prices all
+items through Constructor.io search: control Mon Oct 5 19:30, before Tue Oct 6 18:00,
+after Wed Oct 7 12:00.
+
+Snapshot 2 shows that Meijer reports, per store price, the date a sale price is good
+through. 99.7% of store pairs share that date for a given product, and 4,936
+store-products end their sale on 2026-10-06.
+
+**Definitions.**
+- *Scheduled:* in *before*, a sale price (good-through date before 2090) with
+  good-through date 2026-10-06.
+- *Changed:* the shelf price differs, to the cent.
+- *Unit:* a (store, product) pair seen in both passes being compared.
+
+**Predictions** (same thresholds as the Kroger arm):
+- **M1** At least 80% of scheduled units change price before→after.
+- **M2** The change rate before→after is at most 0.15 for units not scheduled.
+- **M3** The share of all units whose price changes is at least 3 times higher
+  before→after than control→before.
+- **M4** One calendar: among products with a scheduled unit at 2 or more stores, at least
+  90% have the same new (after) price at every store observed. Meijer is near-uniform:
+  97% of prices at list.
+
+Analysis: `analysis/module_h_event.py`, function `meijer_event`, written after this
+addendum and before the data.

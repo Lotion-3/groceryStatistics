@@ -15,7 +15,14 @@ is designed for Meijer's footprint instead:
   run        price all items at the selected stores in snapshot 2 via Meijer's
              Constructor.io search (store-filtered), resumable; ~58 searches/store.
 
+  event      one event pass (owner-approved 2026-10-05; DECISIONS #53): the first
+             N_EVENT stores of the sample (farthest-point order, so spread out) x all
+             items, as a NEW snapshot "meijer event <pass> <time>". Passes: control
+             (Mon night), before (Tue 18:00), after (Wed 12:00), around Meijer's
+             sale ends of Oct 6 (the same night as the Kroger expiry).
+
   python -m scripts.meijer_sample enumerate|select|run
+  python -m scripts.meijer_sample event --note meijer event before
 """
 from __future__ import annotations
 
@@ -34,6 +41,7 @@ from db.init_db import DEFAULT_DB  # noqa: E402
 UNIVERSE = ROOT / "data" / "processed" / "meijer_store_universe.csv"
 SAMPLE = ROOT / "config" / "meijer_sample.csv"
 N_STORES = 80
+N_EVENT = 15
 SEED = 20261004
 # Metro ZIPs spanning Meijer's footprint (50-mile radius each).
 ZIPS = ["48201", "48104", "48933", "49503", "49007", "48502", "48601", "49684", "49770", "48858",
@@ -90,7 +98,7 @@ def select(n: int = N_STORES) -> pd.DataFrame:
     return s
 
 
-def run(snapshot_id: int = 2) -> None:
+def run(snapshot_id: int = 2, n_stores: int | None = None) -> None:
     from collectors import meijer as M
     from collectors.common import upsert_store
     from collectors.snapshot import Run, read_csv
@@ -100,6 +108,8 @@ def run(snapshot_id: int = 2) -> None:
     load_items(con)
     items = read_csv(ROOT / "config" / "items.csv")
     sample = pd.read_csv(SAMPLE, dtype={"store_id": str, "zip": str})
+    if n_stores:
+        sample = sample.head(n_stores)
     r = Run(con, snapshot_id, [M.CHAIN])
     if not r.session_ready(M.CHAIN):
         return
@@ -120,8 +130,9 @@ def run(snapshot_id: int = 2) -> None:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("step", choices=["enumerate", "select", "run"])
+    ap.add_argument("step", choices=["enumerate", "select", "run", "event"])
     ap.add_argument("--n", type=int, default=N_STORES)
+    ap.add_argument("--note", nargs="+", default=["meijer", "event"])
     a = ap.parse_args(argv)
     if a.step == "enumerate":
         u = enumerate_stores()
@@ -130,6 +141,17 @@ def main(argv=None) -> int:
     elif a.step == "select":
         s = select(a.n)
         print(f"{len(s)} stores selected ({int(s['already'].sum())} already in snapshot 2)")
+    elif a.step == "event":
+        from datetime import datetime, timezone
+        from collectors.common import end_snapshot, start_snapshot
+        from db.init_db import connect
+        con = connect(DEFAULT_DB)
+        snap = start_snapshot(con, f"{' '.join(a.note)} {datetime.now(timezone.utc).isoformat(timespec='minutes')}")
+        print("event snapshot:", snap, flush=True)
+        try:
+            run(snapshot_id=snap, n_stores=N_EVENT)
+        finally:
+            end_snapshot(con, snap)
     else:
         run()
     return 0
