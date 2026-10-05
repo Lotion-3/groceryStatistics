@@ -449,3 +449,33 @@ we have not made it.
     demand fields.
   - The machine is now on the Purdue network (128.211.x).
 - DECISIONS #52.
+
+**Mon 2026-10-05, 09:43 check**
+- **Laptop in Modern Standby, network disconnected, 01:36 to 09:34** (Kernel-Power
+  events 506/507, "Adaptive Connected Standby"). Every background job froze for about 8 h.
+  - **Kroger banner run:** stalled at sample row 116/271, then hard-stopped at 09:34 (09:30
+    deadline). **192 Kroger stores** in snapshot 2 (121 before the banner sample). It
+    resumes after the event. No Vitacost rows.
+  - **Kroger control pass:** waiting for 10:00 (pipeline alive).
+  - **Meijer sample:** at store 53/80 (55 Meijer stores, 64,335 store-specific rows, no
+    blocks; failures are items not carried). Still running; the Meijer analysis waits
+    for it to finish.
+  - **Walmart panel:** the 08:00 visit started only at 09:34. Its 09:45 hard stop cuts it
+    to the first store or two (snapshot 4, a partial visit). The 14:00 visit follows the
+    schedule.
+- **Risk for the event:** the probes on Tue 22:30 and Wed 00:15 Eastern need the laptop
+  awake and online. **Owner action:** keep it plugged in, and set "sleep when plugged in"
+  to Never (or `powercfg /change standby-timeout-ac 0`) until Thu Oct 8.
+
+**Mon 2026-10-05, 16:50 check**
+- **Control pass failed at 10:00:** Start-Process split the multi-word `--note`. Fixed in
+  `scripts/kroger_panel.py` (`--note` takes several words). Rerun started 16:51
+  (snapshot 6, pid 41136, hard stop Tue 10:45). Rows carry `price_effective` and
+  `price_expiration`. Pre-registration Addendum 3.
+- **Walmart panel:**
+  - The 08:00 visit (snapshot 4) was partial: 4 stores, 903 store-specific rows, all
+    with slot fields, no failures.
+  - The 14:00 visit finished 15:53 (late, so probably standby again). The 20:00 visit
+    is waiting.
+- **Meijer:** store 69/80 at 16:49 (slowed by standby).
+- The laptop's standby is the main risk to the event schedule.

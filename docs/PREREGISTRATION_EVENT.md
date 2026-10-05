@@ -133,3 +133,28 @@ A dry run of `module_h_event.py` on real snapshot-2 rows (every pass set to snap
 so nothing changes) showed a bug: when both the control and the event change rates were
 0, H3's ratio was infinite and counted as holding. The ratio is now undefined (not
 holding) in that case. No prediction, definition or threshold changed.
+
+## Addendum 3 (2026-10-05, about 16:55 Eastern; before any event data): control pass rerun
+
+The scheduled control pass (Mon Oct 5 10:00) collected nothing. PowerShell's
+Start-Process split the multi-word `--note "kroger event control"` into separate
+arguments, and the script rejected them, so it failed at start (logged in
+`kroger_event_control_pass.log.err`). Every later pass would have failed the same way.
+
+**Fix:** `scripts/kroger_panel.py` accepts a multi-word `--note`. The running pipeline
+starts Python afresh for each pass, so the before, probe, after and late passes pick up
+the fix.
+
+**Deviation:** the control pass was rerun at 16:51 Mon Oct 5 (snapshot 6), with a hard
+stop at Tue Oct 6 10:45 (`scripts/run_kroger_control_rerun.ps1`).
+- The control→before comparison (H3, H7) still spans an interval with no scheduled
+  expiry. It is about 18 h long instead of 25 h; H3 compares change *rates* per
+  transition, not per hour.
+- If the rerun is cut short, H3 and H7 use the store-products observed in both passes,
+  as defined.
+
+No prediction, definition or threshold changed.
+
+**Also noted:** the laptop entered Modern Standby with the network off from 01:36 to
+09:34 on Oct 5, which froze the collectors. A pass delayed by standby still runs, and
+probe windows that are missed are reported as missed.

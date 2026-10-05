@@ -120,7 +120,7 @@ def run_day(snapshot_id: int | None = None, note: str | None = None, probe: bool
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("step", choices=["select", "run", "probe"])
-    ap.add_argument("--note", default=None)
+    ap.add_argument("--note", nargs="+", default=None)   # several words: PowerShell Start-Process splits quoted args
     ap.add_argument("--n", type=int, default=60)
     ap.add_argument("--snapshot-id", type=int, default=None)
     a = ap.parse_args(argv)
@@ -129,7 +129,8 @@ def main(argv=None) -> int:
         print(f"wrote {PANEL.relative_to(ROOT)}: {len(p)} stores")
         print(p["banner"].value_counts().to_string())
     else:
-        print("panel snapshot:", run_day(a.snapshot_id, note=a.note, probe=a.step == "probe"))
+        note = " ".join(a.note) if a.note else None
+        print("panel snapshot:", run_day(a.snapshot_id, note=note, probe=a.step == "probe"))
     return 0
 
 
