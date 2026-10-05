@@ -187,3 +187,9 @@ store-products end their sale on 2026-10-06.
 
 Analysis: `analysis/module_h_event.py`, function `meijer_event`, written after this
 addendum and before the data.
+
+## Addendum 5 (2026-10-05, evening; before the before/after passes): reporting only
+
+`module_h_event.py` gained reporting functions: per-transition change rates, a markdown
+predictions table, and the event figure. They were tested on synthetic data. No
+definition, prediction, threshold or test changed.
