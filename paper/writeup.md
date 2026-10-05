@@ -245,8 +245,8 @@ Gentzkow.
 
 **Across chains.** On identical UPCs, medians vs Walmart:
 - Target +0.5% (10 UPCs, 16 stores);
-- Meijer +5.6% (17 UPCs, 3 stores);
-- Kroger +9.8% (15 UPCs, 121 stores; IQR +6.2 to +18.0).
+- Meijer +5.6% (17 UPCs, 71 stores; the same as with 3 stores, as a uniform list implies);
+- Kroger +9.7% (16 UPCs, 191 stores; IQR +5.4 to +16.6).
 
 One chain is cheapest on nearly every item, so splitting a 12-item basket across 2–3
 nearby stores saves a median of **0.05%**. The test covers 88 locations, and the exact
