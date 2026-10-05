@@ -285,6 +285,37 @@ def timing_clusters(k: pd.DataFrame, zones: pd.Series, rng, n_perm: int = 999) -
             "p_value_one_sided": float((1 + (perm >= obs).sum()) / (1 + n_perm)), "n_perm": n_perm}
 
 
+def meijer_sale_timing(snaps: list[int], rng, n_perm: int = 2999) -> tuple[pd.DataFrame, dict]:
+    """Meijer reports, per store price, the date a sale price is good through
+    (regular prices carry 2099-12-31). (a) Sale-end dates and weekdays;
+    (b) do stores in the same Meijer zone (Module E, price levels only) end the
+    same product's sale on the same date more often than stores in different
+    zones? Permutation of zone labels across stores (one banner)."""
+    o = load_observations(snapshot_id=snaps)
+    m = o[(o["chain"] == "meijer") & (o["store_specific"] == 1)].copy()
+    if m.empty:
+        return pd.DataFrame(), {}
+    ex = m["extra"].map(lambda e: json.loads(e) if isinstance(e, str) else {})
+    m["end"] = pd.to_datetime(ex.map(lambda e: e.get("price_good_through")), errors="coerce")
+    m = m[m["end"].notna()]
+    sale = m[m["end"].dt.year < 2090].drop_duplicates(["store_pk", "chain_product_id"])
+    dates = (sale["end"].dt.date.value_counts().rename_axis("sale_end_date").reset_index(name="store_products")
+             .sort_values("sale_end_date"))
+    summ = {"stores": int(m["store_pk"].nunique()), "store_products": int(m.drop_duplicates(["store_pk", "chain_product_id"]).shape[0]),
+            "share_on_sale": float(len(sale) / max(1, m.drop_duplicates(["store_pk", "chain_product_id"]).shape[0])),
+            "top_end_weekday": sale["end"].dt.day_name().value_counts(normalize=True).round(3).head(3).to_dict()}
+    zt = TAB / "module_e_store_zones.csv"
+    if zt.exists():
+        z = pd.read_csv(zt)
+        z = z[z["chain"] == "meijer"].set_index("store_pk")["zone"]
+        if len(z) >= 10:
+            k = sale[sale["store_pk"].isin(z.index)].assign(eff=lambda d: pd.to_datetime(d["end"], utc=True),
+                                                            banner="MEIJER")
+            r = codating(k, z, rng, n_perm=n_perm)
+            summ.update({f"zone_{kk}": v for kk, v in r.items()})
+    return dates, summ
+
+
 def kroger_zones(snaps: list[int]) -> pd.Series:
     """Kroger zones from Module E's table, or refit the same way (prices only)."""
     zt = TAB / "module_e_store_zones.csv"
@@ -399,6 +430,10 @@ def run(snaps: list[int] | None = None) -> str:
     pd.DataFrame([lsum]).to_csv(TAB / "module_g_promo_length_summary.csv", index=False)
     stock.to_csv(TAB / "module_g_stock.csv", index=False)
     pd.DataFrame([tclus]).to_csv(TAB / "module_g_timing_clusters.csv", index=False)
+    mdates, msumm = meijer_sale_timing(snaps, rng)
+    if len(mdates):
+        mdates.to_csv(TAB / "module_g_meijer_sale_end_dates.csv", index=False)
+        pd.DataFrame([msumm]).to_csv(TAB / "module_g_meijer_sale_timing.csv", index=False)
     lsum["ages_only_days"] = summ.get("promo", {}).get("mean_spell_days_renewal", np.nan)
     pd.DataFrame([lsum]).to_csv(TAB / "module_g_promo_length_summary.csv", index=False)
     figs = figures(wd, dur, note) + [figure_g2(hours, lsum, note)]

@@ -26,7 +26,7 @@ from analysis.common import SEED, TAB, load_observations, main_snapshots, produc
 from analysis.module_e_architecture import chain_matrix
 from analysis.zone_model import adjusted_rand, fit_zones
 
-CHAINS = ("aldi", "walmart", "costco", "kroger")
+CHAINS = ("aldi", "walmart", "costco", "kroger", "meijer")
 GAMMAS = (0.5, 1.0, 5.0)
 N_SPLITS = 2
 SWEEPS = dict(n_sweeps=300, burn=100, thin=4)
