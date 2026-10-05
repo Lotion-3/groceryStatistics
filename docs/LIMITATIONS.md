@@ -92,3 +92,12 @@
 - **Zones are frozen from snapshot-2 prices** for the pre-registered tests. Zones refitted
   on the larger banner sample are reported separately and are not used for the
   pre-registered predictions.
+- **Meijer is a regional sample.** Meijer's store locator blocked us twice (after 51 and
+  then 8 calls), so the 83-store sample covers its Michigan core and border areas. Its
+  near-uniform list and single sale calendar may not hold across all six states.
+- **The Walmart panel is small.** Walmart refuses a session after about 105 requests, so
+  each visit covers the same first 6–7 of the 10 stores. Laptop standby delayed or cut
+  short some early visits; visit times are recorded per row.
+- **Collection gaps from standby.** On Oct 5, 01:36–09:34, the laptop's Modern Standby
+  froze every collector. A keep-awake helper (`scripts/keep_awake.ps1`) now prevents
+  idle sleep until Oct 8.

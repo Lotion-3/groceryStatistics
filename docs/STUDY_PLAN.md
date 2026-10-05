@@ -111,15 +111,22 @@ Other results:
   - timing-only clusters vs price zones: ARI 0.58 vs a 0.43 baseline, p = 0.001;
   - 2.5% of regular price starts fall between noon and 21:00 local.
 
-## Next (updated 2026-10-04 night)
+## Next (updated 2026-10-05 evening)
 
-1. **Kroger event (Q4, Q7):** control pass Mon Oct 5, before Tue Oct 6, probes around the
-   expiry at Tue 23:59 Eastern, after Wed Oct 7, late Thu Oct 8. Then run Module H,
-   unchanged, and report all seven predictions.
-2. Kroger banner sample: until Mon 09:30, resuming after the event. Then refit the zones
-   (reported separately from the frozen pre-registered zones).
-3. Owner decisions pending:
-   - a Meijer store sample (about 5,000 searches);
-   - a small Walmart repeat-visit panel (T2/T3; the parser now keeps slot and stock
-     fields).
-4. Final write-up around Q1–Q7, about Oct 9.
+1. **Kroger event (Q4, Q7):**
+   - control pass rerun Mon evening (Addendum 3);
+   - before Tue 11:00;
+   - probes Tue 22:30 / Wed 00:15 / Wed 05:00;
+   - after Wed 10:00, late Thu 10:00.
+
+   Module H then runs unchanged and reports H1–H7.
+2. **Meijer event arm (Addendum 4, M1–M4):** control Mon 19:30, before Tue 18:00, after
+   Wed 12:00; 15 stores.
+3. **Walmart repeat visits (Module I, T2/T3):** 08/14/20 ET, Mon–Thu; about 7 stores
+   effective.
+4. **Kroger banner sample:** 192 stores so far; it resumes after the late pass. Then the
+   final Kroger rerun (zones, variogram, Module B, timing) on the full sample, reported
+   separately from the frozen pre-registered zones.
+5. **Done:** the Meijer footprint sample (83 stores, Michigan core): near-uniform, with
+   one sale calendar.
+6. Final write-up around Q1–Q7, about Oct 9.

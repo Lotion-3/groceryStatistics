@@ -344,9 +344,24 @@ af68714):
   - prices settle afterwards;
 - the frozen zones, the 60 panel stores, and the analysis code, tested on synthetic data.
 
-Panel passes run Monday (control) to Thursday, with probes around midnight.
+Panel passes run Monday (control) to Thursday, with probes around midnight. The control
+pass was rerun on Monday evening after a scripting failure (Addendum 3; no prediction
+changed). Meijer's sale prices end the same night, so a Meijer arm (15 stores; control,
+before and after passes) was pre-registered before its data (Addendum 4: M1–M4, with the
+same thresholds plus "one new price across stores").
 
-[result: Module H predictions table.]
+[result: Module H predictions table (`tables/module_h_predictions.md`) and Figure 6.]
+
+**5.5 Walmart repeat visits (in progress).** Walmart publishes no price dates, so we
+revisit 10 stores (17 confirmed items) three times a day from Monday to Thursday. Each
+visit reaches the same 6–7 stores before Walmart's per-session limit (about 105 requests).
+- **First result** (4 stores, morning vs afternoon): 0 of 707 store-products changed
+  price within the day, and off-list prices persisted.
+- **Still to measure:** overnight change rates, persistence of local departures (a
+  two-state Markov chain), and delivery-slot lead times, which track time of day rather
+  than store.
+
+[result: Module I tables.]
 
 ## 6. Limitations
 
