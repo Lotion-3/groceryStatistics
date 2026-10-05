@@ -66,3 +66,19 @@ def test_meijer_event_predictions():
     get = lambda h: out[out.hypothesis == h].iloc[0]
     assert get("M1")["value"] == 1.0 and get("M2")["value"] == 0.0
     assert get("M4")["value"] == 1.0 and np.isinf(get("M3")["value"])
+
+
+def test_event_reporting(tmp_path, monkeypatch):
+    import analysis.common as C
+    from analysis.module_h_event import change_rates, event_figure, pair, predictions_markdown
+    monkeypatch.setattr(C, "FIG", tmp_path)
+    passes, zones, banner = _synthetic()
+    pred, zs, est = analyse(passes, zones, banner, n_perm=49)
+    r = change_rates(passes)
+    s = r[(r.transition == "before->after") & (r.units == "scheduled")].change_rate.iloc[0]
+    assert s > 0.9 and r[(r.transition == "control->before")].change_rate.max() == 0.0
+    md = predictions_markdown(pred, "Kroger")
+    assert md.count("\n| H") == len(pred) and "| Holds |" in md
+    ba = pair(passes["before"], passes["after"])
+    f = event_figure(r, r.iloc[0:0], ba.loc[ba.scheduled_a & ba.changed, "eff_b"], "synthetic")
+    assert (tmp_path / f).exists()

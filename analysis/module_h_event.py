@@ -282,16 +282,81 @@ def meijer_event(passes: dict[str, pd.DataFrame]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+# ---------------------------------------------------------------------------
+# Reporting
+
+def change_rates(passes: dict[str, pd.DataFrame], order=("control", "before", "after", "late")) -> pd.DataFrame:
+    """Shelf-price change rate per consecutive transition, scheduled vs other."""
+    rows = []
+    have = [k for k in order if k in passes]
+    for a, b in zip(have[:-1], have[1:]):
+        m = passes[a].merge(passes[b], on=["store_pk", "chain_product_id"], suffixes=("_a", "_b"))
+        sched = passes["before"].set_index(["store_pk", "chain_product_id"])["scheduled"] if "before" in passes else None
+        key = pd.MultiIndex.from_frame(m[["store_pk", "chain_product_id"]])
+        is_s = sched.reindex(key).fillna(False).to_numpy(bool) if sched is not None else np.zeros(len(m), bool)
+        ch = (m["shelf_a"] != m["shelf_b"]).to_numpy()
+        for lab, mask in (("scheduled", is_s), ("other", ~is_s)):
+            rows.append({"transition": f"{a}->{b}", "units": lab, "n": int(mask.sum()),
+                         "change_rate": float(ch[mask].mean()) if mask.any() else np.nan})
+    return pd.DataFrame(rows)
+
+
+def predictions_markdown(pred: pd.DataFrame, title: str) -> str:
+    lines = [f"**{title}**", "", "| | Prediction | Value | n | Holds |", "|---|---|---|---|---|"]
+    for r in pred.itertuples():
+        v = r.value
+        vs = "∞" if isinstance(v, float) and np.isinf(v) else (f"{v:.3f}" if isinstance(v, float) else str(v))
+        holds = {True: "yes", False: "**no**"}.get(r.holds, "n/a")
+        lines.append(f"| {r.hypothesis} | {r.prediction} | {vs} | {r.n:,} | {holds} |")
+    return "\n".join(lines) + "\n"
+
+
+def event_figure(kr: pd.DataFrame, mr: pd.DataFrame, new_eff: pd.Series, note: str) -> str:
+    from analysis.common import FIG, INK, caption, style
+    plt = style()
+    fig, axes = plt.subplots(1, 2, figsize=(9.0, 3.2))
+    ax = axes[0]
+    styles = {("Kroger", "scheduled"): ("#8b5cc7", "-"), ("Kroger", "other"): ("#8b5cc7", ":"),
+              ("Meijer", "scheduled"): ("#d6457a", "-"), ("Meijer", "other"): ("#d6457a", ":")}
+    for name, r in (("Kroger", kr), ("Meijer", mr)):
+        if r is None or r.empty:
+            continue
+        for lab, g in r.groupby("units"):
+            c, ls = styles[(name, lab)]
+            ax.plot(g["transition"], g["change_rate"], marker="o", color=c, linestyle=ls, label=f"{name}, {lab}")
+    ax.set_ylabel("share of units whose price changed")
+    ax.set_title("Scheduled expiry: who changes, and when", loc="left")
+    ax.legend(fontsize=7)
+    ax = axes[1]
+    if new_eff is not None and len(new_eff):
+        et = (new_eff - pd.Timedelta(hours=4))
+        hrs = (et - pd.Timestamp("2026-10-06T00:00Z")).dt.total_seconds() / 3600
+        ax.hist(hrs, bins=np.arange(12, 48.5, 1), color="#8b5cc7", edgecolor="white")
+        ax.axvline(24, color=INK, linewidth=1)
+        ax.text(23.6, ax.get_ylim()[1] * 0.92, "expiry (Tue 23:59 ET)", fontsize=7, color=INK, ha="right")
+        ax.set_xticks([12, 18, 24, 30, 36, 42, 48], ["Tue 12", "18", "Wed 0", "6", "12", "18", "Thu 0"])
+    ax.set_xlabel("effective time of new Kroger prices (Eastern)")
+    ax.set_title("When the new prices took effect", loc="left")
+    caption(fig, note)
+    fig.savefig(FIG / "fig_h1_event.png")
+    plt.close(fig)
+    return "fig_h1_event.png"
+
+
 def run() -> str:
+    TAB.mkdir(exist_ok=True)
     mids = meijer_snapshots()
+    mpred, mrates = pd.DataFrame(), pd.DataFrame()
     if mids:
         mobs = load_observations(snapshot_id=list(mids.values()))
         mp_ = {k: meijer_tidy(mobs[mobs["snapshot_id"] == sid]) for k, sid in mids.items()}
-        TAB.mkdir(exist_ok=True)
-        meijer_event(mp_).to_csv(TAB / "module_h_meijer_predictions.csv", index=False)
+        mpred = meijer_event(mp_)
+        mpred.to_csv(TAB / "module_h_meijer_predictions.csv", index=False)
+        if "before" in mp_:
+            mrates = change_rates(mp_, order=("control", "before", "after"))
     ids = event_snapshots()
     if not {"before", "after"} <= ids.keys():
-        return f"Module H: event passes not collected yet (have {sorted(ids)})."
+        return f"Module H: Kroger event passes not collected yet (have {sorted(ids)}); Meijer passes {sorted(mids)}."
     obs = load_observations(snapshot_id=list(ids.values()))
     obs = obs[obs["chain"] == "kroger"]
     passes = {k: tidy(obs[obs["snapshot_id"] == sid]) for k, sid in ids.items()}
@@ -299,12 +364,23 @@ def run() -> str:
     names = pd.read_sql_query("SELECT store_pk, name FROM stores", sqlite3.connect(DB)).set_index("store_pk")["name"]
     banner = names.fillna("").str.split().str[0].str.upper()
     pred, zs, est = analyse(passes, zones, banner)
-    TAB.mkdir(exist_ok=True)
     pred.to_csv(TAB / "module_h_predictions.csv", index=False)
     zs.to_csv(TAB / "module_h_zone_sync.csv", index=False)
     est.to_csv(TAB / "module_h_estimates.csv", index=False)
+    krates = change_rates(passes)
+    pd.concat([krates.assign(chain="kroger"), mrates.assign(chain="meijer")]).to_csv(
+        TAB / "module_h_change_rates.csv", index=False)
+    md = predictions_markdown(pred, f"Kroger (pre-registered H1-H7; passes {ids})")
+    if not mpred.empty and "hypothesis" in mpred:
+        md += "\n" + predictions_markdown(mpred, f"Meijer (Addendum 4, M1-M4; passes {mids})")
+    (TAB / "module_h_predictions.md").write_text(md, encoding="utf-8")
+    ba = pair(passes["before"], passes["after"])
+    new_eff = ba.loc[ba["scheduled_a"] & ba["changed"], "eff_b"].dropna()
+    n_units = int(ba["scheduled_a"].sum())
+    event_figure(krates, mrates, new_eff, f"Kroger: {n_units:,} scheduled store-products at {ba['store_pk'].nunique()} "
+                 f"panel stores; Meijer: {len(mids)} passes, 15 stores. PRELIMINARY.")
     held = int(pred["holds"].fillna(False).sum())
-    return f"Module H: passes {ids}; {held}/{len(pred)} pre-registered predictions hold; wrote 3 tables."
+    return f"Module H: passes {ids}; {held}/{len(pred)} pre-registered predictions hold; wrote 5 tables and 1 figure."
 
 
 if __name__ == "__main__":
