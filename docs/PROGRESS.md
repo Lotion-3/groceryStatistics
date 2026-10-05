@@ -506,3 +506,6 @@ we have not made it.
 `validate_promo_lengths` and `validate_zone_model` were rerun from scratch. All three
 reproduce the committed `tables/simulation_*.csv` exactly (no content diff). The Module B
 simulation was not rerun because it is slow.
+- The Module B simulation (`simulation.validate_module_b`) was also rerun (19:40–19:48). It
+  reproduces `tables/simulation_module_b.csv` exactly (no content diff). Every simulation
+  table now reproduces from scratch.
