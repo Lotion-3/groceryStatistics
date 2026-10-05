@@ -1,0 +1,11 @@
+store_pk,store_id,name,lat,lon,zip,state,anchor_zip
+46,3833,Mesa S Signal Butte Rd Supercenter,33.3850608,-111.5999636,85209,AZ,85208
+61,2130,Portsmouth Supercenter,43.0341391,-70.7889495,03801,NH,03840
+68,3233,Bemidji Supercenter,47.4966303,-94.9082928,56601,MN,56601
+30,5818,Jacksonville Old Saint Augustine Rd Neighborhood Market,30.185352,-81.609265,32257,FL,32257
+77,4176,Sherwood Supercenter,45.3659136,-122.8335247,97140,OR,97062
+81,3341,Dallas N Central Expressway Neighborhood Market,32.80219,-96.78889,75204,TX,75203
+55,2491,Danville Supercenter,40.2015174,-87.6279864,61834,IL,61832
+44,2729,Fort Collins E Magnolia St Supercenter,40.646854,-105.029519,80524,CO,80521
+85,2418,Placerville Store,38.704024,-120.8290516,95667,CA,95667
+59,558,Salina Supercenter,38.785371,-97.6151737,67401,KS,67401

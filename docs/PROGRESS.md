@@ -435,3 +435,17 @@ we have not made it.
   - start agreement 0.96–0.97.
   - Tables `zone_sensitivity_*_kroger.csv` and the combined files are updated; the
     write-up is updated.
+
+**Evening of 2026-10-04 (owner: "I approve keep working")**
+- **Meijer:**
+  - The locator **blocked after 8 calls** at 12 s (Michigan listed: 122 locations).
+    Stopped; no further locator use.
+  - 80 stores selected, pricing run started 23:18 (pid 45732; log
+    `data/raw/logs/meijer_sample_run.log`), about 2.6 h.
+- **Walmart panel:**
+  - 10 stores × 17 items; visits 08:00/14:00/20:00 ET, Mon–Thu (11 visits);
+    scheduler pid 43912; log `data/raw/logs/walmart_panel.log`.
+  - The smoke test passed (snapshot 3): store-specific rows carry slot, stock and
+    demand fields.
+  - The machine is now on the Purdue network (128.211.x).
+- DECISIONS #52.
