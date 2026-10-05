@@ -479,3 +479,14 @@ we have not made it.
     is waiting.
 - **Meijer:** store 69/80 at 16:49 (slowed by standby).
 - The laptop's standby is the main risk to the event schedule.
+- **Walmart panel 14:00 visit (snapshot 5):** 7 stores (1,366 store-specific rows), then a
+  px-captcha after 105 successful requests. Logged as "STOPPED for this run (not a
+  block)", with a 1 h rest under the policy. Like Target's per-session allowance, each
+  visit reliably covers the first 6–7 stores in the fixed order; those form the effective
+  panel.
+- **Module I, first real run** (visits 4 and 5; PRELIMINARY):
+  - 0 of 707 store-products changed price between the morning and afternoon visits
+    (4 stores);
+  - departures from the list price persisted (p_stay_off = 1, 694 transitions);
+  - fixed the slot-lead variance decomposition (pooled within-store variance, stores
+    seen ≥ 2 times; it was giving negative shares).

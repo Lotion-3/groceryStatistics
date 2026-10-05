@@ -1,0 +1,3 @@
+lead,store_visits,mean_h,median_h,share_var_between_stores,stores_with_repeat_visits,by_local_hour
+lead_delivery_h,11,4.027979797979798,3.8113888888888887,0.0,4,06h 3.4; 08h 3.3; 09h 3.8; 11h 3.9; 13h 3.8; 14h 4.9
+lead_pickup_h,11,3.937070707070707,3.770277777777778,0.0,4,06h 3.4; 08h 6.3; 09h 3.3; 11h 3.9; 13h 3.8; 14h 3.9

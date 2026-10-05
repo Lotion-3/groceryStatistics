@@ -114,9 +114,14 @@ def analyse(p: pd.DataFrame, lp: pd.Series, seed: int = SEED) -> dict[str, pd.Da
         if len(d) < 4:
             continue
         tot = d[col].var()
-        within_store = d.groupby("store_pk")[col].var().mean()
+        g = d.groupby("store_pk")[col]
+        multi = g.size() >= 2
+        # pooled within-store variance (stores seen at >= 2 visits); needs >= 3 such stores
+        within_store = (float((g.var(ddof=1)[multi] * (g.size()[multi] - 1)).sum() / (g.size()[multi] - 1).sum())
+                        if multi.sum() >= 3 else np.nan)
         rows.append({"lead": col, "store_visits": int(len(d)), "mean_h": float(d[col].mean()),
-                     "median_h": float(d[col].median()), "share_var_between_stores": float(1 - within_store / tot) if tot else np.nan,
+                     "median_h": float(d[col].median()), "share_var_between_stores": float(np.clip(1 - within_store / tot, 0, 1)) if tot and np.isfinite(within_store) else np.nan,
+                     "stores_with_repeat_visits": int(multi.sum()),
                      "by_local_hour": "; ".join(f"{h:02d}h {v:.1f}" for h, v in d.groupby(d["local"].dt.hour)[col].median().items())})
     return {"module_i_t2_change_rates": pd.DataFrame(t2), "module_i_t3_departure_persistence": t3,
             "module_i_slot_lead_times": pd.DataFrame(rows)}
