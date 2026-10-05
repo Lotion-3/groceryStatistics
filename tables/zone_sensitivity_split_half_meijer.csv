@@ -1,0 +1,3 @@
+chain,stores,split,products_per_half,zones_half1,zones_half2,ari_half1_vs_half2,ari_half1_vs_full,ari_half2_vs_full
+meijer,71,0,596,7,8,0.692603939452666,0.8818147041490473,0.5982215036378334
+meijer,71,1,596,6,14,0.2803247449919134,0.6059933407325194,0.49995200426628744

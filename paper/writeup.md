@@ -198,6 +198,8 @@ between stores. Bands are 95% store-bootstrap intervals.*
     (range about 44 km).
   - The 7 zones found are barely more coherent in space than chance (nearby stores share
     a zone 24% of the time vs 21% permuted).
+  - They do not replicate: split-half ARI 0.28–0.69, and 6–10 zones depending on
+    $\gamma$.
 
 ![Figure 2](../figures/fig_e3_zones_aldi.png)
 *Figure 2. ALDI's price-list zones (Dirichlet-process mixture): one national list plus
@@ -283,6 +285,14 @@ Zone labels were permuted within banner, 2,999 times. Three checks:
 - **Timing alone recovers the zones.** Clustering stores only by how often their prices
   begin in the same minute matches the price zones at ARI 0.58. The within-banner
   permutation baseline is 0.43 (p = 0.001).
+- **Not a by-product of distance.** Same-zone stores are closer together, so we fit a
+  hierarchical binomial model for each same-banner pair (191 stores, 1,535 pairs):
+  co-timed products out of shared products, with a same-zone indicator, log distance,
+  store effects (pairs sharing a store are dependent) and pair-level overdispersion.
+  - Holding distance and store effects fixed, being in the same zone multiplies the odds
+    of a shared start date by 1.59 (90% interval 1.50–1.69) and of a shared start minute
+    by 1.75 (1.38–2.21).
+  - NUTS: R-hat ≤ 1.006, no divergences.
 - **Conclusion.** Prices and timestamps are two independent views, and they identify the
   same pricing units.
 - **Meijer, by contrast, runs one sale calendar** (71 stores; Meijer reports when each

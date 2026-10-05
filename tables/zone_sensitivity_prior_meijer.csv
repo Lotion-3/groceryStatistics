@@ -1,0 +1,4 @@
+chain,stores,gamma,zones_ge2,zones_post_mean,ari_vs_gamma1,start_agreement_ari
+meijer,71,0.5,10,10.0,0.7825115964641725,1.0
+meijer,71,1.0,9,8.21,1.0,0.8500723223332912
+meijer,71,5.0,6,6.46,0.6059933407325194,1.0

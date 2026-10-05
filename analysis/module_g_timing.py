@@ -285,6 +285,76 @@ def timing_clusters(k: pd.DataFrame, zones: pd.Series, rng, n_perm: int = 999) -
             "p_value_one_sided": float((1 + (perm >= obs).sum()) / (1 + n_perm)), "n_perm": n_perm}
 
 
+def pair_table(k: pd.DataFrame, zones: pd.Series, unit: str = "date") -> pd.DataFrame:
+    """Same-banner store pairs: shared products n, co-timed y (same date or same
+    minute), same zone?, distance (km)."""
+    from analysis.estimators import haversine_km
+    k = k[k["store_pk"].isin(zones.index)].drop_duplicates(["store_pk", "chain_product_id"]).copy()
+    k["v"] = k["eff"].dt.date if unit == "date" else k["eff"].dt.floor("min")
+    piv = k.pivot_table(index="store_pk", columns="chain_product_id", values="v", aggfunc="first")
+    A, S = piv.to_numpy(), piv.index.to_numpy()
+    meta = k.drop_duplicates("store_pk").set_index("store_pk")
+    st = pd.read_sql_query("SELECT store_pk, lat, lon FROM stores", sqlite3.connect(DB)).set_index("store_pk").reindex(S)
+    b = meta["banner"].reindex(S).to_numpy()
+    rows = []
+    for i in range(len(S)):
+        for j in range(i + 1, len(S)):
+            if b[i] != b[j]:
+                continue
+            ok = pd.notna(A[i]) & pd.notna(A[j])
+            n = int(ok.sum())
+            if n < 20:
+                continue
+            rows.append({"i": S[i], "j": S[j], "banner": b[i], "n": n, "y": int((A[i][ok] == A[j][ok]).sum()),
+                         "same_zone": int(zones[S[i]] == zones[S[j]]),
+                         "dist_km": float(haversine_km(st["lat"].iat[i], st["lon"].iat[i], st["lat"].iat[j], st["lon"].iat[j]))})
+    return pd.DataFrame(rows)
+
+
+def dyadic_model(pt: pd.DataFrame, seed: int = SEED, draws: int = 1000, tune: int = 1000) -> dict:
+    """Hierarchical binomial model for pair co-timing:
+        y_ij ~ Binomial(n_ij, p_ij),
+        logit p_ij = a + b_zone * same_zone + b_dist * log1p(d_ij / 100 km)
+                     + u_i + u_j + e_ij,
+    store effects u ~ N(0, s_u) for the dependence between pairs that share a store
+    (multiple-membership), pair effects e ~ N(0, s_e) for overdispersion. Pairs are
+    same-banner and stores are nested in banners, so store effects absorb banner
+    levels (a banner intercept would not be identified separately). b_zone is the zone
+    effect on the log-odds of co-timing beyond distance and store."""
+    import pymc as pm
+    import arviz as az
+    stores = np.unique(np.concatenate([pt["i"], pt["j"]]))
+    pos = {s: k for k, s in enumerate(stores)}
+    ii, jj = pt["i"].map(pos).to_numpy(), pt["j"].map(pos).to_numpy()
+    bcode, bnames = pd.factorize(pt["banner"])
+    ld = np.log1p(pt["dist_km"].to_numpy() / 100.0)
+    with pm.Model():
+        a = pm.Normal("a", 0, 2)
+        b_zone = pm.Normal("b_zone", 0, 1)
+        b_dist = pm.Normal("b_dist", 0, 1)
+        s_u = pm.HalfNormal("s_u", 1)
+        s_e = pm.HalfNormal("s_e", 1)
+        u = pm.Normal("u_raw", 0, 1, shape=len(stores)) * s_u
+        e = pm.Normal("e_raw", 0, 1, shape=len(pt)) * s_e
+        eta = a + b_zone * pt["same_zone"].to_numpy() + b_dist * ld + u[ii] + u[jj] + e
+        pm.Binomial("y", n=pt["n"].to_numpy(), logit_p=eta, observed=pt["y"].to_numpy())
+        idata = pm.sample(draws, tune=tune, chains=4, target_accept=0.95, nuts_sampler="numpyro",
+                          random_seed=seed, progressbar=False)
+    sm = az.summary(idata, var_names=["b_zone", "b_dist", "s_u", "s_e"], ci_prob=0.9, ci_kind="eti")
+    post = idata.posterior["b_zone"].values.ravel()
+    out = {"pairs": int(len(pt)), "stores": int(len(stores)), "banners": int(len(bnames)),
+           "share_pairs_same_zone": float(pt["same_zone"].mean()),
+           "p_b_zone_gt_0": float((post > 0).mean()),
+           "odds_ratio_same_zone": float(np.exp(np.median(post))),
+           "divergences": int(idata.sample_stats["diverging"].values.sum())}
+    for v in ("b_zone", "b_dist", "s_u", "s_e"):
+        r = sm.loc[v]
+        out.update({f"{v}_mean": float(r["mean"]), f"{v}_lo90": float(r["eti90_lb"]), f"{v}_hi90": float(r["eti90_ub"])})
+    out["rhat_max"] = float(sm["r_hat"].max())
+    out["ess_bulk_min"] = float(sm["ess_bulk"].min())
+    return out
+
+
 def meijer_sale_timing(snaps: list[int], rng, n_perm: int = 2999) -> tuple[pd.DataFrame, dict]:
     """Meijer reports, per store price, the date a sale price is good through
     (regular prices carry 2099-12-31). (a) Sale-end dates and weekdays;
@@ -430,6 +500,11 @@ def run(snaps: list[int] | None = None) -> str:
     pd.DataFrame([lsum]).to_csv(TAB / "module_g_promo_length_summary.csv", index=False)
     stock.to_csv(TAB / "module_g_stock.csv", index=False)
     pd.DataFrame([tclus]).to_csv(TAB / "module_g_timing_clusters.csv", index=False)
+    dy = []
+    for unit, dr in (("date", 3000), ("minute", 1000)):          # dyadic model (about 5 min)
+        r = dyadic_model(pair_table(k, zones, unit), draws=dr, tune=2000 if unit == "date" else 1000)
+        dy.append({"unit": unit, **r})
+    pd.DataFrame(dy).to_csv(TAB / "module_g_dyadic_model.csv", index=False)
     mdates, msumm = meijer_sale_timing(snaps, rng)
     if len(mdates):
         mdates.to_csv(TAB / "module_g_meijer_sale_end_dates.csv", index=False)
