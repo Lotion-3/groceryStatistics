@@ -209,27 +209,23 @@ regional zones.*
 *Figure 3. Kroger-family stores by banner (left), and banner × zone counts (right). The zone
 model never sees banners, yet almost every zone falls inside one banner.*
 
-**Departures and extremes** (M2, Figure 4). Kroger (160 stores, partway through the
-banner sample) and Walmart (41), contiguous US: 8,002 prices, 70% at list.
-- **Convergence:** 4 × 2,000 draws; R-hat ≤ 1.006, minimum bulk ESS 877, no divergences.
-- **Spatial share:**
-  - Kroger 0.996 (90% interval 0.985–1.000). Kroger's store-level departure sizes are
-    almost entirely regional; the field cannot separate banner territories from a smooth
-    surface.
-  - Walmart 0.51 (0.35–0.68).
-  - Length-scale about 92 km (66–122 km).
-- **Size:** departures average +3.0% at Kroger (2.5–3.4%) and about 0 at Walmart (−0.1%).
-  Stores' tendency to depart clusters in space (Moran's I 0.43 and 2.08, p = 0.0002).
+**Departures and extremes** (M2, Figure 4). The model is fitted to Kroger (160 stores,
+partway through the banner sample) and Walmart (41): 8,002 prices, 70% at list. It
+converges (4 × 2,000 draws, R-hat ≤ 1.006, no divergences).
+- **Kroger:** departure sizes are almost entirely regional (spatial share 0.996, 90%
+  interval 0.985–1.000; length-scale about 92 km); the field cannot separate banner
+  territories from a smooth surface.
+- **Walmart:** spatial share 0.51 (0.35–0.68).
+- **Departure size:** +3.0% on average at Kroger and about 0 at Walmart. Stores' tendency
+  to depart clusters in space (Moran's I 0.43 and 2.08, p = 0.0002).
 - **Fit:**
-  - PSIS-LOO does not separate the spatial model from the model without $f$ (difference
-    30 ± 22 elpd, favouring the simpler model).
-  - Posterior predictive checks reproduce the share at list, but the extreme departures
-    are heavier than the model's $t_{\nu \approx 2.2}$ (99th percentile 0.34 observed vs 0.30
-    replicated).
-- **Extremes:** the extreme upper tail is mostly geographic. A Honolulu Walmart charges
-  \$6.28 for milk against a chain median of \$2.97. Without Hawaii and Alaska, Walmart's
-  generalised-Pareto shape is about 0 ($\hat\xi = -0.04$, 95% CI −0.40 to 0.14): no
-  power-law tail.
+  - PSIS-LOO does not separate the spatial model from the model without $f$
+    (30 ± 22 elpd).
+  - Extreme departures are heavier than the model's $t_{\nu \approx 2.2}$: the 99th percentile is
+    0.34 observed vs 0.30 replicated.
+- **Extremes:** the upper tail is mostly geographic. A Honolulu Walmart charges \$6.28
+  for milk against a chain median of \$2.97. Without Hawaii and Alaska, Walmart's
+  generalised-Pareto shape is about 0 ($\hat\xi = -0.04$, 95% CI −0.40 to 0.14).
 
 ![Figure 4](../figures/fig_b1_spatial_surface.png)
 *Figure 4. Posterior mean of the spatial field $f$ in the two-part model: where off-list
@@ -315,27 +311,16 @@ Zone labels were permuted within banner, 2,999 times. Three checks:
 
 **5.3 How long do promotions last? One snapshot, four answers.** A snapshot sees only
 promotions still running, so long promotions are over-represented (the inspection
-paradox). Each correction relies on a different invariance:
+paradox). Each correction relies on a different invariance, and they disagree (Figure 5b):
+- naive mean 28.5 days;
+- renewal theory from ages 18.3;
+- length-bias correction $1/\mathbb{E}[1/L]$: 12.7;
+- Lynden-Bell's product-limit estimator for left-truncated data: 9.4.
 
-| Estimator | Mean (days) | Assumes |
-|---|---|---|
-| Naive mean of planned lengths | 28.5 | nothing (length-biased) |
-| Renewal theory from ages, $\mu = 1/f_A(0)$ (Cox 1962) | 18.3 | stationarity |
-| Length-bias correction, $1/\mathbb{E}[1/L]$ | 12.7 (12.4–12.9) | equal weekly cohorts |
-| Lynden-Bell (1971) product-limit, left-truncated at age (Woodroofe 1985) | 9.4 (9.1–9.9) | same length mix each week |
-
-Intervals are 95% store bootstrap.
-
-A simulation (200 replications) shows the three corrections agree under stationarity. If
-one week's cohort has a different length mix, they split in exactly the observed order:
-ages-only is biased up (+2.8 days on a 15.5-day truth), Lynden-Bell down (−0.7), and the
-harmonic mean stays close. The data agree with that explanation:
-- age / planned length, which is uniform under stationarity, has mean 0.56, and 0.71 for
-  2-week promotions;
-- the most recent weekly cohort is smaller than the one before.
-
-One snapshot cannot separate cohort size from cohort mix. The event below sees a whole
-cohort when it starts.
+A simulation shows they agree under stationarity, and split in exactly this order when
+one week's cohort has a different length mix. The age/length ratio and the cohort sizes
+in the data agree with that explanation (Appendix B). One snapshot cannot separate
+cohort size from cohort mix. The event below sees a whole cohort when it starts.
 
 ![Figure 5](../figures/fig_g2_timing_lengths.png)
 *Figure 5. (a) Store-local time at which Kroger prices take effect. (b) Mean promotion
@@ -497,6 +482,23 @@ $k = 5\%$ Hill interval covered the true value 84–97% of the time.
 **Predictors.** We compare OLS, lasso, elastic net and a regularised horseshoe (Piironen and Vehtari 2017). Low-rank
 factor structure in the store × product deviation matrix is supported for ALDI (rank 4),
 Costco (3) and Kroger (8), but not for Walmart (cross-validation picks rank 0).
+
+**Promotion-length estimators.**
+
+| Estimator | Mean (days) | Assumes |
+|---|---|---|
+| Naive mean of planned lengths | 28.5 | nothing (length-biased) |
+| Renewal theory from ages, $\mu = 1/f_A(0)$ (Cox 1962) | 18.3 | stationarity |
+| Length-bias correction, $1/\mathbb{E}[1/L]$ | 12.7 (12.4–12.9) | equal weekly cohorts |
+| Lynden-Bell (1971) product-limit, left-truncated at age (Woodroofe 1985) | 9.4 (9.1–9.9) | same length mix each week |
+
+Intervals are 95% store bootstrap.
+
+In a 200-replication simulation, the corrections agree under stationarity. When one
+week's cohort has a different length mix, ages-only is biased up (+2.8 days on a
+15.5-day truth), Lynden-Bell down (−0.7), and the harmonic mean stays close. In the data,
+age / planned length (uniform under stationarity) has mean 0.56, and 0.71 for 2-week
+promotions, and the most recent weekly cohort is smaller than the one before.
 
 **Timing details.**
 - Regular-price spells have a renewal-estimated mean of about 32 days. The age tail has
