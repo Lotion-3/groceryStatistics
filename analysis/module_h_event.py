@@ -227,7 +227,68 @@ def analyse(passes: dict[str, pd.DataFrame], zones: pd.Series, banner: pd.Series
     return pd.DataFrame(rows), zs, pd.DataFrame(est)
 
 
+# ---------------------------------------------------------------------------
+# Meijer arm (pre-registration Addendum 4)
+
+MEIJER_END = "2026-10-06"
+
+
+def meijer_snapshots() -> dict[str, int]:
+    con = sqlite3.connect(DB)
+    ids = {}
+    for sid, notes in con.execute("SELECT snapshot_id, notes FROM snapshots WHERE notes LIKE 'meijer event %'"):
+        ids.setdefault(notes.split(" 20")[0].replace("meijer event ", "").strip(), int(sid))
+    con.close()
+    return ids
+
+
+def meijer_tidy(obs: pd.DataFrame) -> pd.DataFrame:
+    o = obs[(obs["chain"] == "meijer") & (obs["store_specific"] == 1)].dropna(subset=["price"]).copy()
+    ex = o["extra"].map(lambda e: json.loads(e) if isinstance(e, str) else (e or {}))
+    o["good_through"] = ex.map(lambda e: str(e.get("price_good_through") or "")[:10])
+    o["shelf"] = o["price"].round(2)
+    o["scheduled"] = o["good_through"] == MEIJER_END
+    return o.sort_values("observed_at").drop_duplicates(["store_pk", "chain_product_id"], keep="last")[
+        ["store_pk", "chain_product_id", "shelf", "good_through", "scheduled"]]
+
+
+def meijer_event(passes: dict[str, pd.DataFrame]) -> pd.DataFrame:
+    """Predictions M1-M4 (Addendum 4) from tidy Meijer passes."""
+    rows = []
+
+    def add(h, claim, value, n, holds, note=""):
+        ok = None if (isinstance(value, float) and np.isnan(value)) else bool(holds)
+        rows.append({"hypothesis": h, "prediction": claim, "value": value, "n": n, "holds": ok, "note": note})
+    if not {"before", "after"} <= passes.keys():
+        return pd.DataFrame([{"note": f"Meijer passes so far: {sorted(passes)}"}])
+    ba = passes["before"].merge(passes["after"], on=["store_pk", "chain_product_id"], suffixes=("_a", "_b"))
+    ba["changed"] = ba["shelf_a"] != ba["shelf_b"]
+    sch, other = ba[ba["scheduled_a"]], ba[~ba["scheduled_a"]]
+    r1 = float(sch["changed"].mean()) if len(sch) else np.nan
+    r2 = float(other["changed"].mean()) if len(other) else np.nan
+    add("M1", "change rate of scheduled units >= 0.80", r1, len(sch), r1 >= 0.80)
+    add("M2", "change rate of other units <= 0.15", r2, len(other), r2 <= 0.15)
+    if "control" in passes:
+        cb = passes["control"].merge(passes["before"], on=["store_pk", "chain_product_id"], suffixes=("_a", "_b"))
+        rc = float((cb["shelf_a"] != cb["shelf_b"]).mean()) if len(cb) else np.nan
+        re_ = float(ba["changed"].mean())
+        ratio = re_ / rc if rc else (np.inf if re_ else np.nan)
+        add("M3", "change rate before->after >= 3 x control->before", ratio, len(ba), ratio >= 3,
+            f"event {re_:.4f} (n={len(ba)}), control {rc:.4f} (n={len(cb)})")
+    g = sch.groupby("chain_product_id")["shelf_b"].agg(["nunique", "size"])
+    g = g[g["size"] >= 2]
+    r4 = float((g["nunique"] == 1).mean()) if len(g) else np.nan
+    add("M4", "products with one new price across stores >= 0.90", r4, len(g), r4 >= 0.90)
+    return pd.DataFrame(rows)
+
+
 def run() -> str:
+    mids = meijer_snapshots()
+    if mids:
+        mobs = load_observations(snapshot_id=list(mids.values()))
+        mp_ = {k: meijer_tidy(mobs[mobs["snapshot_id"] == sid]) for k, sid in mids.items()}
+        TAB.mkdir(exist_ok=True)
+        meijer_event(mp_).to_csv(TAB / "module_h_meijer_predictions.csv", index=False)
     ids = event_snapshots()
     if not {"before", "after"} <= ids.keys():
         return f"Module H: event passes not collected yet (have {sorted(ids)})."

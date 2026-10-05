@@ -53,3 +53,16 @@ def test_module_h_recovers_known_answers():
     assert EXPIRY.hour == 3
     coh = est[est.estimate.str.startswith("new cohort: mean")].iloc[0]
     assert abs(coh.value - 14) < 0.7      # renewals planned to the expiry two weeks on
+
+
+def test_meijer_event_predictions():
+    from analysis.module_h_event import meijer_event
+    rows = lambda shift, sched: pd.DataFrame([{"store_pk": s, "chain_product_id": f"P{p}",
+                                               "shelf": 3.0 + p + (shift if p < 10 else 0),
+                                               "good_through": "2026-10-06" if (sched and p < 10) else "2099-12-31",
+                                               "scheduled": bool(sched and p < 10)}
+                                              for s in range(5) for p in range(40)])
+    out = meijer_event({"control": rows(0, True), "before": rows(0, True), "after": rows(0.5, False)})
+    get = lambda h: out[out.hypothesis == h].iloc[0]
+    assert get("M1")["value"] == 1.0 and get("M2")["value"] == 0.0
+    assert get("M4")["value"] == 1.0 and np.isinf(get("M3")["value"])
