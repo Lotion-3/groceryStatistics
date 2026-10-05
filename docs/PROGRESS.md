@@ -490,3 +490,14 @@ we have not made it.
   - departures from the list price persisted (p_stay_off = 1, 694 transitions);
   - fixed the slot-lead variance decomposition (pooled within-store variance, stores
     seen ≥ 2 times; it was giving negative shares).
+- **Meijer sample finished (about 16:50).**
+  - 83 Meijer stores in snapshot 2 (71 pass the analysis filters); no blocks.
+  - 97% of prices at list; variogram nugget 0.1%, sill 4.9%, range about 44 km.
+  - Zones: 7, weakly coherent (24% vs 21%).
+  - Sale ends: 99.7% of store pairs end the same date (one sale calendar). 83% of sales
+    end on a Tuesday, and 6,953 store-products end on Oct 6–7, the same night as the
+    Kroger expiry.
+  - Added to the write-up's §4, §5 and abstract.
+  - The Module E/G rerun also refit Kroger on 191 stores (banner sample partial). The
+    write-up's Kroger figures stay at 121/160 until the final rerun after the banner
+    sample.

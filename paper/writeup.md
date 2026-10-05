@@ -28,6 +28,7 @@ The chains differ sharply:
 - **Costco** on Instacart has regional zones about 850 km across.
 - **Kroger** has local zones nested inside its banners: 94% banner purity, although the
   model never sees banners.
+- **Meijer**, in its Michigan core, has almost one list (97% at list) and one sale calendar.
 
 Kroger's own price timestamps then supply independent evidence that zones are real
 decision units:
@@ -190,6 +191,13 @@ between stores. Bands are 95% store-bootstrap intervals.*
   - Stores less than 100 km apart differ on 11% of shared products within a banner and 77%
     across banners.
   - The zones replicate (split-half ARI 0.83–0.98 at 160 stores).
+- **Meijer** (71 stores, mostly Michigan; its locator limited the sample to its core
+  region) is the most uniform chain we observe.
+  - 97% of prices sit at list.
+  - Nearby stores differ on 0.1% of shared products, rising to a plateau of only 4.9%
+    (range about 44 km).
+  - The 7 zones found are barely more coherent in space than chance (nearby stores share
+    a zone 24% of the time vs 21% permuted).
 
 ![Figure 2](../figures/fig_e3_zones_aldi.png)
 *Figure 2. ALDI's price-list zones (Dirichlet-process mixture): one national list plus
@@ -277,6 +285,12 @@ Zone labels were permuted within banner, 2,999 times. Three checks:
   permutation baseline is 0.43 (p = 0.001).
 - **Conclusion.** Prices and timestamps are two independent views, and they identify the
   same pricing units.
+- **Meijer, by contrast, runs one sale calendar** (71 stores; Meijer reports when each
+  store's sale price ends).
+  - For a given product, 99.7% of store pairs end the sale on the same date. Zones add
+    nothing (0.1 percentage points; 2,485 pairs).
+  - 83% of sales end on a Tuesday, and 6,953 store-products end on Oct 6–7: the same night
+    as Kroger's mass expiry (§5.4). Both chains turn over their ad weeks together.
 
 **5.3 How long do promotions last? One snapshot, four answers.** A snapshot sees only
 promotions still running, so long promotions are over-represented (the inspection
