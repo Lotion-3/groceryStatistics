@@ -295,6 +295,17 @@ Zone labels were permuted within banner, 2,999 times. Three checks:
   - NUTS: R-hat ≤ 1.006, no divergences.
 - **Conclusion.** Prices and timestamps are two independent views, and they identify the
   same pricing units.
+- **Updates arrive in a fixed order** (exploratory). For products repriced on the same
+  day at every store of a zone, but not in the same minute, we ranked the stores by
+  effective time. The rankings agree strongly across products in all 24 zones tested
+  (191 stores, 7,293 product-zone rankings):
+  - Kendall's W has median 0.62 (IQR 0.45–0.69), against about 0.003 under the null;
+    p ≤ 0.03 in every zone;
+  - the median spread within a zone is 9 minutes.
+
+  A zone is updated as a sequence, with stores in a stable order: the signature of a
+  push queue or per-store batch schedule. This is a microstructure-level detail that a
+  price cross-section cannot show.
 - **Meijer, by contrast, runs one sale calendar** (71 stores; Meijer reports when each
   store's sale price ends).
   - For a given product, 99.7% of store pairs end the sale on the same date. Zones add

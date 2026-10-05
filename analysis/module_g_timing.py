@@ -355,6 +355,39 @@ def dyadic_model(pt: pd.DataFrame, seed: int = SEED, draws: int = 1000, tune: in
     return out
 
 
+def push_order(k: pd.DataFrame, zones: pd.Series, rng, n_perm: int = 499) -> pd.DataFrame:
+    """Within a zone, do stores receive new prices in a consistent order?
+    Products whose price started on the same date at every store of the zone, but
+    not all in the same minute, give one ranking of the stores by effective time
+    each. Kendall's W measures agreement of these rankings across products
+    (0 = no consistent order, 1 = identical order); the null shuffles each
+    product's ranking. EXPLORATORY (not pre-registered)."""
+    k = k[k["store_pk"].isin(zones.index)].drop_duplicates(["store_pk", "chain_product_id"]).copy()
+    k["zone"] = zones.reindex(k["store_pk"]).to_numpy()
+    k["date"] = k["eff"].dt.date
+    out = []
+    for zn, g in k.groupby("zone"):
+        if g["store_pk"].nunique() < 3:
+            continue
+        piv = g.pivot_table(index="chain_product_id", columns="store_pk", values="eff", aggfunc="first")
+        dates = g.pivot_table(index="chain_product_id", columns="store_pk", values="date", aggfunc="first")
+        P = piv[piv.notna().all(axis=1) & (dates.nunique(axis=1) == 1)]
+        P = P[(P.max(axis=1) - P.min(axis=1)).dt.total_seconds() > 60]
+        if len(P) < 5:
+            continue
+        R = P.rank(axis=1).to_numpy()
+        m, n = R.shape
+
+        def W(R):
+            return 12 * ((R.sum(0) - m * (n + 1) / 2) ** 2).sum() / (m ** 2 * (n ** 3 - n))
+        w = W(R)
+        null = np.array([W(np.array([rng.permutation(r) for r in R])) for _ in range(n_perm)])
+        out.append({"zone": zn, "banner": g["banner"].mode().iat[0], "stores": n, "products": m, "kendall_W": float(w),
+                    "null_mean_W": float(null.mean()), "p_value": float((1 + (null >= w).sum()) / (1 + n_perm)),
+                    "median_spread_min": float((P.max(axis=1) - P.min(axis=1)).dt.total_seconds().median() / 60)})
+    return pd.DataFrame(out)
+
+
 def meijer_sale_timing(snaps: list[int], rng, n_perm: int = 2999) -> tuple[pd.DataFrame, dict]:
     """Meijer reports, per store price, the date a sale price is good through
     (regular prices carry 2099-12-31). (a) Sale-end dates and weekdays;
@@ -500,6 +533,7 @@ def run(snaps: list[int] | None = None) -> str:
     pd.DataFrame([lsum]).to_csv(TAB / "module_g_promo_length_summary.csv", index=False)
     stock.to_csv(TAB / "module_g_stock.csv", index=False)
     pd.DataFrame([tclus]).to_csv(TAB / "module_g_timing_clusters.csv", index=False)
+    push_order(k, zones, rng).to_csv(TAB / "module_g_push_order.csv", index=False)
     dy = []
     for unit, dr in (("date", 3000), ("minute", 1000)):          # dyadic model (about 5 min)
         r = dyadic_model(pair_table(k, zones, unit), draws=dr, tune=2000 if unit == "date" else 1000)
