@@ -73,8 +73,13 @@ def run(snaps: list[int] | None = None, chains=CHAINS) -> str:
         print(f"  {chain}: done", flush=True)
     TAB.mkdir(exist_ok=True)
     pr, sp = pd.DataFrame(prior_rows), pd.DataFrame(split_rows)
-    pr.to_csv(TAB / "zone_sensitivity_prior.csv", index=False)
-    sp.to_csv(TAB / "zone_sensitivity_split_half.csv", index=False)
+    # combined tables: replace only the chains rerun now, keep the others' rows
+    for name, new in (("zone_sensitivity_prior.csv", pr), ("zone_sensitivity_split_half.csv", sp)):
+        f = TAB / name
+        if f.exists() and not new.empty:
+            old_t = pd.read_csv(f)
+            new = pd.concat([old_t[~old_t["chain"].isin(new["chain"].unique())], new], ignore_index=True)
+        new.to_csv(f, index=False)
     summ = sp.groupby("chain")["ari_half1_vs_half2"].agg(["mean", "min"]).round(2).to_dict("index")
     return f"Zone sensitivity: wrote 2 tables. Split-half ARI by chain: {summ}"
 
