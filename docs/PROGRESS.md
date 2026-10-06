@@ -509,3 +509,10 @@ simulation was not rerun because it is slow.
 - The Module B simulation (`simulation.validate_module_b`) was also rerun (19:40–19:48). It
   reproduces `tables/simulation_module_b.csv` exactly (no content diff). Every simulation
   table now reproduces from scratch.
+- **Walmart 20:00 visit (snapshot 8):** all 10 stores, no captcha. Module I after 3
+  visits:
+  - 0/1,844 intraday price changes (7 stores);
+  - departures persist (1,804 transitions);
+  - slot lead time is driven by time of day (evening 10–17 h), not by store.
+
+  Added to the write-up §5.5.

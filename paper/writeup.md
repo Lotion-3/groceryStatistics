@@ -351,11 +351,14 @@ same thresholds plus "one new price across stores").
 **5.5 Walmart repeat visits (in progress).** Walmart publishes no price dates, so we
 revisit 10 stores (17 confirmed items) three times a day from Monday to Thursday. Each
 visit reaches the same 6–7 stores before Walmart's per-session limit (about 105 requests).
-- **First result** (4 stores, morning vs afternoon): 0 of 707 store-products changed
-  price within the day, and off-list prices persisted.
-- **Still to measure:** overnight change rates, persistence of local departures (a
-  two-state Markov chain), and delivery-slot lead times, which track time of day rather
-  than store.
+- **First day** (3 visits; 10 stores, 7 seen at least twice):
+  - **0 of 1,844** store-product transitions within the day changed price;
+  - all 1,804 transitions from an off-list price stayed off list;
+  - delivery-slot lead time follows the clock, not the store: 3–5 h during the day,
+    10–12 h in the evening (the next slot is the following morning). Store explains none
+    of its variance.
+- **Still to measure:** overnight change rates (from Tuesday), and the persistence of
+  local departures over several days (a two-state Markov chain).
 
 [result: Module I tables.]
 
