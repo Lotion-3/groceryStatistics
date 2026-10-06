@@ -508,6 +508,17 @@ week's cohort has a different length mix, ages-only is biased up (+2.8 days on a
 age / planned length (uniform under stationarity) has mean 0.56, and 0.71 for 2-week
 promotions, and the most recent weekly cohort is smaller than the one before.
 
+**Update batches** (exploratory). Grouping Kroger's current prices by the minute they took
+effect gives 10,068 batches (108,370 store-products).
+- They are very uneven: median size 3, 99th percentile 141, maximum 985 (24 stores × 76
+  products).
+- The largest 1% of batches carry 24% of all prices, and the largest 10% carry 66%.
+- The Hill tail index falls with $k$: 1.70 (95% bootstrap 1.46–1.92) at $k$ = 2%, 1.39
+  (1.28–1.50) at 5%, 1.16 (1.09–1.23) at 10%. That is a heavy, infinite-variance tail
+  that is not a clean power law.
+- Caveats: only prices still in force are seen, and zones updated in the same minute
+  merge into one batch.
+
 **Timing details.**
 - Regular-price spells have a renewal-estimated mean of about 32 days. The age tail has
   Hill $\hat\alpha \approx 2.3$ (2.2–2.5).

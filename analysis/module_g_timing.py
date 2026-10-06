@@ -396,6 +396,29 @@ def push_order(k: pd.DataFrame, zones: pd.Series, rng, n_perm: int = 499) -> pd.
     return pd.DataFrame(out)
 
 
+def batch_sizes(k: pd.DataFrame, rng, B: int = 500) -> dict:
+    """Update batches: store-products whose current price began in the same minute
+    (chain-wide). Size distribution, concentration, and the Hill tail index at
+    k = 2/5/10% of batches with bootstrap CIs. EXPLORATORY: only prices still in
+    force are seen (later batches overwrite earlier ones), and zones updated in the
+    same minute merge into one batch."""
+    from analysis.estimators import hill_gamma
+    k = k.drop_duplicates(["store_pk", "chain_product_id"])
+    x = k.groupby(k["eff"].dt.floor("min")).size().to_numpy(float)
+    srt = np.sort(x)[::-1]
+    out = {"batches": int(len(x)), "store_products": int(x.sum()), "median_size": float(np.median(x)),
+           "q99_size": float(np.percentile(x, 99)), "max_size": float(x.max()),
+           "share_in_top1pct": float(srt[: max(1, len(x) // 100)].sum() / x.sum()),
+           "share_in_top10pct": float(srt[: len(x) // 10].sum() / x.sum())}
+    for frac in (0.02, 0.05, 0.10):
+        kk = int(frac * len(x))
+        a = 1 / hill_gamma(x, kk)
+        bs = [1 / hill_gamma(rng.choice(x, len(x)), kk) for _ in range(B)]
+        out.update({f"hill_alpha_k{int(frac * 100)}": float(a), f"hill_alpha_k{int(frac * 100)}_lo": float(np.percentile(bs, 2.5)),
+                    f"hill_alpha_k{int(frac * 100)}_hi": float(np.percentile(bs, 97.5))})
+    return out
+
+
 def meijer_sale_timing(snaps: list[int], rng, n_perm: int = 2999) -> tuple[pd.DataFrame, dict]:
     """Meijer reports, per store price, the date a sale price is good through
     (regular prices carry 2099-12-31). (a) Sale-end dates and weekdays;
@@ -542,6 +565,7 @@ def run(snaps: list[int] | None = None) -> str:
     stock.to_csv(TAB / "module_g_stock.csv", index=False)
     pd.DataFrame([tclus]).to_csv(TAB / "module_g_timing_clusters.csv", index=False)
     push_order(k, zones, rng).to_csv(TAB / "module_g_push_order.csv", index=False)
+    pd.DataFrame([batch_sizes(k, rng)]).to_csv(TAB / "module_g_batch_sizes.csv", index=False)
     dy = []
     for unit, dr in (("date", 3000), ("minute", 1000)):          # dyadic model (about 5 min)
         r = dyadic_model(pair_table(k, zones, unit), draws=dr, tune=2000 if unit == "date" else 1000)
