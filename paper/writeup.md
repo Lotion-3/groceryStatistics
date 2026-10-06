@@ -93,41 +93,31 @@ Every raw response is archived, and every failure is logged.
 
 ## 3. Methods
 
-**Point mass and departures.** The list price $\ell_j$ is the chain's modal price for
-product $j$. We report the share of store prices at $\ell_j$ and the direction and size of
-departures, $\log(p_{sj}/\ell_j)$.
+**Point mass and variogram.** The list price $\ell_j$ is the chain's modal price for product
+$j$; departures are $\log(p_{sj}/\ell_j)$. For a pair of stores, the dissimilarity
+$\delta_{st}$ is the share of shared products (at least 20) priced differently. Its mean by
+distance band, with store-bootstrap bands, gives a price-list variogram, fitted with an
+exponential nugget–sill–range model. When there is no plateau, we report none.
 
-**Price-list variogram.** For stores $s, t$, the dissimilarity $\delta_{st}$ is the share of
-shared products (at least 20) priced differently. We plot its mean by distance band, with
-store-bootstrap bands, and fit an exponential model with nugget, sill and range. When there
-is no plateau, we report none.
-
-**Zones.** Each store's price list is coded, product by product, as which of the product's
-observed price levels it charges. The model is a Dirichlet-process mixture:
+**Zones.** Each store's list is coded as which observed price level it charges for each
+product, under a Dirichlet-process mixture:
 - $z_s \sim \mathrm{CRP}(\alpha)$;
 - $c_{sj} \mid z_s = k \sim \mathrm{Cat}(\theta_{kj})$;
-- $\theta_{kj} \sim \mathrm{Dir}(\gamma g_j)$, where $g_j$ is the chain-wide level
-  frequency (an empirical-Bayes base measure).
+- $\theta_{kj} \sim \mathrm{Dir}(\gamma g_j)$, where $g_j$ is the chain-wide level frequency (an
+  empirical-Bayes base measure).
 
-Price levels charged by a single store are set aside as local departures. Inference is
-collapsed Gibbs (Neal 2000) plus merge–split moves (Dahl 2005), with Escobar–West (1995)
-updates for $\alpha$. We run two starts and compare them with the adjusted Rand index
-(ARI; Hubert and Arabie 1985).
+Levels charged by a single store are set aside. Inference: collapsed Gibbs (Neal 2000),
+merge–split moves (Dahl 2005) and Escobar–West (1995) updates for $\alpha$, from two starts
+compared by adjusted Rand index (ARI; Hubert and Arabie 1985). Zones are judged by
+**split-half replication** (disjoint halves of the products) and **prior sensitivity**
+($\gamma$ from 0.5 to 5), not by the posterior alone.
 
-Robustness checks that do not rely on the model's posterior:
-- *split-half replication:* fit two disjoint random halves of the products separately;
-- *prior sensitivity:* vary $\gamma$ from 0.5 to 5.
-
-**Two-part spatial model** (M2).
-1. Part 1: whether a price is at list, $1\{p_{sj} = \ell_j\} \sim \mathrm{Bernoulli}(\pi_s)$,
-   with store effects.
-2. Part 2: for prices off list, $\log(p_{sj}/\ell_j) \sim t_\nu(\mu_c + u_s + f(x_s), \sigma)$,
-   where $f$ is a Matérn-3/2 Gaussian process (Hilbert-space approximation; Solin and
-   Särkkä 2020).
-
-Inference is by NUTS (Hoffman and Gelman 2014; NumPyro). We report the spatial share
-$\operatorname{var} f / (\operatorname{var} f + \sigma_u^2)$, PSIS-LOO (Vehtari et al. 2017) against the same
-model without $f$, and posterior predictive checks.
+**Two-part spatial model.**
+- Whether a price is at list: Bernoulli with store effects.
+- Off-list departures: $t_\nu(\mu_c + u_s + f(x_s), \sigma)$, with $f$ a Matérn-3/2 Gaussian
+  process (Hilbert-space approximation; Solin and Särkkä 2020).
+- NUTS (Hoffman and Gelman 2014); spatial share $\operatorname{var} f / (\operatorname{var} f + \sigma_u^2)$; PSIS-LOO
+  (Vehtari et al. 2017); posterior predictive checks.
 
 **Timing.** For each store-product, the effective timestamp gives when the current price
 record began.
@@ -175,33 +165,27 @@ between stores. Bands are 95% store-bootstrap intervals.*
   map does not replicate at 41 stores, but the gradient does.
 - **Costco on Instacart** forms about 18 regional zones on a scale of about 850 km. They
   replicate almost perfectly: split-half ARI 0.96, and ARI 0.99 across priors.
-- **Kroger** is the most local at short range, and its zones follow its banners and, more
-  closely, its operating divisions (Figure 3).
-  - Stores less than 100 km apart differ on 8% of shared products within a banner and 72%
-    across banners.
-  - The zones replicate (split-half ARI 0.83–0.98 at 160 stores).
-  - **The zones follow Kroger's divisions even more closely than its banners.** The
-    location id begins with a 3-digit division number. At 191 stores (16 banners, 20
-    divisions, 28 zones):
+- **Kroger** is the most local at short range (Figure 3). Stores within 100 km differ on
+  8% of shared products within a banner and 72% across banners. The zones replicate
+  (split-half ARI 0.83–0.98).
 
-    | Zones compared with | Purity | ARI | Zones inside one group |
-    |---|---|---|---|
-    | division | 95% | 0.71 | 89% |
-    | banner | 89% | 0.51 | 82% |
+  **They follow Kroger's operating divisions even more closely than its banners.** The
+  location id starts with a 3-digit division number. At 191 stores (16 banners, 20
+  divisions, 28 zones):
 
-    - The "Kroger" banner spans 9 divisions, and the model splits it along them.
-    - Banners that share a division share zones: Food 4 Less and Foods Co, and Dillons,
-      Baker's and Gerbes (Appendix Figure B1).
-    - Prices alone recover the organisational pricing units.
-- **Meijer** (71 stores, mostly Michigan; its locator limited the sample to its core
-  region) is the most uniform chain we observe.
+  | Zones compared with | Purity | ARI | Zones inside one group |
+  |---|---|---|---|
+  | division | 95% | 0.71 | 89% |
+  | banner | 89% | 0.51 | 82% |
+
+  The "Kroger" banner spans 9 divisions and is split along them, while banners that share
+  a division share zones (Food 4 Less and Foods Co; Dillons, Baker's and Gerbes). Prices
+  alone recover the organisational pricing units.
+- **Meijer** (71 stores, its Michigan core) is the most uniform chain.
   - 97% of prices sit at list.
-  - Nearby stores differ on 0.1% of shared products, rising to a plateau of only 4.9%
-    (range about 44 km).
-  - The 7 zones found are barely more coherent in space than chance (nearby stores share
-    a zone 24% of the time vs 21% permuted).
-  - They do not replicate: split-half ARI 0.28–0.69, and 6–10 zones depending on
-    $\gamma$.
+  - Nearby stores differ on 0.1% of products, rising to only 4.9%.
+  - Its 7 zones barely beat chance in space and do not replicate (split-half ARI
+    0.28–0.69).
 
 ![Figure 2](../figures/fig_e3_zones_aldi.png)
 *Figure 2. ALDI's price-list zones (Dirichlet-process mixture): one national list plus
@@ -212,20 +196,15 @@ regional zones.*
 model never sees banners, yet most zones fall inside one banner (and more inside one
 division).*
 
-**Departures and extremes** (M2, Figure 4). The model is fitted to Kroger (160 stores,
-partway through the banner sample) and Walmart (41): 8,002 prices, 70% at list. It
-converges (4 × 2,000 draws, R-hat ≤ 1.006, no divergences).
+**Departures and extremes** (M2, Figure 4; Kroger 160 stores and Walmart 41; 8,002 prices,
+70% at list; R-hat ≤ 1.006, no divergences).
 - **Kroger:** departure sizes are almost entirely regional (spatial share 0.996, 90%
-  interval 0.985–1.000; length-scale about 92 km); the field cannot separate banner
-  territories from a smooth surface.
+  interval 0.985–1.000; length-scale about 92 km).
 - **Walmart:** spatial share 0.51 (0.35–0.68).
-- **Departure size:** +3.0% on average at Kroger and about 0 at Walmart. Stores' tendency
-  to depart clusters in space (Moran's I 0.43 and 2.08, p = 0.0002).
-- **Fit:**
-  - PSIS-LOO does not separate the spatial model from the model without $f$
-    (30 ± 22 elpd).
-  - Extreme departures are heavier than the model's $t_{\nu \approx 2.2}$: the 99th percentile is
-    0.34 observed vs 0.30 replicated.
+- **Departure size:** +3.0% on average at Kroger and about 0 at Walmart.
+- **Fit:** PSIS-LOO does not separate the spatial model from the model without $f$, and the
+  extreme departures are heavier than the fitted $t_{\nu \approx 2.2}$ (99th percentile 0.34
+  observed vs 0.30 replicated).
 - **Extremes:** the upper tail is mostly geographic. A Honolulu Walmart charges \$6.28
   for milk against a chain median of \$2.97. Without Hawaii and Alaska, Walmart's
   generalised-Pareto shape is about 0 ($\hat\xi = -0.04$, 95% CI −0.40 to 0.14).
