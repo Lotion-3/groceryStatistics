@@ -56,52 +56,45 @@ contribution.
 
 ## 2. Data
 
-**Sources.** Snapshot 2 was collected 2026-10-02 to 2026-10-04 by three routes:
+**Cross-section** (snapshot 2, Oct 2–5, 2026). Store-specific prices for 58 national-brand
+items, collected three ways:
 - retailer websites (Walmart, Target, Meijer);
-- Instacart storefronts (Costco, and ALDI's own Instacart-built site);
-- Kroger's official Public API, which covers its banners (Kroger, Ralphs, Harris Teeter,
-  Fry's, Smith's, King Soopers, Mariano's and others).
+- Instacart storefronts (Costco, and ALDI's own Instacart-built site), which may include
+  platform pricing and are reported separately;
+- Kroger's official API, covering its banners (Kroger, Ralphs, Harris Teeter, Fry's,
+  King Soopers, Dillons and others).
 
-Instacart prices may include platform pricing, so Instacart chains are reported separately.
-Kroger's API also gives every price an **effective timestamp** and a scheduled
-**expiration timestamp**. Those two fields are the source of the timing results.
+The items are 37 groceries, 15 non-grocery items and 6 perishables; cross-chain matches use
+UPCs confirmed from two retailers' catalogues (Appendix A). The core sample is 250
+locations drawn from Target's 1,893 stores, stratified by Census region × RUCA urbanicity.
+Each other chain contributes the store it assigns to, or has nearest to, each location.
+Kroger and Meijer were then extended with samples designed for their footprints.
 
-**Stores.**
-- 250 locations were drawn by stratified random sampling from Target's 1,893 stores.
-  Strata are Census region × RUCA urbanicity.
-- For every other chain, the store is the one it assigns to, or has nearest to, each
-  location.
-- Locations are visited in a balanced-prefix order, so a chain that stops part-way still
-  has a stratified, spread-out sample.
+We use regular prices to the cent, and only rows the retailer ties to the requested store.
 
-**Items.** 58 items:
-- 37 national-brand groceries;
-- 15 national-brand non-grocery items;
-- 6 perishables.
-
-Cross-chain matches use UPCs confirmed from two retailers' catalogues (Appendix A).
-
-**Prices.** The analyses use regular (non-promotional) prices to the cent, and only rows
-the retailer itself ties to the requested store.
-
-| Chain | Stores | Store-item pairs | Source; note |
+| Chain | Stores | Store-item coverage | Note |
 |---|---|---|---|
-| ALDI | 205 | 100% | ALDI's Instacart-built site |
+| ALDI | 205 | 100% | Instacart-built site |
 | Costco | 175 | 100% | Instacart |
-| Kroger family | 122 | 96% | official API; locations without a Kroger store within 15 mi skipped |
-| Walmart | 42 | 99% | website; stopped at a captcha after 42 stores |
-| Target | 16 | 16 matched items by design | website; short budgeted sessions |
-| Meijer | 3 | 100% | website; Midwest only, store locator blocked |
+| Kroger family | 192 | 96% | official API; banner sample in progress (about 270) |
+| Meijer | 83 | 100% | Michigan core (its locator blocks automated use) |
+| Walmart | 42 | 99% | stopped at a captcha |
+| Target | 16 | 16 matched items | short budgeted sessions |
+
+**Timestamps and panels.** Kroger's API gives every price an *effective* and a scheduled
+*expiration* timestamp; Meijer gives a sale's end date. The pre-registered event panels
+(Kroger, 60 stores × 7 passes; Meijer, 15 stores × 3) and a Walmart repeat-visit panel (10
+stores × 3 visits a day) cover Oct 5–8.
 
 **Do requests reach the intended stores?**
-- For every chain, the number of distinct pricing locations the retailer reports equals
-  the number of stores requested.
-- No two stores more than 1,000 km apart share an identical price list.
-- Price-list dissimilarity rises with distance in every chain (Spearman 0.29–0.68).
-- One Instacart fallback shop, returned for 37 distant ZIPs, was found and excluded.
+- For every chain, the retailer's own attribution gives as many distinct pricing
+  locations as stores requested.
+- No two stores more than 1,000 km apart share a price list.
+- Dissimilarity rises with distance in every chain.
+- One Instacart fallback shop was found and excluded (Appendix A).
 
-Collection was rate-limited: one request at a time per site, at least 5 s apart (9 s for
-Kroger). Every raw response is archived, and every failure is logged.
+Collection is rate-limited (one request at a time per site, ≥ 5 s apart; 9 s for Kroger).
+Every raw response is archived, and every failure is logged.
 
 ## 3. Methods
 
@@ -141,23 +134,19 @@ Inference is by NUTS (Hoffman and Gelman 2014; NumPyro). We report the spatial s
 $\operatorname{var} f / (\operatorname{var} f + \sigma_u^2)$, PSIS-LOO (Vehtari et al. 2017) against the same
 model without $f$, and posterior predictive checks.
 
-**Timing.** Kroger's effective timestamps give, for each store-product, when the current
-price began. We test two kinds of synchronisation, using same-banner store pairs only:
-- *Co-dating:* the share of shared products whose current price began on the same date,
-  or in the same minute, within vs across zones.
-- *Timing-only clustering:* stores clustered by co-timing alone, compared with the price
-  zones by ARI.
+**Timing.** For each store-product, the effective timestamp gives when the current price
+began.
+- *Co-timing:* we compare same-zone and different-zone store pairs (same banner) on how
+  many shared products began on the same day or minute. Zone labels are permuted within
+  banner, so banners alone earn no credit.
+- *Dyadic binomial model:* adds distance and store effects.
+- *Timing-only clustering:* compared with the price zones by ARI.
+- *Event study:* the scheduled expiry is pre-registered (§5.4).
 
-For both, zone labels are permuted *within banner*, so agreement explained by banners
-alone is not counted. Promotion lengths use the planned length $L$ = expiration −
-effective (§5.3).
-
-**Simulation checks** (Appendix B), all run before reporting real results:
-- tail estimators: interval coverage 84–97%;
-- zone model: exact recovery of 3–6 zones at a 3% product difference, and one zone when
-  there are none;
-- two-part model: 13 of 16 parameters inside their 90% intervals;
-- promotion-length estimators (§5.3).
+**Simulation checks** (Appendix B), all run before the real results: tail-estimator
+coverage 84–97%; exact zone recovery at a 3% product difference and one zone when there
+are none; 13 of 16 two-part-model parameters inside their 90% intervals; the
+promotion-length estimators (§5.3).
 
 ## 4. Results: space
 
@@ -526,7 +515,7 @@ effect gives 10,068 batches (108,370 store-products).
 
 **Timing details.**
 - Regular-price spells have a renewal-estimated mean of about 35 days. The age tail has
-  Hill $\hat\alpha \approx 2.3$ (2.2–2.5).
+  Hill $\hat\alpha \approx 2.3$ (2.2–2.4).
 - Kroger reports stock levels for 81% of store-products: 61% HIGH, 12% LOW, 9% out of
   stock. These shares are the same for promotions and regular prices.
 - Promotion-length simulation: `simulation/validate_promo_lengths.py` (stationary,
