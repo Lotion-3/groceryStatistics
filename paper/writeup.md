@@ -304,6 +304,11 @@ Zone labels were permuted within banner, 2,999 times. Three checks:
   - NUTS: R-hat ≤ 1.006, no divergences.
 - **Conclusion.** Prices and timestamps are two independent views, and they identify the
   same pricing units.
+- **Division sets the day, zone sets the batch** (exploratory). Zones follow divisions
+  (§4), so we repeated the test within the same division (1,354 pairs). The same-date
+  share is 0.92 within a zone vs 0.87 across zones of the same division; the same-minute
+  share is 0.28 vs 0.16 (both p = 0.0005). A division shares its calendar, but each zone
+  within it is pushed as its own batch.
 - **Updates arrive in a fixed order** (exploratory). For products repriced on the same
   day at every store of a zone, but not in the same minute, we ranked the stores by
   effective time. The rankings agree strongly across products in all 24 zones tested

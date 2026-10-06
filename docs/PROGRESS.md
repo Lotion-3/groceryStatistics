@@ -539,3 +539,20 @@ simulation was not rerun because it is slow.
 - **Keep-awake** is running (pid 21456). The only standby since evening was 19:08–19:15,
   before the keep-awake started at 19:16. None since.
 - Nothing broken; no changes.
+
+**Tue 2026-10-06, 00:30–01:30 (owner: "8 hours uninterrupted")**
+- **Push order follows store number:** Spearman ρ between a store's mean position in a
+  zone update and its store number is 1 in 13 of 21 zones (≥ 0.95 in 16; mean 0.92).
+  Location explains little.
+- **Update batches** (same effective minute):
+  - top 1% of batches hold 24% of prices, top 10% hold 66%;
+  - Hill α 1.7 / 1.39 / 1.16 at k = 2 / 5 / 10%: heavy tail, not a clean power law.
+- **Zones follow Kroger's operating divisions** (location-id prefix) more closely than
+  banners. At 191 stores: purity 95% vs 89%, ARI 0.71 vs 0.51, zones inside one division
+  89% vs inside one banner 82%. Food 4 Less with Foods Co, and Dillons with Baker's and
+  Gerbes, share zones.
+  - Module E's banner check now reports divisions.
+  - Posterior co-clustering figure (`fig_e5`): 0.1% of pairs uncertain.
+- **Within the same division:** same date 0.92 vs 0.87 (zone vs not), same minute 0.28 vs
+  0.16 (p = 0.0005). Division sets the day; zone sets the batch.
+- Tests added for push order and batch sizes; all pass.
