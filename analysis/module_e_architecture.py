@@ -36,12 +36,13 @@ cross-sectional, website prices; every output states n.
 """
 from __future__ import annotations
 
+import sqlite3
 import sys
 
 import numpy as np
 import pandas as pd
 
-from analysis.common import (CHAIN_COLORS, FIG, INK, MUTED, SEED, TAB, caption, load_observations, main_snapshots,
+from analysis.common import (CHAIN_COLORS, DB, FIG, INK, MUTED, SEED, TAB, caption, load_observations, main_snapshots,
                              product_panel, style)
 from analysis.estimators import haversine_km
 
@@ -242,11 +243,15 @@ def urban_rural_test(F: np.ndarray, D: np.ndarray, urban: np.ndarray, rng: np.ra
 # 5. Zones (DP mixture)
 # ---------------------------------------------------------------------------
 
+PSMS: dict[str, tuple] = {}     # chain -> (store_pk index, posterior similarity matrix)
+
+
 def zone_summary(chain: str, st: pd.DataFrame, M: pd.DataFrame, D: np.ndarray, rng: np.random.Generator) -> tuple:
     from analysis.zone_model import encode, fit_zones
     _, _, unique_share = encode(M.to_numpy(float), return_unique_share=True)
     r = fit_zones(M.to_numpy(float), n_sweeps=800, burn=300, thin=5, gamma=1.0, seed=SEED)
     z = r["partition"]
+    PSMS[chain] = (st.index, r["psm"])
     sizes = np.sort(np.bincount(z))[::-1]
     iu = np.triu_indices(len(z), 1)
     near = D[iu] < COHERENCE_KM
@@ -293,8 +298,15 @@ def banner_check(st: pd.DataFrame, F: np.ndarray, D: np.ndarray, z: np.ndarray) 
     same = (b[:, None] == b[None, :])[iu]
     near = (D[iu] < 100) & ~np.isnan(F[iu])
     f = F[iu]
-    return pd.DataFrame([{"stores": len(z), "banners": len(set(b)), "zones": len(np.unique(z)),
-                          "zone_banner_purity": float(purity),
+    # Kroger location id = 3-digit division + 5-digit store: the operating division
+    div = pd.read_sql_query("SELECT store_pk, store_id FROM stores", sqlite3.connect(DB)).set_index(
+        "store_pk")["store_id"].reindex(st.index).astype(str).str[:3].to_numpy()
+    div_purity = sum(pd.Series(div[z == k]).value_counts().iloc[0] for k in np.unique(z)) / len(z)
+    return pd.DataFrame([{"stores": len(z), "banners": len(set(b)), "divisions": len(set(div)), "zones": len(np.unique(z)),
+                          "zone_banner_purity": float(purity), "zone_division_purity": float(div_purity),
+                          "ari_zone_vs_division": adjusted_rand(pd.factorize(div)[0], z),
+                          "share_zones_in_one_division": float(pd.Series(div).groupby(z).nunique().le(1).mean()),
+                          "share_zones_in_one_banner": float(pd.Series(b).groupby(z).nunique().le(1).mean()),
                           "ari_zone_vs_banner": adjusted_rand(pd.factorize(b)[0], z),
                           "near_pairs_same_banner": int((near & same).sum()),
                           "delta_near_same_banner": float(f[near & same].mean()) if (near & same).any() else np.nan,
@@ -316,6 +328,31 @@ BANNER_NAMES = {"HART": "Harris Teeter", "FRED": "Fred Meyer", "PICK": "Pick 'n 
 
 def banner_name(code: str) -> str:
     return BANNER_NAMES.get(code, code.title())
+
+
+def psm_figure(idx: pd.Index, P: np.ndarray, z: np.ndarray, note: str) -> str:
+    """Kroger posterior similarity matrix (share of posterior draws in which two
+    stores share a zone), stores ordered by banner then point-estimate zone, with
+    banner blocks outlined. Shows the zone model's uncertainty, not one partition."""
+    plt = style()
+    b = banners(idx).to_numpy()
+    order = sorted(range(len(b)), key=lambda i: (-(b == b[i]).sum(), b[i], z[i]))
+    Q = P[np.ix_(order, order)]
+    fig, ax = plt.subplots(figsize=(5.6, 5.0))
+    im = ax.imshow(Q, cmap="Blues", vmin=0, vmax=1, interpolation="nearest")
+    bo = b[order]
+    edges = [0] + [i for i in range(1, len(bo)) if bo[i] != bo[i - 1]] + [len(bo)]
+    for a0, a1 in zip(edges[:-1], edges[1:]):
+        ax.add_patch(plt.Rectangle((a0 - 0.5, a0 - 0.5), a1 - a0, a1 - a0, fill=False, edgecolor=INK, linewidth=0.8))
+        if a1 - a0 >= 6:
+            ax.text(a1 + 1, (a0 + a1) / 2, banner_name(bo[a0]), fontsize=6.5, va="center", color=INK)
+    ax.set_xticks([]); ax.set_yticks([])
+    ax.set_title("Kroger zones: posterior co-clustering", loc="left")
+    fig.colorbar(im, ax=ax, shrink=0.7, pad=0.14, label="P(same zone)")
+    caption(fig, note + " Stores ordered by banner (outlined) and zone.")
+    fig.savefig(FIG / "fig_e5_kroger_psm.png")
+    plt.close(fig)
+    return "fig_e5_kroger_psm.png"
 
 
 def kroger_banner_figure(st: pd.DataFrame, z: np.ndarray, note: str) -> str:
@@ -485,6 +522,10 @@ def run(snaps: list[int] | None = None) -> str:
                    note)
     if kroger_fig is not None:
         figs.append(kroger_banner_figure(*kroger_fig, note))
+        if "kroger" in PSMS:
+            idx, P = PSMS["kroger"]
+            pd.DataFrame(P, index=idx, columns=idx).to_csv(TAB / "module_e_psm_kroger.csv")
+            figs.append(psm_figure(idx, P, kroger_fig[1], note))
     return f"Module E: wrote {len(tables)} tables and {len(figs)} figures. {note}"
 
 

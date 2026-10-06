@@ -26,8 +26,8 @@ The chains differ sharply:
 - **ALDI** runs a national list with a few regional zones.
 - **Walmart** has a slow geographic gradient.
 - **Costco** on Instacart has regional zones about 850 km across.
-- **Kroger** has local zones nested inside its banners: 94% banner purity, although the
-  model never sees banners.
+- **Kroger** has local zones nested inside its operating divisions: 95% division purity,
+  although the model never sees banners or divisions.
 - **Meijer**, in its Michigan core, has almost one list (97% at list) and one sale calendar.
 
 Kroger's own price timestamps then supply independent evidence that zones are real
@@ -191,6 +191,19 @@ between stores. Bands are 95% store-bootstrap intervals.*
   - Stores less than 100 km apart differ on 11% of shared products within a banner and 77%
     across banners.
   - The zones replicate (split-half ARI 0.83–0.98 at 160 stores).
+  - **The zones follow Kroger's divisions even more closely than its banners.** The
+    location id begins with a 3-digit division number. At 191 stores (16 banners, 20
+    divisions, 28 zones):
+
+    | Zones compared with | Purity | ARI | Zones inside one group |
+    |---|---|---|---|
+    | division | 95% | 0.71 | 89% |
+    | banner | 89% | 0.51 | 82% |
+
+    - The "Kroger" banner spans 9 divisions, and the model splits it along them.
+    - Banners that share a division share zones: Food 4 Less and Foods Co, and Dillons,
+      Baker's and Gerbes (Appendix Figure B1).
+    - Prices alone recover the organisational pricing units.
 - **Meijer** (71 stores, mostly Michigan; its locator limited the sample to its core
   region) is the most uniform chain we observe.
   - 97% of prices sit at list.
@@ -507,6 +520,11 @@ week's cohort has a different length mix, ages-only is biased up (+2.8 days on a
 15.5-day truth), Lynden-Bell down (−0.7), and the harmonic mean stays close. In the data,
 age / planned length (uniform under stationarity) has mean 0.56, and 0.71 for 2-week
 promotions, and the most recent weekly cohort is smaller than the one before.
+
+**Posterior co-clustering** (Figure B1, `figures/fig_e5_kroger_psm.png`). Only 0.1% of
+Kroger store pairs have a posterior same-zone probability between 0.1 and 0.9. The model
+is confident (likely overconfident; products are treated as independent), which is why
+replication, not the posterior, is our evidence for the zones.
 
 **Update batches** (exploratory). Grouping Kroger's current prices by the minute they took
 effect gives 10,068 batches (108,370 store-products).
