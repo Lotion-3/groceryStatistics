@@ -574,3 +574,9 @@ simulation was not rerun because it is slow.
     ages (spells are longer); promotions are rarely affected.
   - Pre-registration Addendum 7: the H tests are unchanged, and Module H also reports
     reset rates per transition.
+- **Zone co-timing holds for promotions** (real price changes; rarely reset). Same-banner
+  pairs: same day 0.98 vs 0.92, same minute 0.17 vs 0.04 (p = 0.001). Regular: 0.88 vs
+  0.64 and 0.27 vs 0.07. Zones push real promotion changes in the same batch. Added to
+  Module G and the §5.2 table.
+- Module G ran end-to-end (191 stores, about 8 min, no errors). Figures and captions now
+  say "price records". All 85 tests pass.
