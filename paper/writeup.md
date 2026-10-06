@@ -11,37 +11,30 @@ complete.*
 
 ## Abstract
 
-For identical products, how does a retail chain's price vary across its stores, and when
-does it change? We collected store-specific prices for about 60 national-brand items:
-- **chains:** six US chains, at up to 250 sampled locations;
-- **routes:** retailer websites, Instacart-built storefronts and Kroger's official API.
+How does a retail chain's price for an identical product vary across its stores, and when
+does it change? We collected store-specific prices for 58 national-brand items at six US
+chains (up to 250 sampled locations; retailer websites, Instacart-built storefronts and
+Kroger's official API).
 
 Most prices sit **exactly** at the chain's list price (91% at ALDI and Walmart, 65% at
-Kroger). Dispersion is therefore a point mass plus structured departures, not a continuous
-spread. We describe each chain's pricing architecture with:
-- a price-list variogram;
-- a Dirichlet-process mixture that recovers pricing zones from prices alone;
-- a two-part Bayesian spatial model of departures.
+Kroger), so dispersion is a point mass plus structured departures. Using a price-list
+variogram, a Dirichlet-process mixture that recovers pricing zones from prices alone, and
+a two-part Bayesian spatial model, we find four architectures:
+- **ALDI:** a national list with regional zones;
+- **Walmart:** a slow gradient;
+- **Costco on Instacart:** regional zones about 850 km across;
+- **Kroger:** local zones nested in its operating divisions (95% purity), although the
+  model never sees banners or divisions.
 
-The chains differ sharply:
-- **ALDI** runs a national list with a few regional zones.
-- **Walmart** has a slow geographic gradient.
-- **Costco** on Instacart has regional zones about 850 km across.
-- **Kroger** has local zones nested inside its operating divisions: 95% division purity,
-  although the model never sees banners or divisions.
-- **Meijer**, in its Michigan core, has almost one list (97% at list) and one sale calendar.
+Meijer, in its Michigan core, has almost one list and one sale calendar.
 
-Kroger's price-record timestamps then give independent evidence that zones are units of
-its pricing system:
-- **Same day:** stores in the same zone start a price on the same date for 90% of shared
-  products (68% across zones).
-- **Same minute:** they start it in the same minute for 25% (6% across zones).
-- **Timing alone:** clustering stores on timing alone recovers the price zones
-  (p = 0.001).
-- **Overnight:** price records start in overnight and morning batches, almost never in the
-  afternoon or evening.
-
-Each method was first checked on simulated data with a known answer.
+Kroger's price-record timestamps independently confirm that zones are units of its pricing
+system. Same-zone stores start a record on the same day for 90% of shared products (68%
+across zones) and in the same minute for 25% (6%). The effect holds for promotions, holds
+beyond distance in a hierarchical model, and stores clustered on timing alone recover the
+zones. Each zone is updated as a batch that walks its store list in store-number order,
+almost never in the afternoon. A pre-registered event study of a scheduled nationwide
+promotion expiry is in progress. Every method was first checked on simulated data.
 
 ## 1. Question
 
@@ -342,24 +335,21 @@ cohort size from cohort mix. The event below sees a whole cohort when it starts.
 length from one snapshot under four estimators.*
 
 **5.4 A pre-registered event (in progress).** 9,326 snapshot-2 promotions at 113 stores are
-scheduled to expire at one instant nationwide: Tuesday Oct 6, 23:59 Eastern. Before any
-event data existed, we committed the following (`docs/PREREGISTRATION_EVENT.md`, commit
-af68714):
-- **seven predictions:**
-  - the expiry is enforced;
-  - the expiration date predicts which prices change;
-  - more prices change on the event night than on a control night;
-  - the old prices expire at the instant;
-  - new prices arrive in two batches;
-  - zones switch together;
-  - prices settle afterwards;
-- the frozen zones, the 60 panel stores, and the analysis code, tested on synthetic data.
+scheduled to expire at one instant nationwide: Tuesday Oct 6, 23:59 Eastern.
 
-Panel passes run Monday (control) to Thursday, with probes around midnight. The control
-pass was rerun on Monday evening after a scripting failure (Addendum 3; no prediction
-changed). Meijer's sale prices end the same night, so a Meijer arm (15 stores; control,
-before and after passes) was pre-registered before its data (Addendum 4: M1–M4, with the
-same thresholds plus "one new price across stores").
+Before any event data existed, we committed (`docs/PREREGISTRATION_EVENT.md`, commit
+af68714) the frozen zones, the 60 panel stores, analysis code tested on synthetic data,
+and seven predictions:
+- the expiry is enforced, at the instant;
+- the expiration date predicts which prices change;
+- the event night has at least 3 times the control night's change rate;
+- new prices arrive in two batches;
+- zones switch together;
+- prices then settle.
+
+Meijer's sales end the same night, so a 15-store Meijer arm (M1–M4) was pre-registered
+before its data. Later addenda (all before event data) record a control-pass rerun, the
+reporting code, and exploratory additions.
 
 [result: Module H predictions table (`tables/module_h_predictions.md`) and Figure 6.]
 

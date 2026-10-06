@@ -580,3 +580,12 @@ simulation was not rerun because it is slow.
   Module G and the §5.2 table.
 - Module G ran end-to-end (191 stores, about 8 min, no errors). Figures and captions now
   say "price records". All 85 tests pass.
+
+**Tue 2026-10-06, 02:47 night check 2**
+- **Kroger control rerun (snapshot 6):** 43/60, no 401/403/429, pacing median 10.4 s
+  (minimum 9.8 s), about 13 min per store, so it should finish about 06:30 (hard stop
+  10:45).
+- All schedulers alive: Kroger event pipeline (47108, waiting for the 11:00 before pass),
+  control rerun (41136), Walmart (43912, next 08:00), Meijer (39336, next 18:00),
+  keep-awake (21456).
+- No standby events since 19:15 Mon.
