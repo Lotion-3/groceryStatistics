@@ -299,9 +299,14 @@ Zone labels were permuted within banner, 2,999 times. Three checks:
     p ≤ 0.03 in every zone;
   - the median spread within a zone is 9 minutes.
 
-  A zone is updated as a sequence, with stores in a stable order: the signature of a
-  push queue or per-store batch schedule. This is a microstructure-level detail that a
-  price cross-section cannot show.
+  The order is the **store number**. In 21 zones with at least 4 stores, a store's mean
+  position correlates with its store number at Spearman 0.92 on average: at least 0.95
+  in 16 zones, and exactly 1 in 13 zones (84 stores).
+  - Location explains little (median |ρ| 0.32 for longitude, 0.40 for latitude).
+  - By chance, a perfect ordering of $n$ stores has probability $1/n!$.
+
+  The pricing system walks each zone's store list in store-number order. This is a
+  microstructure detail that a price cross-section cannot show.
 - **Meijer, by contrast, runs one sale calendar** (71 stores; Meijer reports when each
   store's sale price ends).
   - For a given product, 99.7% of store pairs end the sale on the same date. Zones add

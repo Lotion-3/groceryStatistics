@@ -382,7 +382,15 @@ def push_order(k: pd.DataFrame, zones: pd.Series, rng, n_perm: int = 499) -> pd.
             return 12 * ((R.sum(0) - m * (n + 1) / 2) ** 2).sum() / (m ** 2 * (n ** 3 - n))
         w = W(R)
         null = np.array([W(np.array([rng.permutation(r) for r in R])) for _ in range(n_perm)])
+        # what sets the order? Spearman of each store's mean rank with its store number
+        # (last 5 digits of Kroger's location id = division + store) and with location
+        from scipy.stats import spearmanr
+        mr = P.rank(axis=1).mean()
+        st = pd.read_sql_query("SELECT store_pk, store_id, lat, lon FROM stores", sqlite3.connect(DB)).set_index("store_pk").loc[mr.index]
+        num = pd.to_numeric(st["store_id"].str[-5:], errors="coerce")
+        rho = lambda x: float(spearmanr(mr, x).correlation) if pd.Series(x).nunique() > 2 else np.nan
         out.append({"zone": zn, "banner": g["banner"].mode().iat[0], "stores": n, "products": m, "kendall_W": float(w),
+                    "rho_store_number": rho(num), "rho_lon": rho(st["lon"]), "rho_lat": rho(st["lat"]),
                     "null_mean_W": float(null.mean()), "p_value": float((1 + (null >= w).sum()) / (1 + n_perm)),
                     "median_spread_min": float((P.max(axis=1) - P.min(axis=1)).dt.total_seconds().median() / 60)})
     return pd.DataFrame(out)
