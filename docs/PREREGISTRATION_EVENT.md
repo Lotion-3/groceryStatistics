@@ -202,3 +202,21 @@ therefore also reports H6 with pairs restricted to the same **division** instead
 same banner (`tables/module_h_zone_sync_within_division.csv`). This is **exploratory**
 and labelled as such. The pre-registered H6 (same-banner pairs) is unchanged and remains
 the confirmatory test.
+
+## Addendum 7 (2026-10-06, about 01:10 Eastern; before the before pass): effective-date resets
+
+Comparing snapshot 2 (Oct 2–4) with the control pass (Oct 5; 35 stores so far) showed that
+an effective timestamp often changes while the price stays identical: a re-entry of the
+price record, not a price change.
+- 6.5% of store-products got a new effective date, and 93.5% of those had an identical
+  price. Only 0.4% of prices changed.
+- Resets are almost all regular prices: 7.8% of regular-price records vs 0.3% of
+  promotions. They come in store-level batches.
+
+**Consequences for the pre-registered tests** (definitions unchanged):
+- H2, H3 and H7 use the shelf price only and are unaffected.
+- H1 is barely affected, because promotion records rarely reset.
+- H6a (same effective minute among *changed* units) can include resets. Module H
+  therefore also reports, exploratorily, the reset rate per transition
+  (`tables/module_h_record_resets.csv`).
+- H6b (same new price) and the price-change outcomes measure actual price changes.

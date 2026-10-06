@@ -282,6 +282,22 @@ def meijer_event(passes: dict[str, pd.DataFrame]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def record_resets(a: pd.DataFrame, b: pd.DataFrame) -> dict:
+    """Exploratory (Addendum 7): how often a price record's effective timestamp
+    changes while the price stays identical (a re-entry, not a price change),
+    between two tidy passes; by promo status."""
+    m = a.merge(b, on=["store_pk", "chain_product_id"], suffixes=("_a", "_b"))
+    same = (m["shelf_a"] == m["shelf_b"]) & (m["regular_a"] == m["regular_b"]) & (m["promo_a"] == m["promo_b"])
+    reset = (m["eff_a"] != m["eff_b"]) & same
+    return {"units": int(len(m)), "stores": int(m["store_pk"].nunique()),
+            "share_eff_changed": float((m["eff_a"] != m["eff_b"]).mean()) if len(m) else np.nan,
+            "share_price_changed": float((~same).mean()) if len(m) else np.nan,
+            "share_reset": float(reset.mean()) if len(m) else np.nan,
+            "share_reset_regular": float(reset[~m["promo_a"]].mean()) if (~m["promo_a"]).any() else np.nan,
+            "share_reset_promo": float(reset[m["promo_a"]].mean()) if m["promo_a"].any() else np.nan,
+            "resets_share_of_date_changes": float(reset.sum() / max(1, (m["eff_a"] != m["eff_b"]).sum()))}
+
+
 # ---------------------------------------------------------------------------
 # Reporting
 
@@ -373,6 +389,9 @@ def run() -> str:
     zone_sync(pair(passes["before"], passes["after"]), zones, div, np.random.default_rng(SEED)).to_csv(
         TAB / "module_h_zone_sync_within_division.csv", index=False)
     est.to_csv(TAB / "module_h_estimates.csv", index=False)
+    have = [x for x in ("control", "before", "after", "late") if x in passes]
+    pd.DataFrame([{"transition": f"{x}->{y}", **record_resets(passes[x], passes[y])}
+                  for x, y in zip(have[:-1], have[1:])]).to_csv(TAB / "module_h_record_resets.csv", index=False)
     krates = change_rates(passes)
     pd.concat([krates.assign(chain="kroger"), mrates.assign(chain="meijer")]).to_csv(
         TAB / "module_h_change_rates.csv", index=False)
