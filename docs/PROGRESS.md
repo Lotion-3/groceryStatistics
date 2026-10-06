@@ -519,3 +519,11 @@ simulation was not rerun because it is slow.
 - **Meijer control pass (snapshot 7)** finished at 20:11: 15 stores, 16,677 store-products,
   no blocks. 1,020 store-products have a sale ending 2026-10-06; these become "scheduled"
   units if still on sale in the Tue 18:00 before pass.
+- **Kroger control pass check (20:26).** The 10:01 "control pass : finished" log line is
+  the failed run; the rerun is **snapshot 6**, at 15/60 stores, about 14 min per store,
+  expected to finish about 07:15 Tue (hard stop 10:45).
+  - All 8,954 rows so far carry `price_effective` and `price_expiration`; no parser
+    issue.
+  - 8,871 store-products; **935 scheduled units** (promos expiring
+    2026-10-07T03:59:59Z) of 1,704 promos.
+  - `config/analysis.yaml`: `event_snapshots: {control: 6}`.
