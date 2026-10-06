@@ -15,7 +15,7 @@ does it change? We collected store-specific prices for about 60 national-brand i
 - **chains:** six US chains, at up to 250 sampled locations;
 - **routes:** retailer websites, Instacart-built storefronts and Kroger's official API.
 
-Most prices sit **exactly** at the chain's list price (91% at ALDI and Walmart, 59% at
+Most prices sit **exactly** at the chain's list price (91% at ALDI and Walmart, 65% at
 Kroger). Dispersion is therefore a point mass plus structured departures, not a continuous
 spread. We describe each chain's pricing architecture with:
 - a price-list variogram;
@@ -153,18 +153,20 @@ that distance alone creates in a naive comparison).
 
 ## 4. Results: space
 
-| | ALDI (204) | Walmart (41) | Costco (174) | Kroger (121) |
+| | ALDI (204) | Walmart (41) | Costco (174) | Kroger (191) |
 |---|---|---|---|---|
-| Prices at list | 91% | 91% | 76% | 59% |
-| Departures upward (median) | 19% (−7.9%) | 76% (+4.8%) | 50% (+0.3%) | 66% (+5.7%) |
-| $\delta$: stores < 50 km apart → > 2,000 km apart | 6.5% → 20% | 5.3% → 21% | 8.9% → 36% | 25% → 69% |
-| Variogram range | no plateau | no plateau | ≈ 850 km | ≈ 240 km |
-| Zones | 10; largest 79 stores, 27 states | 5 (not robust) | 18 regional | 21, banner-aligned |
-| Nearby stores in the same zone vs permuted | 50% vs 20% | 78% vs 25% | 50% vs 6% | 38% vs 5% |
+| Prices at list | 91% | 91% | 76% | 65% |
+| Departures upward (median) | 19% (−7.9%) | 76% (+4.8%) | 50% (+0.3%) | 66% (+4.5%) |
+| $\delta$: stores < 50 km apart → > 2,000 km apart | 6.5% → 20% | 5.3% → 21% | 8.9% → 36% | 20% → 63% |
+| Variogram range | no plateau | no plateau | ≈ 850 km | no plateau* |
+| Zones | 10; largest 79 stores, 27 states | 5 (not robust) | 18 regional | 28, division-aligned |
+| Nearby stores in the same zone vs permuted | 50% vs 20% | 78% vs 25% | 50% vs 6% | 48% vs 5% |
 | Split-half replication (ARI) | 0.52–0.54 | 0.41–0.53 | 0.96 | 0.83–0.98* |
 
-All spatial-coherence p = 0.001. *Kroger's robustness checks were rerun on 160 stores
-(banner sample in progress; 25 zones): split-half ARI 0.83–0.98.
+All spatial-coherence p = 0.001. *Kroger, 191 stores (banner sample in progress). Its
+variogram had a plateau at about 240 km on the first 121 stores; with distant divisions
+added it keeps rising (local zones within a nationwide gradient). Robustness checks were
+run on 160 stores (25 zones).
 
 ![Figure 1](../figures/fig_e1_price_list_variogram.png)
 *Figure 1. Price-list variogram: share of shared products priced differently, by distance
@@ -180,7 +182,7 @@ between stores. Bands are 95% store-bootstrap intervals.*
 - **Costco on Instacart** forms about 18 regional zones on a scale of about 850 km. They
   replicate almost perfectly: split-half ARI 0.96, and ARI 0.99 across priors.
 - **Kroger** is the most local, and its zones follow its banners (Figure 3).
-  - Stores less than 100 km apart differ on 11% of shared products within a banner and 77%
+  - Stores less than 100 km apart differ on 8% of shared products within a banner and 72%
     across banners.
   - The zones replicate (split-half ARI 0.83–0.98 at 160 stores).
   - **The zones follow Kroger's divisions even more closely than its banners.** The
