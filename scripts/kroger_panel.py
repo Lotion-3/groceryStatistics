@@ -31,6 +31,13 @@ from __future__ import annotations
 
 import argparse
 import csv
+import os
+
+# Event passes run at 1 request/s (owner, 2026-10-06; DECISIONS #55). Same number of
+# calls per pass, finished in about 1.5 h instead of about 14 h; the daily total stays
+# under Kroger's 10,000/day limit. The banner sample keeps the 9 s default.
+os.environ.setdefault("GS_DOMAIN_INTERVALS", "api.kroger.com=1")
+os.environ.setdefault("GS_MIN_INTERVAL_SECONDS", "1.0")      # this process only talks to Kroger
 import sqlite3
 import sys
 from datetime import datetime, timezone

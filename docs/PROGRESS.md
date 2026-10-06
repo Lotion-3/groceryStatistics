@@ -673,3 +673,8 @@ simulation was not rerun because it is slow.
 - **Kroger before pass started on time at 11:00** (snapshot 10; the multi-word note fix
   works). `event_snapshots()` = {control: 6, before: 10}. Checks scheduled at 18:23,
   22:57, 00:47 Wed and 13:17 Wed.
+- **11:24, Kroger event passes switched to 1 req/s** (owner). The 'before' pass resumed
+  in snapshot 10 (watchdog `run_kroger_resume.ps1`, hard stop 22:15), at about 3 s per
+  item / 3 min per store, so done about 14:30 with all 60 stores. No errors. Later passes
+  (probes, after, late) inherit 1 s through `kroger_panel.py`. DECISIONS #55,
+  Addendum 8.

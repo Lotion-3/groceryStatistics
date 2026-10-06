@@ -230,3 +230,10 @@ pass (Monday; 28 stores; 513 pair-products) did **not** show zone synchronisatio
 
 This is recorded so that it cannot be read as post hoc. The predictions and tests are
 unchanged.
+
+## Addendum 8 (2026-10-06, about 11:30 Eastern; before the expiry): pacing
+
+The Kroger event passes run at 1 request/s instead of ≥ 9 s (DECISIONS #55). The 'before'
+pass was stopped after its first 3 stores and resumed in the same snapshot (10). Each
+pass now covers all 60 stores in about 3 h. No prediction, definition, store list or
+analysis changed.
