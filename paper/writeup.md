@@ -1,10 +1,11 @@
 # How Retailers Price Across Space and Time: National Lists, Pricing Zones and Overnight Batches
 
-*Preliminary draft, 2026-10-04. Numbers come from snapshot 2 (one cross-section, Oct 2–4,
+*Preliminary draft, 2026-10-06. Numbers come from snapshot 2 (one cross-section, Oct 2–5,
 2026) and from the retailers' own price timestamps. Every result states its sample size.
 Nothing here is causal. A pre-registered event study (§5.4) is in progress. Details of
 data checks and methods are in the Appendix. A Kroger banner sample is being added to
-snapshot 2 (121 → about 270 stores), so Kroger sample sizes differ between sections. Each
+snapshot 2 (121 → 192 so far, about 270 planned), so Kroger sample sizes differ between
+sections. Each
 result states its own n, and all Kroger numbers will be rerun once the sample is
 complete.*
 
@@ -136,7 +137,7 @@ $\operatorname{var} f / (\operatorname{var} f + \sigma_u^2)$, PSIS-LOO (Vehtari 
 model without $f$, and posterior predictive checks.
 
 **Timing.** For each store-product, the effective timestamp gives when the current price
-began.
+record began.
 - *Co-timing:* we compare same-zone and different-zone store pairs (same banner) on how
   many shared products began on the same day or minute. Zone labels are permuted within
   banner, so banners alone earn no credit.
@@ -181,7 +182,8 @@ between stores. Bands are 95% store-bootstrap intervals.*
   map does not replicate at 41 stores, but the gradient does.
 - **Costco on Instacart** forms about 18 regional zones on a scale of about 850 km. They
   replicate almost perfectly: split-half ARI 0.96, and ARI 0.99 across priors.
-- **Kroger** is the most local, and its zones follow its banners (Figure 3).
+- **Kroger** is the most local at short range, and its zones follow its banners and, more
+  closely, its operating divisions (Figure 3).
   - Stores less than 100 km apart differ on 8% of shared products within a banner and 72%
     across banners.
   - The zones replicate (split-half ARI 0.83–0.98 at 160 stores).
@@ -214,7 +216,8 @@ regional zones.*
 
 ![Figure 3](../figures/fig_e4_kroger_banners_zones.png)
 *Figure 3. Kroger-family stores by banner (left), and banner × zone counts (right). The zone
-model never sees banners, yet almost every zone falls inside one banner.*
+model never sees banners, yet most zones fall inside one banner (and more inside one
+division).*
 
 **Departures and extremes** (M2, Figure 4). The model is fitted to Kroger (160 stores,
 partway through the banner sample) and Walmart (41): 8,002 prices, 70% at list. It
@@ -260,7 +263,7 @@ nearby stores saves a median of **0.05%**. The test covers 88 locations, and the
 integer program and the greedy heuristic agree everywhere. Cross-chain gaps are level
 differences, so the violations of the law of one price leave almost no basket arbitrage.
 
-## 5. Results: time (Kroger, n = 109,362 dated prices, 191 stores)
+## 5. Results: time (Kroger, n = 109,362 dated price records, 191 stores)
 
 *What a timestamp measures.* Kroger's effective timestamp marks when the current price
 **record** began. Comparing the same store-products on Oct 2–4 and Oct 5, 7.8% of
@@ -291,7 +294,7 @@ same-banner store pairs (1,535); p-values come from permuting zone labels within
 
 | Statistic | Same zone | Different zone | Evidence |
 |---|---|---|---|
-| Share of shared products whose current price began the same **day** | 0.90 | 0.68 | p = 0.0003 |
+| Share of shared products whose current price record began the same **day** | 0.90 | 0.68 | p = 0.0003 |
 | ... the same **minute** | 0.25 | 0.06 | p = 0.0003 |
 | Same day, products at the same price / at different prices | 0.91 / 0.72 | 0.76 / 0.51 | holds at fixed price |
 | Promotions only (real price changes; rarely reset): same day / same minute | 0.98 / 0.17 | 0.92 / 0.04 | p = 0.001 each |
@@ -335,7 +338,7 @@ one week's cohort has a different length mix (Appendix B). One snapshot cannot s
 cohort size from cohort mix. The event below sees a whole cohort when it starts.
 
 ![Figure 5](../figures/fig_g2_timing_lengths.png)
-*Figure 5. (a) Store-local time at which Kroger prices take effect. (b) Mean promotion
+*Figure 5. (a) Store-local time at which Kroger price records take effect. (b) Mean promotion
 length from one snapshot under four estimators.*
 
 **5.4 A pre-registered event (in progress).** 9,326 snapshot-2 promotions at 113 stores are
@@ -382,13 +385,15 @@ visit reaches the same 6–7 stores before Walmart's per-session limit (about 10
   changes.
 - **Website prices,** not shelf audits. Costco's local structure may partly be
   Instacart's.
-- **Partial chains.** Walmart (41 stores), Target (16) and Meijer (3) limited automated
-  access at low volume. They are spread across strata by design, but small.
+- **Partial chains.** Walmart (41 stores) and Target (16) limited automated access at low
+  volume; they are spread across strata by design, but small. Meijer (83) is a regional
+  sample of its Michigan core.
 - **Sampling.** Locations come from Target's footprint, which over-represents urban areas
   for the other chains. Items are hand-picked national brands.
 - **Zone model.** Products are treated as independent within a zone, so posterior
   certainty about the number of zones is overstated. The replication checks address this.
-- **Locations** are mostly ZIP centroids. Timing results are for Kroger only.
+- **Locations** are mostly ZIP centroids. Timestamp results are for Kroger (with Meijer
+  sale ends); Walmart timing comes only from repeat visits.
 
 ## 7. Reproducibility
 
