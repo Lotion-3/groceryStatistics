@@ -82,3 +82,19 @@ def test_event_reporting(tmp_path, monkeypatch):
     ba = pair(passes["before"], passes["after"])
     f = event_figure(r, r.iloc[0:0], ba.loc[ba.scheduled_a & ba.changed, "eff_b"], "synthetic")
     assert (tmp_path / f).exists()
+
+
+def test_record_resets_counts_reentries_not_price_changes():
+    from analysis.module_h_event import record_resets
+    base = pd.DataFrame({"store_pk": [1, 1, 1, 1], "chain_product_id": ["A", "B", "C", "D"],
+                         "shelf": [1.0, 2.0, 3.0, 4.0], "regular": [1.0, 2.0, 3.5, 4.0],
+                         "promo": [False, False, True, False],
+                         "eff": pd.to_datetime(["2026-09-30T10:00Z"] * 4)})
+    later = base.copy()
+    later.loc[0, "eff"] = pd.Timestamp("2026-10-05T12:00Z")                 # A: re-entry, same price
+    later.loc[1, ["shelf", "regular"]] = [2.5, 2.5]                          # B: real change
+    later.loc[1, "eff"] = pd.Timestamp("2026-10-05T12:00Z")
+    r = record_resets(base, later)
+    assert r["units"] == 4 and r["share_reset"] == 0.25 and r["share_price_changed"] == 0.25
+    assert r["share_reset_promo"] == 0.0 and abs(r["share_reset_regular"] - 1 / 3) < 1e-9
+    assert r["resets_share_of_date_changes"] == 0.5
