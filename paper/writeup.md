@@ -238,8 +238,9 @@ differences, so the violations of the law of one price leave almost no basket ar
 ## 5. Results: time (Kroger, n = 109,362 dated price records, 191 stores)
 
 *What a timestamp measures.* Kroger's effective timestamp marks when the current price
-**record** began. Comparing the same store-products on Oct 2–4 and Oct 5, 7.8% of
-regular-price records (0.3% of promotions) got a new timestamp with an **identical** price.
+**record** began. Comparing the same store-products on Oct 2–4 and Oct 5 (60 stores), 7.8%
+of regular-price records (0.9% of promotions) got a new timestamp with an **identical**
+price.
 These re-entries come in store-level batches. So:
 - the co-timing below describes the pricing system's **update batches**;
 - regular-price "ages" are record ages, and true spells are longer;
@@ -258,7 +259,7 @@ The event study (§5.4) observes actual price changes.
 Records start in overnight and morning batches. 99.6% of promotions, which rarely reset,
 start outside noon–21:00. We see no sign of the demand-driven ("surge")
 intraday repricing feared with electronic shelf labels (Figure 5a). The Walmart repeat
-visits agree: no price changed within a day (§5.5).
+visits agree: no price changed within a day or overnight (§5.5).
 
 **5.2 Zones change prices together.** Zones were estimated from price *levels* only, so
 timestamps are an independent test of whether they are real units. The table uses
@@ -335,14 +336,15 @@ reporting code, and exploratory additions.
 **5.5 Walmart repeat visits (in progress).** Walmart publishes no price dates, so we
 revisit 10 stores (17 confirmed items) three times a day from Monday to Thursday. Each
 visit reaches the same 6–7 stores before Walmart's per-session limit (about 105 requests).
-- **First day** (3 visits; 10 stores, 7 seen at least twice):
-  - **0 of 1,844** store-product transitions within the day changed price;
-  - all 1,804 transitions from an off-list price stayed off list;
+- **First 4 visits** (Mon 08:00 to Tue 08:00; 10 stores):
+  - **0 of 1,844** store-product transitions within a day changed price, and **0 of
+    1,869 overnight**;
+  - all 3,624 transitions from an off-list price stayed off list;
   - delivery-slot lead time follows the clock, not the store: 3–5 h during the day,
     10–12 h in the evening (the next slot is the following morning). Store explains none
     of its variance.
-- **Still to measure:** overnight change rates (from Tuesday), and the persistence of
-  local departures over several days (a two-state Markov chain).
+- **Still to measure:** change rates across the Tuesday-night ad-week boundary, and the
+  persistence of local departures over several days (a two-state Markov chain).
 
 [result: Module I tables.]
 
