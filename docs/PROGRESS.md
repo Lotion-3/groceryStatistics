@@ -683,3 +683,17 @@ simulation was not rerun because it is slow.
   (about 3 min per store; needs about 2 h 50 min for the remaining 56 stores, so start
   by about 19:15 to finish before 22:15). The event pipeline (47108) is still waiting for
   the 22:30 probe.
+
+**Tue 2026-10-06, 18:23 check**
+- **Laptop in standby repeatedly 11:32–18:16** (lid closed while the owner was away). The
+  keep-awake helper cannot override a closed lid.
+- **Kroger before pass:** still PAUSED by the owner at store 4/60 (snapshot 10). It needs
+  about 2 h 50 min for the rest; start by about 19:15 to finish before the 22:15 stop.
+  Not resumed without the owner's go-ahead. The pipeline (probes 22:30 / 00:15 / 05:00)
+  is waiting.
+- **Meijer before pass:** started 18:16 (delayed by standby; window until 22:30); store
+  2/15, no errors.
+- **Walmart 14:00 visit (snapshot 11): 0 rows.** Store scoping failed at all 10 stores (7×
+  'store lookup HTTP 412', 3× 'store set but search priced at #None') on campus network
+  128.210.106.61, around sleep/wake. Not counted as a block; not worked around. Next visit
+  20:00.
