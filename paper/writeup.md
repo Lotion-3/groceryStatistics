@@ -292,13 +292,14 @@ same-banner store pairs (1,535); p-values come from permuting zone labels within
 | Share of shared products whose current price began the same **day** | 0.90 | 0.68 | p = 0.0003 |
 | ... the same **minute** | 0.25 | 0.06 | p = 0.0003 |
 | Same day, products at the same price / at different prices | 0.91 / 0.72 | 0.76 / 0.51 | holds at fixed price |
+| Promotions only (real price changes; rarely reset): same day / same minute | 0.98 / 0.17 | 0.92 / 0.04 | p = 0.001 each |
 | Hierarchical binomial model, odds ratio for same zone, day / minute | 1.59 / 1.75 | 1 | 90% intervals 1.50–1.69 and 1.38–2.21 |
 | Stores clustered by co-timing alone, agreement with price zones (ARI) | 0.70 | 0.60 (permuted) | p = 0.001 |
 
 The model controls for log distance, store effects (pairs sharing a store are dependent)
 and pair-level overdispersion. NUTS: R-hat ≤ 1.006, no divergences. The zone effect is not
-a by-product of sharing a price or of being close: **prices and timestamps identify the
-same pricing units.**
+a by-product of sharing a price, of being close, or of record re-entries (it holds for
+promotions): **prices and timestamps identify the same pricing units.**
 
 Two exploratory findings sharpen this:
 - **Division sets the day, zone sets the batch.**
