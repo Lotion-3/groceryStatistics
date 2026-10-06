@@ -32,9 +32,9 @@ The chains differ sharply:
 
 Kroger's own price timestamps then supply independent evidence that zones are real
 decision units:
-- **Same day:** stores in the same zone start a price on the same date for 87% of shared
-  products (66% across zones).
-- **Same minute:** they start it in the same minute for 16% (3% across zones).
+- **Same day:** stores in the same zone start a price on the same date for 90% of shared
+  products (68% across zones).
+- **Same minute:** they start it in the same minute for 25% (6% across zones).
 - **Timing alone:** clustering stores on timing alone recovers the price zones
   (p = 0.001).
 - **Overnight:** prices change in overnight batches, almost never during the day.
@@ -266,83 +266,65 @@ nearby stores saves a median of **0.05%**. The test covers 88 locations, and the
 integer program and the greedy heuristic agree everywhere. Cross-chain gaps are level
 differences, so the violations of the law of one price leave almost no basket arbitrage.
 
-## 5. Results: time (Kroger, n = 68,856 dated prices, 121 stores)
+## 5. Results: time (Kroger, n = 109,362 dated prices, 191 stores)
 
-**5.1 When prices change.** Prices start on Wednesdays, the start of Kroger's ad week: 89%
-of promotions and 54% of regular prices. 80% of promotions end on a Tuesday night, and 91%
-run a whole number of weeks. By store-local time:
-- 64% of price starts fall 03:00–08:00, and 18% fall 08:00–12:00;
-- **2.5% of regular prices and 0.3% of promotions** start between noon and 21:00.
+**5.1 When prices change.**
+- **Weekly calendar.** 89% of promotions and 54% of regular prices start on a Wednesday,
+  the start of Kroger's ad week. 78% of promotions end on a Tuesday night, and 90% run a
+  whole number of weeks.
+- **Time of day.** By store-local time, 66% of price starts fall 03:00–08:00 and 20% fall
+  08:00–12:00. **Only 2.3% of regular prices and 0.4% of promotions** start between noon
+  and 21:00.
 
 Prices change in overnight and morning batches. We see no sign of the demand-driven
 ("surge") intraday repricing feared with electronic shelf labels (Figure 5a).
 
-**5.2 Zones change prices together.** For same-banner store pairs (1,118), the share of
-shared products whose current price began at the same moment:
+**5.2 Zones change prices together.** Zones were estimated from price *levels* only, so
+timestamps are an independent test of whether they are real units. The table uses
+same-banner store pairs (1,535); p-values come from permuting zone labels within banner.
 
-| Same start | Within zone | Across zones | Permutation p |
+| Statistic | Same zone | Different zone | Evidence |
 |---|---|---|---|
-| date | 0.87 | 0.66 | 0.0003 |
-| minute | 0.16 | 0.03 | 0.0003 |
+| Share of shared products whose current price began the same **day** | 0.90 | 0.68 | p = 0.0003 |
+| ... the same **minute** | 0.25 | 0.06 | p = 0.0003 |
+| Same day, products at the same price / at different prices | 0.91 / 0.72 | 0.76 / 0.51 | holds at fixed price |
+| Hierarchical binomial model, odds ratio for same zone, day / minute | 1.59 / 1.75 | 1 | 90% intervals 1.50–1.69 and 1.38–2.21 |
+| Stores clustered by co-timing alone, agreement with price zones (ARI) | 0.70 | 0.60 (permuted) | p = 0.001 |
 
-Zone labels were permuted within banner, 2,999 times. Three checks:
-- **Not a by-product of shared prices.** Zones were estimated from price *levels* only, so
-  timestamps are independent evidence. Holding the price fixed, same-zone pairs still
-  share start dates more often:
-  - same price: 0.88 vs 0.74;
-  - different price: 0.59 vs 0.49.
-- **Timing alone recovers the zones.** Clustering stores only by how often their prices
-  begin in the same minute matches the price zones at ARI 0.58. The within-banner
-  permutation baseline is 0.43 (p = 0.001).
-- **Not a by-product of distance.** Same-zone stores are closer together, so we fit a
-  hierarchical binomial model for each same-banner pair (191 stores, 1,535 pairs):
-  co-timed products out of shared products, with a same-zone indicator, log distance,
-  store effects (pairs sharing a store are dependent) and pair-level overdispersion.
-  - Holding distance and store effects fixed, being in the same zone multiplies the odds
-    of a shared start date by 1.59 (90% interval 1.50–1.69) and of a shared start minute
-    by 1.75 (1.38–2.21).
-  - NUTS: R-hat ≤ 1.006, no divergences.
-- **Conclusion.** Prices and timestamps are two independent views, and they identify the
-  same pricing units.
-- **Division sets the day, zone sets the batch** (exploratory). Zones follow divisions
-  (§4), so we repeated the test within the same division (1,354 pairs). The same-date
-  share is 0.92 within a zone vs 0.87 across zones of the same division; the same-minute
-  share is 0.28 vs 0.16 (both p = 0.0005). A division shares its calendar, but each zone
-  within it is pushed as its own batch.
-- **Updates arrive in a fixed order** (exploratory). For products repriced on the same
-  day at every store of a zone, but not in the same minute, we ranked the stores by
-  effective time. The rankings agree strongly across products in all 24 zones tested
-  (191 stores, 7,293 product-zone rankings):
-  - Kendall's W has median 0.62 (IQR 0.45–0.69), against about 0.003 under the null;
-    p ≤ 0.03 in every zone;
-  - the median spread within a zone is 9 minutes.
+The model controls for log distance, store effects (pairs sharing a store are dependent)
+and pair-level overdispersion. NUTS: R-hat ≤ 1.006, no divergences. The zone effect is not
+a by-product of sharing a price or of being close: **prices and timestamps identify the
+same pricing units.**
 
-  The order is the **store number**. In 21 zones with at least 4 stores, a store's mean
-  position correlates with its store number at Spearman 0.92 on average: at least 0.95
-  in 16 zones, and exactly 1 in 13 zones (84 stores).
-  - Location explains little (median |ρ| 0.32 for longitude, 0.40 for latitude).
-  - By chance, a perfect ordering of $n$ stores has probability $1/n!$.
+Two exploratory findings sharpen this:
+- **Division sets the day, zone sets the batch.**
+  - Within the same division (1,354 pairs), the same-day share is 0.92 vs 0.87, and the
+    same-minute share is 0.28 vs 0.16 (both p = 0.0005).
+  - A division shares a calendar, but each zone is pushed as its own batch.
+- **Each batch walks the store list in store-number order.** For products repriced on one
+  day at every store of a zone, the order in which stores receive them agrees across
+  products in all 24 zones tested.
+  - Kendall's W median 0.62, vs about 0.003 under the null; median spread 9 minutes.
+  - A store's position correlates with its store number at Spearman 0.92 on average,
+    and exactly 1 in 13 of 21 zones. Location explains little (median |ρ| ≤ 0.40).
 
-  The pricing system walks each zone's store list in store-number order. This is a
-  microstructure detail that a price cross-section cannot show.
-- **Meijer, by contrast, runs one sale calendar** (71 stores; Meijer reports when each
-  store's sale price ends).
-  - For a given product, 99.7% of store pairs end the sale on the same date. Zones add
-    nothing (0.1 percentage points; 2,485 pairs).
-  - 83% of sales end on a Tuesday, and 6,953 store-products end on Oct 6–7: the same night
-    as Kroger's mass expiry (§5.4). Both chains turn over their ad weeks together.
+**Meijer, by contrast, runs one sale calendar** (71 stores; Meijer reports when each
+store's sale price ends).
+- For a given product, 99.7% of store pairs end the sale on the same date, and zones add
+  nothing.
+- 83% of sales end on a Tuesday, and 6,953 store-products end on Oct 6–7: the same night
+  as Kroger's mass expiry (§5.4).
 
 **5.3 How long do promotions last? One snapshot, four answers.** A snapshot sees only
 promotions still running, so long promotions are over-represented (the inspection
 paradox). Each correction relies on a different invariance, and they disagree (Figure 5b):
-- naive mean 28.5 days;
-- renewal theory from ages 18.3;
-- length-bias correction $1/\mathbb{E}[1/L]$: 12.7;
+- naive mean 29.3 days;
+- renewal theory from ages 18.4;
+- length-bias correction $1/\mathbb{E}[1/L]$: 12.6;
 - Lynden-Bell's product-limit estimator for left-truncated data: 9.4.
 
 A simulation shows they agree under stationarity, and split in exactly this order when
-one week's cohort has a different length mix. The age/length ratio and the cohort sizes
-in the data agree with that explanation (Appendix B). One snapshot cannot separate
+one week's cohort has a different length mix (Appendix B). One snapshot cannot separate
 cohort size from cohort mix. The event below sees a whole cohort when it starts.
 
 ![Figure 5](../figures/fig_g2_timing_lengths.png)
@@ -513,18 +495,18 @@ Costco (3) and Kroger (8), but not for Walmart (cross-validation picks rank 0).
 
 | Estimator | Mean (days) | Assumes |
 |---|---|---|
-| Naive mean of planned lengths | 28.5 | nothing (length-biased) |
-| Renewal theory from ages, $\mu = 1/f_A(0)$ (Cox 1962) | 18.3 | stationarity |
-| Length-bias correction, $1/\mathbb{E}[1/L]$ | 12.7 (12.4–12.9) | equal weekly cohorts |
-| Lynden-Bell (1971) product-limit, left-truncated at age (Woodroofe 1985) | 9.4 (9.1–9.9) | same length mix each week |
+| Naive mean of planned lengths | 29.3 | nothing (length-biased) |
+| Renewal theory from ages, $\mu = 1/f_A(0)$ (Cox 1962) | 18.4 | stationarity |
+| Length-bias correction, $1/\mathbb{E}[1/L]$ | 12.6 (12.5–12.8) | equal weekly cohorts |
+| Lynden-Bell (1971) product-limit, left-truncated at age (Woodroofe 1985) | 9.4 (9.2–9.7) | same length mix each week |
 
 Intervals are 95% store bootstrap.
 
 In a 200-replication simulation, the corrections agree under stationarity. When one
 week's cohort has a different length mix, ages-only is biased up (+2.8 days on a
 15.5-day truth), Lynden-Bell down (−0.7), and the harmonic mean stays close. In the data,
-age / planned length (uniform under stationarity) has mean 0.56, and 0.71 for 2-week
-promotions, and the most recent weekly cohort is smaller than the one before.
+age / planned length (uniform under stationarity) has mean 0.58, and the most recent
+weekly cohort is smaller than the one before.
 
 **Posterior co-clustering** (Figure B1, `figures/fig_e5_kroger_psm.png`). Only 0.1% of
 Kroger store pairs have a posterior same-zone probability between 0.1 and 0.9. The model
@@ -543,9 +525,9 @@ effect gives 10,068 batches (108,370 store-products).
   merge into one batch.
 
 **Timing details.**
-- Regular-price spells have a renewal-estimated mean of about 32 days. The age tail has
+- Regular-price spells have a renewal-estimated mean of about 35 days. The age tail has
   Hill $\hat\alpha \approx 2.3$ (2.2–2.5).
-- Kroger reports stock levels for 81% of store-products: 61% HIGH, 12% LOW, 8% out of
+- Kroger reports stock levels for 81% of store-products: 61% HIGH, 12% LOW, 9% out of
   stock. These shares are the same for promotions and regular prices.
 - Promotion-length simulation: `simulation/validate_promo_lengths.py` (stationary,
   varying cohort sizes, varying length mix).
