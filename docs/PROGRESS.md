@@ -697,3 +697,8 @@ simulation was not rerun because it is slow.
   'store lookup HTTP 412', 3× 'store set but search priced at #None') on campus network
   128.210.106.61, around sleep/wake. Not counted as a block; not worked around. Next visit
   20:00.
+- **19:33, Kroger before pass resumed** (owner) at **0.5 s between requests** (snapshot
+  10; `run_kroger_resume.ps1 -Interval 0.5`, hard stop 22:15). About 2.1 s per item
+  query including API latency, about 2 min per store, so done about 21:30. No errors.
+  Daily calls stay under 10,000 (about 7,500 incl. the 22:30 probe). Probes and
+  after/late passes stay at 1 s.
