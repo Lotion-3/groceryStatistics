@@ -516,3 +516,6 @@ simulation was not rerun because it is slow.
   - slot lead time is driven by time of day (evening 10–17 h), not by store.
 
   Added to the write-up §5.5.
+- **Meijer control pass (snapshot 7)** finished at 20:11: 15 stores, 16,677 store-products,
+  no blocks. 1,020 store-products have a sale ending 2026-10-06; these become "scheduled"
+  units if still on sale in the Tue 18:00 before pass.
