@@ -483,7 +483,7 @@ def figures(wd: pd.DataFrame, dur: pd.DataFrame, note: str) -> list[str]:
             axes[0].bar(x + (j - 0.5) * 0.38, row[days].to_numpy()[0], width=0.36, color=color, label=kind)
     axes[0].set_xticks(x, [d[:3] for d in days])
     axes[0].set_ylabel("share of price start dates")
-    axes[0].set_title("When Kroger prices start (weekday)", loc="left")
+    axes[0].set_title("When Kroger price records start (weekday)", loc="left")
     axes[0].legend(fontsize=7)
     for kind, color in (("regular", "#2a78d6"), ("promo", "#eb6834")):
         g = dur[dur["kind"] == kind]
@@ -505,7 +505,7 @@ def figure_g2(hours: pd.DataFrame, lsum: dict, note: str) -> str:
     """(a) local hour of price starts; (b) mean promotion length by estimator."""
     plt = style()
     fig, axes = plt.subplots(1, 2, figsize=(9.0, 3.0), gridspec_kw={"width_ratios": [1.15, 1]})
-    fig.subplots_adjust(wspace=0.62)
+    fig.subplots_adjust(wspace=0.62, bottom=0.2)
     bands = [c for c in hours.columns if c not in ("kind", "n")]
     x = np.arange(len(bands))
     for j, (kind, color) in enumerate((("regular", "#2a78d6"), ("promo", "#eb6834"))):
@@ -514,8 +514,8 @@ def figure_g2(hours: pd.DataFrame, lsum: dict, note: str) -> str:
             axes[0].bar(x + (j - 0.5) * 0.38, row[bands].to_numpy(float)[0], width=0.36, color=color, label=kind)
     axes[0].set_xticks(x, bands)
     axes[0].set_xlabel("store local time")
-    axes[0].set_ylabel("share of price starts")
-    axes[0].set_title("Prices change overnight, not during the day", loc="left")
+    axes[0].set_ylabel("share of price-record starts")
+    axes[0].set_title("Price records start overnight, not in the afternoon", loc="left")
     axes[0].legend(fontsize=7)
     est = [("naive mean", lsum["sampled_mean_days"], None, None),
            ("ages (renewal)", lsum.get("ages_only_days", np.nan), None, None),
