@@ -30,14 +30,15 @@ The chains differ sharply:
   although the model never sees banners or divisions.
 - **Meijer**, in its Michigan core, has almost one list (97% at list) and one sale calendar.
 
-Kroger's own price timestamps then supply independent evidence that zones are real
-decision units:
+Kroger's price-record timestamps then give independent evidence that zones are units of
+its pricing system:
 - **Same day:** stores in the same zone start a price on the same date for 90% of shared
   products (68% across zones).
 - **Same minute:** they start it in the same minute for 25% (6% across zones).
 - **Timing alone:** clustering stores on timing alone recovers the price zones
   (p = 0.001).
-- **Overnight:** prices change in overnight batches, almost never during the day.
+- **Overnight:** price records start in overnight and morning batches, almost never in the
+  afternoon or evening.
 
 Each method was first checked on simulated data with a known answer.
 
@@ -259,7 +260,17 @@ differences, so the violations of the law of one price leave almost no basket ar
 
 ## 5. Results: time (Kroger, n = 109,362 dated prices, 191 stores)
 
-**5.1 When prices change.**
+*What a timestamp measures.* Kroger's effective timestamp marks when the current price
+**record** began. Comparing the same store-products on Oct 2–4 and Oct 5, 7.8% of
+regular-price records (0.3% of promotions) got a new timestamp with an **identical** price.
+These re-entries come in store-level batches. So:
+- the co-timing below describes the pricing system's **update batches**;
+- regular-price "ages" are record ages, and true spells are longer;
+- promotions are rarely affected.
+
+The event study (§5.4) observes actual price changes.
+
+**5.1 When price records start.**
 - **Weekly calendar.** 89% of promotions and 54% of regular prices start on a Wednesday,
   the start of Kroger's ad week. 78% of promotions end on a Tuesday night, and 90% run a
   whole number of weeks.
@@ -267,8 +278,10 @@ differences, so the violations of the law of one price leave almost no basket ar
   08:00–12:00. **Only 2.3% of regular prices and 0.4% of promotions** start between noon
   and 21:00.
 
-Prices change in overnight and morning batches. We see no sign of the demand-driven
-("surge") intraday repricing feared with electronic shelf labels (Figure 5a).
+Records start in overnight and morning batches. Promotions, which rarely reset, start
+almost entirely before noon (99.6%). We see no sign of the demand-driven ("surge")
+intraday repricing feared with electronic shelf labels (Figure 5a). The Walmart repeat
+visits agree: no price changed within a day (§5.5).
 
 **5.2 Zones change prices together.** Zones were estimated from price *levels* only, so
 timestamps are an independent test of whether they are real units. The table uses
@@ -361,8 +374,9 @@ visit reaches the same 6–7 stores before Walmart's per-session limit (about 10
 ## 6. Limitations
 
 - **Mostly cross-sectional.** Nothing is causal. Timing comes from Kroger's reported
-  timestamps; the event panel checks them against observed changes. An effective date may
-  reset when an unchanged price is re-entered.
+  timestamps, and an effective date can reset when an unchanged price is re-entered (7.8%
+  of regular-price records in 1–3 days, measured). The event panel observes actual
+  changes.
 - **Website prices,** not shelf audits. Costco's local structure may partly be
   Instacart's.
 - **Partial chains.** Walmart (41 stores), Target (16) and Meijer (3) limited automated
@@ -516,7 +530,8 @@ effect gives 10,068 batches (108,370 store-products).
   merge into one batch.
 
 **Timing details.**
-- Regular-price spells have a renewal-estimated mean of about 35 days. The age tail has
+- Regular-price *records* have a renewal-estimated mean of about 35 days, which is a
+  lower bound for true price spells because records reset. The age tail has
   Hill $\hat\alpha \approx 2.3$ (2.2–2.4).
 - Kroger reports stock levels for 81% of store-products: 61% HIGH, 12% LOW, 9% out of
   stock. These shares are the same for promotions and regular prices.

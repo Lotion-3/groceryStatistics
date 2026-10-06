@@ -566,3 +566,11 @@ simulation was not rerun because it is slow.
 - **Write-up:** §5 rebuilt on 191 Kroger stores (one table for the zone-timing tests),
   plus tighter Data and Methods. Main text 3,320 words; the final cut comes after the
   event results.
+- **Effective-date resets measured** (snapshot 2 vs control, 35 stores, 19,373 units).
+  - 6.5% of records got a new effective date in 1–3 days, 93.5% of them with an
+    identical price: re-entries. Regular 7.8% vs promo 0.3%.
+  - Store-level batches (one minute per store); 58% are in multi-store zone batches.
+  - Write-up reworded: timestamps describe update batches; regular "ages" are record
+    ages (spells are longer); promotions are rarely affected.
+  - Pre-registration Addendum 7: the H tests are unchanged, and Module H also reports
+    reset rates per transition.
