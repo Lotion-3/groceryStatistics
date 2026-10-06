@@ -678,3 +678,8 @@ simulation was not rerun because it is slow.
   item / 3 min per store, so done about 14:30 with all 60 stores. No errors. Later passes
   (probes, after, late) inherit 1 s through `kroger_panel.py`. DECISIONS #55,
   Addendum 8.
+- **11:35, Kroger 'before' pass PAUSED by the owner** at store 4/60 (snapshot 10). To
+  resume: `Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File scripts\run_kroger_resume.ps1 -SnapshotId 10 -Pass before -Deadline 2026-10-06T22:15" -WindowStyle Hidden`
+  (about 3 min per store; needs about 2 h 50 min for the remaining 56 stores, so start
+  by about 19:15 to finish before 22:15). The event pipeline (47108) is still waiting for
+  the 22:30 probe.
