@@ -278,8 +278,8 @@ The event study (§5.4) observes actual price changes.
   08:00–12:00. **Only 2.3% of regular prices and 0.4% of promotions** start between noon
   and 21:00.
 
-Records start in overnight and morning batches. Promotions, which rarely reset, start
-almost entirely before noon (99.6%). We see no sign of the demand-driven ("surge")
+Records start in overnight and morning batches. 99.6% of promotions, which rarely reset,
+start outside noon–21:00. We see no sign of the demand-driven ("surge")
 intraday repricing feared with electronic shelf labels (Figure 5a). The Walmart repeat
 visits agree: no price changed within a day (§5.5).
 
