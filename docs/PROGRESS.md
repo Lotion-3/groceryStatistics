@@ -589,3 +589,59 @@ simulation was not rerun because it is slow.
   control rerun (41136), Walmart (43912, next 08:00), Meijer (39336, next 18:00),
   keep-awake (21456).
 - No standby events since 19:15 Mon.
+
+## End-of-night summary (Tue 2026-10-06, 05:43)
+
+**Jobs**
+
+| Job | Status |
+|---|---|
+| Kroger control rerun (snapshot 6) | 57/60 stores, no 401/403/429, pacing ≥ 9.8 s; finishes about 06:25 (hard stop 10:45) |
+| Kroger event pipeline (pid 47108) | waiting for the before pass at Tue 11:00 |
+| Meijer event scheduler (39336) | control done (snapshot 7); before Tue 18:00, after Wed 12:00 |
+| Walmart panel (43912) | 3 visits Mon; next Tue 08:00 |
+| Keep-awake (21456) | on until Oct 8 15:00; no standby since Mon 19:15 |
+
+**Failures and fixes (Mon–Tue)**
+- **Control pass failed at 10:00:** Start-Process split the multi-word `--note`. Fixed
+  (`--note` takes several words); rerun as snapshot 6 (Addendum 3). Later passes use the
+  fix.
+- **Modern Standby froze every job** Mon 01:36–09:34. Fixed with the keep-awake helper.
+- **Meijer locator blocked** after 8 calls; stopped, and it is not used.
+- Walmart visits stop after about 105 requests (captcha, "not a block"), so the effective
+  panel is 6–7 stores.
+- **Bugs fixed:** Module I variance decomposition; zone-sensitivity partial reruns; the
+  dyadic model's identifiability; text that the shell's newline escaping had mangled.
+
+**Results that changed overnight**
+- **Effective timestamps mark price records.** 7.8% of regular-price records (0.3% of
+  promotions) re-entered with an identical price within 1–3 days. Write-up reworded;
+  Addendum 7.
+- **Zone co-timing holds for promotions** (real changes): same minute 0.17 vs 0.04.
+- **Zones follow Kroger's operating divisions** (purity 95%, ARI 0.71 vs banner 0.51).
+  Division sets the day; zone sets the batch.
+- **Each zone batch walks its store list in store-number order** (ρ = 1 in 13/21 zones).
+- **Dyadic hierarchical model:** zone odds ratio 1.59 (day) and 1.75 (minute) beyond
+  distance and store; simulation-validated.
+- **Meijer:** near-uniform list (97% at list), zones do not replicate, one sale calendar
+  ending the same night as Kroger's.
+- **Walmart panel day 1:** 0/1,844 intraday price changes; lead time follows the clock.
+- **Kroger at 191 stores:** 65% at list, no variogram plateau (local zones within a
+  nationwide gradient).
+- **Update batches:** heavy-tailed sizes. Every simulation table reproduces exactly.
+
+**Next (scheduled; no owner action needed unless something fails)**
+- Tue 08:00 Walmart visit (first overnight comparison); check at 08:53.
+- **Tue 11:00 Kroger before pass** (hard stop 22:15; about 45 of 60 stores expected).
+- **Tue 18:00 Meijer before.**
+- **Kroger probes Tue 22:30, Wed 00:15, Wed 05:00** around the 23:59 Eastern expiry.
+- Wed 10:00 Kroger after; Wed 12:00 Meijer after; Thu 10:00 Kroger late. Then the banner
+  sample resumes.
+- **Thu after the late pass:** run Module H (and I), then `scripts/final_rerun.ps1`
+  (run_all plus Kroger/Meijer zone robustness on the full Kroger sample), and cut the
+  write-up to 5–6 pages with the event results.
+
+**Owner**
+- Keep the laptop plugged in, lid open, on the network until Thu.
+- Commit your session-policy files when you create the public repo.
+- Decide whether the write-up goes out before or after the event results (Thu).
