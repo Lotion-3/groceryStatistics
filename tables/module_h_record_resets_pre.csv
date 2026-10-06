@@ -1,0 +1,2 @@
+transition,units,stores,share_eff_changed,share_price_changed,share_reset,share_reset_regular,share_reset_promo,resets_share_of_date_changes
+snapshot2->control,33822,60,0.07155106143929986,0.00969782981491337,0.061853231624386495,0.07781533261637733,0.008476753146673517,0.8644628099173554

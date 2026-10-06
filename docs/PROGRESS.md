@@ -645,3 +645,16 @@ simulation was not rerun because it is slow.
 - Keep the laptop plugged in, lid open, on the network until Thu.
 - Commit your session-policy files when you create the public repo.
 - Decide whether the write-up goes out before or after the event results (Thu).
+
+**Tue 2026-10-06, 08:53 check**
+- **Walmart 08:00 visit (all 10 stores, no captcha):** the first overnight transition.
+  Module I after 4 visits: intraday 0/1,844, **overnight 0/1,869** price changes;
+  departures persist (3,624 transitions). Write-up §5.5 updated.
+- **Kroger control rerun finished at 06:31:** 60/60 panel stores, 34,705 store-products,
+  **4,977 scheduled units** (promos expiring 2026-10-07T03:59:59Z), 8,158 promos.
+  `event_snapshots` = {control: 6}. Pipeline (47108) alive and waiting for the 11:00 before
+  pass.
+- **Record resets, snapshot 2 → control (all 60 stores, 33,822 units):** 7.2% of dates
+  changed vs 1.0% of prices; resets 7.8% of regular records and 0.85% of promos; 86% of
+  date changes were re-entries. Table `module_h_record_resets_pre.csv`; write-up §5
+  updated (promo 0.9%).
