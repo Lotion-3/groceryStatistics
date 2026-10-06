@@ -366,6 +366,12 @@ def run() -> str:
     pred, zs, est = analyse(passes, zones, banner)
     pred.to_csv(TAB / "module_h_predictions.csv", index=False)
     zs.to_csv(TAB / "module_h_zone_sync.csv", index=False)
+    # Addendum 6 (exploratory, not a pre-registered test): H6 within the same operating
+    # division (location-id prefix) instead of the same banner.
+    div = pd.read_sql_query("SELECT store_pk, store_id FROM stores", sqlite3.connect(DB)).set_index(
+        "store_pk")["store_id"].astype(str).str[:3]
+    zone_sync(pair(passes["before"], passes["after"]), zones, div, np.random.default_rng(SEED)).to_csv(
+        TAB / "module_h_zone_sync_within_division.csv", index=False)
     est.to_csv(TAB / "module_h_estimates.csv", index=False)
     krates = change_rates(passes)
     pd.concat([krates.assign(chain="kroger"), mrates.assign(chain="meijer")]).to_csv(

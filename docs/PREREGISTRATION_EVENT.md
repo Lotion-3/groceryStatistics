@@ -193,3 +193,12 @@ addendum and before the data.
 `module_h_event.py` gained reporting functions: per-transition change rates, a markdown
 predictions table, and the event figure. They were tested on synthetic data. No
 definition, prediction, threshold or test changed.
+
+## Addendum 6 (2026-10-06, about 00:50 Eastern; before the before pass): one exploratory analysis
+
+Snapshot-2 analyses after the pre-registration found that Kroger's zones follow its
+operating divisions (the location-id prefix) more closely than its banners. Module H
+therefore also reports H6 with pairs restricted to the same **division** instead of the
+same banner (`tables/module_h_zone_sync_within_division.csv`). This is **exploratory**
+and labelled as such. The pre-registered H6 (same-banner pairs) is unchanged and remains
+the confirmatory test.
