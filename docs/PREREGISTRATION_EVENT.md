@@ -220,3 +220,13 @@ price record, not a price change.
   therefore also reports, exploratorily, the reset rate per transition
   (`tables/module_h_record_resets.csv`).
 - H6b (same new price) and the price-change outcomes measure actual price changes.
+
+## Note (2026-10-06, about 09:10 Eastern; before the before pass): pre-event dry run of H6
+
+Running the H6 code on the 328 actual price changes between snapshot 2 and the control
+pass (Monday; 28 stores; 513 pair-products) did **not** show zone synchronisation:
+- same minute: 0.49 within vs 0.53 across zones (p = 0.14);
+- same new price: 0.95 vs 0.87 (p = 0.10).
+
+This is recorded so that it cannot be read as post hoc. The predictions and tests are
+unchanged.

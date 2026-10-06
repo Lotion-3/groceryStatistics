@@ -658,3 +658,15 @@ simulation was not rerun because it is slow.
   changed vs 1.0% of prices; resets 7.8% of regular records and 0.85% of promos; 86% of
   date changes were re-entries. Table `module_h_record_resets_pre.csv`; write-up §5
   updated (promo 0.9%).
+- **Pre-event look at real price changes** (snapshot 2 → control; exploratory; recorded
+  before the event).
+  - 328 actual price changes with a new record at 28 stores: mostly promotions starting
+    or changing (regular→promo 171, promo→promo 114).
+  - Their new effective times are 99.1% outside noon–21:00 local (all 00:00–12:00).
+    Observed changes, not just re-entries, happen overnight and in the morning.
+  - **Zone synchronisation was NOT detected** for these mid-week changes (pre-registered
+    H6 code, frozen zones): same minute 0.49 within vs 0.53 across zones (banner pairs,
+    p = 0.14); same new price 0.95 vs 0.87 (p = 0.10); similar within division.
+  - Small sample (513 pair-products, one weekday). These Monday changes look banner-wide.
+  - H6 at the event may therefore fail. The predictions are unchanged and will be
+    reported as they come out.
