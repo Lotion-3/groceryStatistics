@@ -355,7 +355,7 @@ def dyadic_model(pt: pd.DataFrame, seed: int = SEED, draws: int = 1000, tune: in
     return out
 
 
-def push_order(k: pd.DataFrame, zones: pd.Series, rng, n_perm: int = 499) -> pd.DataFrame:
+def push_order(k: pd.DataFrame, zones: pd.Series, rng, n_perm: int = 499, stores: pd.DataFrame | None = None) -> pd.DataFrame:
     """Within a zone, do stores receive new prices in a consistent order?
     Products whose price started on the same date at every store of the zone, but
     not all in the same minute, give one ranking of the stores by effective time
@@ -386,7 +386,9 @@ def push_order(k: pd.DataFrame, zones: pd.Series, rng, n_perm: int = 499) -> pd.
         # (last 5 digits of Kroger's location id = division + store) and with location
         from scipy.stats import spearmanr
         mr = P.rank(axis=1).mean()
-        st = pd.read_sql_query("SELECT store_pk, store_id, lat, lon FROM stores", sqlite3.connect(DB)).set_index("store_pk").loc[mr.index]
+        meta = stores if stores is not None else pd.read_sql_query(
+            "SELECT store_pk, store_id, lat, lon FROM stores", sqlite3.connect(DB)).set_index("store_pk")
+        st = meta.loc[mr.index]
         num = pd.to_numeric(st["store_id"].str[-5:], errors="coerce")
         rho = lambda x: float(spearmanr(mr, x).correlation) if pd.Series(x).nunique() > 2 else np.nan
         out.append({"zone": zn, "banner": g["banner"].mode().iat[0], "stores": n, "products": m, "kendall_W": float(w),

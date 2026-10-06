@@ -56,3 +56,32 @@ def test_timing_clusters_recover_zones():
     r = timing_clusters(k, zones, np.random.default_rng(4), n_perm=99)
     assert r["ari_timing_vs_price_zones"] > 0.9
     assert r["p_value_one_sided"] <= 0.02
+
+
+def test_push_order_recovers_store_number_queue():
+    from analysis.module_g_timing import push_order
+    rng = np.random.default_rng(5)
+    stores = pd.DataFrame({"store_id": [f"0140{n:04d}" for n in (11, 3, 27, 8, 19)],
+                           "lat": rng.uniform(30, 45, 5), "lon": rng.uniform(-100, -80, 5)},
+                          index=[1, 2, 3, 4, 5])
+    order = stores["store_id"].str[-5:].astype(int).rank().to_numpy()       # queue by store number
+    rows = []
+    for p in range(30):
+        t0 = pd.Timestamp("2026-09-30T10:00Z") + pd.Timedelta(minutes=int(rng.integers(0, 300)))
+        for s, r in zip(stores.index, order):
+            rows.append({"store_pk": s, "chain_product_id": f"P{p}", "banner": "KROGER",
+                         "eff": t0 + pd.Timedelta(minutes=2 * r + float(rng.uniform(0, 0.5)))})
+    r = push_order(pd.DataFrame(rows), pd.Series(0, index=stores.index), rng, n_perm=99, stores=stores)
+    assert r["kendall_W"].iloc[0] > 0.95 and r["p_value"].iloc[0] <= 0.02
+    assert r["rho_store_number"].iloc[0] > 0.99
+
+
+def test_batch_sizes_concentration():
+    from analysis.module_g_timing import batch_sizes
+    rng = np.random.default_rng(6)
+    sizes = np.ceil(rng.pareto(1.5, 2000) + 1).astype(int)
+    rows = [{"store_pk": i, "chain_product_id": f"P{b}", "eff": pd.Timestamp("2026-09-01T00:00Z") + pd.Timedelta(minutes=b)}
+            for b, n in enumerate(sizes) for i in range(n)]
+    out = batch_sizes(pd.DataFrame(rows), rng, B=50)
+    assert out["batches"] == 2000 and out["store_products"] == sizes.sum()
+    assert 1.0 < out["hill_alpha_k5"] < 2.2
