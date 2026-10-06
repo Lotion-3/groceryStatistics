@@ -559,7 +559,11 @@ def run(snaps: list[int] | None = None) -> str:
     wd.to_csv(TAB / "module_g_weekday.csv", index=False)
     dur.to_csv(TAB / "module_g_duration_curve.csv", index=False)
     pd.DataFrame([{"kind": kk, **v} for kk, v in summ.items()]).to_csv(TAB / "module_g_durations.csv", index=False)
-    pd.DataFrame([res, res_min]).to_csv(TAB / "module_g_zone_codating.csv", index=False)
+    rows = [{"records": "all", **res}, {"records": "all", **res_min}]
+    for lab, kk in (("promotions", k[k["is_promo"] == 1]), ("regular", k[k["is_promo"] == 0])):
+        for unit in ("date", "minute"):       # promotions rarely reset: real price changes
+            rows.append({"records": lab, **codating(kk, zones, rng, n_perm=999, unit=unit)})
+    pd.DataFrame(rows).to_csv(TAB / "module_g_zone_codating.csv", index=False)
     by_price.to_csv(TAB / "module_g_codating_by_price.csv", index=False)
     hours.to_csv(TAB / "module_g_local_hour.csv", index=False)
     lengths.to_csv(TAB / "module_g_promo_lengths.csv", index=False)
