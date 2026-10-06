@@ -702,3 +702,10 @@ simulation was not rerun because it is slow.
   query including API latency, about 2 min per store, so done about 21:30. No errors.
   Daily calls stay under 10,000 (about 7,500 incl. the 22:30 probe). Probes and
   after/late passes stay at 1 s.
+- **About 19:40, running in parallel** (owner: "run some things in parallel"):
+  - **Target budgeted session** (64 queries, approved session design; different site
+    from Kroger; network 128.211.252.173);
+  - **Kroger zone robustness on the current Kroger stores** (CPU only);
+  - **Module B at 2,000 draws** on the current Kroger stores (CPU only).
+  - Not started: the Kroger banner resume, which shares the 10,000/day key with the event
+    passes. It resumes after the late pass as planned.
