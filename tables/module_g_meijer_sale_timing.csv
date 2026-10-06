@@ -1,2 +1,2 @@
 stores,store_products,share_on_sale,top_end_weekday,zone_unit,zone_store_pairs_same_banner,zone_codated_share_same_zone,zone_codated_share_diff_zone,zone_difference,zone_p_value_one_sided,zone_n_perm
-71,81045,0.22270343636251466,"{'Tuesday': 0.833, 'Wednesday': 0.167}",date,2485,0.9985281905665827,0.9974337358321812,0.0010944547344015065,0.023333333333333334,2999
+71,81045,0.22270343636251466,"{'Tuesday': 0.833, 'Wednesday': 0.167}",date,2485,0.9985281905665827,0.9974337358321812,0.0010944547344015065,0.027333333333333334,2999

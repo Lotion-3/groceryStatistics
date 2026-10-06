@@ -552,8 +552,8 @@ def run(snaps: list[int] | None = None) -> str:
     tclus = timing_clusters(k, zones, rng)
     lengths, lsum = promo_lengths(snaps, rng)
     stock = stock_table(k)
-    note = (f"n = {len(k):,} dated Kroger prices, {k['store_pk'].nunique()} stores; snapshot(s) {snaps}. "
-            f"PRELIMINARY; renewal estimate assumes stationary price spells.")
+    note = (f"n = {len(k):,} dated Kroger price records, {k['store_pk'].nunique()} stores; snapshot(s) {snaps}. "
+            f"PRELIMINARY; records can reset without a price change; renewal estimates assume stationarity.")
     TAB.mkdir(exist_ok=True)
     FIG.mkdir(exist_ok=True)
     wd.to_csv(TAB / "module_g_weekday.csv", index=False)
