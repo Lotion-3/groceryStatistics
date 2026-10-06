@@ -527,3 +527,15 @@ simulation was not rerun because it is slow.
   - 8,871 store-products; **935 scheduled units** (promos expiring
     2026-10-07T03:59:59Z) of 1,704 promos.
   - `config/analysis.yaml`: `event_snapshots: {control: 6}`.
+
+**Mon 2026-10-05, 23:43 night check**
+- **Kroger control rerun (snapshot 6):** 30/60 stores (about 13 min per store, so about
+  06:15 Tue, before the 10:45 stop). Pacing median 10.5 s, minimum 9.8 s (≥ 9 s holds).
+  No 401/403/429 or blocks.
+- **Meijer control (snapshot 7):** finished 20:11 (15 stores, 16,677 store-products, no
+  blocks). Waiting for Tue 18:00.
+- **Walmart:** the 20:00 visit (snapshot 8) reached all 10 stores; Module I updated. Next
+  visit Tue 08:00.
+- **Keep-awake** is running (pid 21456). The only standby since evening was 19:08–19:15,
+  before the keep-awake started at 19:16. None since.
+- Nothing broken; no changes.
