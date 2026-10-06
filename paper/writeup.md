@@ -146,7 +146,9 @@ began.
 **Simulation checks** (Appendix B), all run before the real results: tail-estimator
 coverage 84–97%; exact zone recovery at a 3% product difference and one zone when there
 are none; 13 of 16 two-part-model parameters inside their 90% intervals; the
-promotion-length estimators (§5.3).
+promotion-length estimators (§5.3); the dyadic co-timing model (unbiased, 90% intervals
+covering 80–90% in 10 replicates per scenario, and it removes the spurious zone effect
+that distance alone creates in a naive comparison).
 
 ## 4. Results: space
 

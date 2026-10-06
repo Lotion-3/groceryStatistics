@@ -556,3 +556,13 @@ simulation was not rerun because it is slow.
 - **Within the same division:** same date 0.92 vs 0.87 (zone vs not), same minute 0.28 vs
   0.16 (p = 0.0005). Division sets the day; zone sets the batch.
 - Tests added for push order and batch sizes; all pass.
+- **Dyadic model validated** (`simulation/validate_dyadic_model.py`, 10 replicates per
+  scenario, about 420 pairs each).
+  - True b_zone 0: estimate −0.01, 90% coverage 0.8. The naive within/across difference
+    shows a spurious +0.09 from distance.
+  - True b_zone 0.5: estimate 0.52, coverage 0.9.
+  - b_dist coverage 0.9.
+  - Table `simulation_dyadic_model.csv`.
+- **Write-up:** §5 rebuilt on 191 Kroger stores (one table for the zone-timing tests),
+  plus tighter Data and Methods. Main text 3,320 words; the final cut comes after the
+  event results.
