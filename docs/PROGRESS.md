@@ -764,3 +764,16 @@ simulation was not rerun because it is slow.
   - Kroger after pass left to run on return (window until Thu 09:45).
   - Pre-registration Addendum 9.
   - Kroger calls in today's UTC window so far about 4,400; after pass about 4,700 more.
+
+**Wed 2026-10-07, 05:47 early check**
+- **Probe early** (05:00–05:16) finished: 12/12 stores, no errors. All three Kroger probes
+  are done (snapshots 14, 15 and the early probe).
+- **The Walmart extension completed all 250 anchors** (finished 02:16; no captcha or
+  block). **Walmart: 84 stores** in snapshot 2 (was 41). The only failures: two stores
+  with no pickup access point.
+- **Target 03:26 run:** refused after 52 successes, the fresh replacement finished
+  (63/64); **Target: 28 stores**.
+- **Kroger calls today** (estimate) 4,673. With the after pass (about 4,900) that is
+  about 9,570, under 9,800. No delay needed.
+- Kroger after pass waits for 10:00 (or the owner's return); Meijer after at 07:00;
+  Walmart panel visit at 08:00.
