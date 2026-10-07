@@ -453,7 +453,7 @@ Pairs sharing a store are dependent, so bands come from a store bootstrap.
   permuted labels.
 
 **Prior sensitivity of the zones.**
-- Kroger (191 stores): $gamma = 0.5$ vs 1 gives ARI 0.95; $gamma = 5$ merges zones
+- Kroger (191 stores): $\gamma = 0.5$ vs 1 gives ARI 0.95; $\gamma = 5$ merges zones
   (27 → 17).
 - ALDI: 7–11 zones across $\gamma$. With 91% of prices at list and 0.6% unique to one
   store, each store carries little information.
