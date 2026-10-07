@@ -237,3 +237,15 @@ The Kroger event passes run at 1 request/s instead of ≥ 9 s (DECISIONS #55). T
 pass was stopped after its first 3 stores and resumed in the same snapshot (10). Each
 pass now covers all 60 stores in about 3 h. No prediction, definition, store list or
 analysis changed.
+
+## Addendum 9 (2026-10-07, 01:40 Eastern; before any Meijer after data): timing changes
+
+The owner is away with the laptop from 09:10 on Wed Oct 7.
+- **Meijer 'after' pass moved from 12:00 to 07:00** (`scripts/run_meijer_after_early.ps1`;
+  same stores, items and analysis). Meijer's sales ended with the date 2026-10-06, so new
+  prices are live by Wednesday morning.
+- **Kroger 'after' pass:** it runs when the laptop is back online. The pipeline starts any
+  pass whose window is still open; this window closes Thu 09:45. It is deliberately not
+  moved earlier: a pass starting about 05:30 would reach some stores before their morning
+  price batch (04:00–10:00 local) and undercount changes.
+- Pass start and end times are reported.

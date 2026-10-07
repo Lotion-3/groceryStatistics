@@ -759,3 +759,8 @@ simulation was not rerun because it is slow.
   effective time, so reverted records dated in September count as "before the expiry".
   H5 will be reported exactly as pre-registered, plus a clearly labelled post-hoc
   refinement that excludes reverted (old-dated) records.
+- **01:40, the owner leaves at 09:10 with the laptop:**
+  - Meijer after pass moved to 07:00 (one-off script; the old scheduler was stopped).
+  - Kroger after pass left to run on return (window until Thu 09:45).
+  - Pre-registration Addendum 9.
+  - Kroger calls in today's UTC window so far about 4,400; after pass about 4,700 more.
