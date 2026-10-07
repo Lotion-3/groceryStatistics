@@ -258,7 +258,7 @@ The event study (§5.4) observes actual price changes.
 Records start in overnight and morning batches. 99.6% of promotions, which rarely reset,
 start outside noon–21:00. We see no sign of the demand-driven ("surge")
 intraday repricing feared with electronic shelf labels (Figure 5a). The Walmart repeat
-visits agree: no price changed within a day or overnight (§5.5).
+visits agree: 1 price change in 5,790 transitions (§5.5).
 
 **5.2 Zones change prices together.** Zones were estimated from price *levels* only, so
 timestamps are an independent test of whether they are real units. The table uses
@@ -335,10 +335,11 @@ reporting code, and exploratory additions.
 **5.5 Walmart repeat visits (in progress).** Walmart publishes no price dates, so we
 revisit 10 stores (17 confirmed items) three times a day from Monday to Thursday. Each
 visit reaches the same 6–7 stores before Walmart's per-session limit (about 105 requests).
-- **First 4 visits** (Mon 08:00 to Tue 08:00; 10 stores):
-  - **0 of 1,844** store-product transitions within a day changed price, and **0 of
-    1,869 overnight**;
-  - all 3,624 transitions from an off-list price stayed off list;
+- **First 6 visits** (Mon 08:00 to Tue 20:00; 10 stores; the Tue 14:00 visit failed at
+  store scoping):
+  - **1 of 3,632** store-product transitions within a day changed price, and **0 of
+    2,158 overnight**;
+  - all 5,631 transitions from an off-list price stayed off list;
   - delivery-slot lead time follows the clock, not the store: 3–5 h during the day,
     10–12 h in the evening (the next slot is the following morning). Store explains none
     of its variance.
