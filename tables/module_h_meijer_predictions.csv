@@ -1,0 +1,5 @@
+hypothesis,prediction,value,n,holds,note
+M1,change rate of scheduled units >= 0.80,0.37093023255813956,860,False,
+M2,change rate of other units <= 0.15,0.025396622313203686,15632,True,
+M3,change rate before->after >= 3 x control->before,53.66092650982294,16492,True,"event 0.0434 (n=16492), control 0.0008 (n=16068)"
+M4,products with one new price across stores >= 0.90,0.6515151515151515,66,False,

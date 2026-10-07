@@ -1,0 +1,25 @@
+estimate,value,ci_lo,ci_hi,n
+POST HOC: share of changed scheduled units with a fresh record,1.0,,,1950
+POST HOC H5a: fresh records effective before the expiry,0.011794871794871795,,,1950
+POST HOC H5b: fresh records effective Wed 04:00-11:00 ET,0.9061538461538462,,,1950
+"renewal share (promotion again, new effective date)",0.38461538461538464,0.34068799368088465,0.42937725601350824,1950
+discount depth: expired promotions,0.1916654656511376,,,1950
+discount depth: renewals,0.23581238947270428,,,750
+"stock LOW/OUT share, scheduled, before",0.2517948717948718,,,1950
+"stock LOW/OUT share, scheduled, after",0.23487179487179488,,,1950
+"stock LOW/OUT share, other, before",0.19808762665905524,,,14014
+"stock LOW/OUT share, other, after",0.18345939774511202,,,14014
+"renewal share, banner HART",0.5737704918032787,,,183
+"renewal share, banner KROGER",0.29736842105263156,,,1140
+"renewal share, banner RALPHS",0.4880382775119617,,,627
+new cohort: mean planned promotion length (days),18.878700281813444,18.413639401218656,19.50817139166283,2541
+new cohort: share 1 wk,0.209366391184573,,,2541
+new cohort: share 2 wk,0.049586776859504134,,,2541
+new cohort: share 3 wk,0.6666666666666666,,,2541
+new cohort: share 4 wk,0.03699330972058245,,,2541
+new cohort: share 5 wk,0.014561196379378197,,,2541
+new cohort: share 6 wk,0.014167650531286895,,,2541
+new cohort: share 7 wk,0.0007870916961826052,,,2541
+new cohort: share 16 wk,0.0059031877213695395,,,2541
+new cohort: share 17 wk,0.0019677292404565133,,,2541
+probe_early: scheduled promotions gone,1.0,,,974

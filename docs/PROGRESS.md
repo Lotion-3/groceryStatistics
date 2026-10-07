@@ -804,3 +804,24 @@ simulation was not rerun because it is slow.
 - Probe early done (05:16); Walmart extension finished at 84 stores.
 - **While the laptop is away:** the Kroger after pass starts automatically when it is back
   online (window until Thu 09:45); the late pass is Thu 10:00.
+
+**Wed 2026-10-07, 14:07 check: PROVISIONAL Module H** (Kroger after pass at 28/60 stores)
+- The laptop was away and asleep for most of 09:11–14:07. The Kroger after pass started
+  10:00:43 and runs in awake stretches; 28/60 so far, no errors.
+- **Kroger (provisional, 28 stores): 9/10 testable predictions hold.**
+  - H1 1.00; H2 0.917 and 0.135 (the second is near its 0.15 threshold); H3 42×;
+    H4 1.00 / 1.00; H5b 0.906; H6a 0.093 (p = 0.008); H6b 0.216 (p = 0.0002).
+  - **H5a fails (0.012):** no Tuesday-evening push this week.
+  - H7 needs the late pass.
+- Zones switch together at the event, unlike Monday's mid-week changes.
+- Post-hoc H5: every changed scheduled unit had a fresh record by the after pass, so the
+  concern did not bite.
+- **Estimates:**
+  - renewal 0.38 (0.34–0.43); renewal by banner: Harris Teeter 0.57, Ralphs 0.49,
+    Kroger 0.30;
+  - discount depth 0.19 for expired promotions vs 0.24 for renewals;
+  - **new cohort mean planned length 18.9 days (18.4–19.5)**; 67% are 3-week promotions;
+  - stock LOW/OUT for scheduled units 0.25 → 0.23.
+- **Resets:** control→before 0.9% of units; before→after (28 stores) 2.7%.
+- **Meijer (final):** M1 fails, M2 and M3 hold, M4 fails (see above).
+- The Walmart 14:00 visit started 14:07.

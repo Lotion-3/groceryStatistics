@@ -1,0 +1,11 @@
+hypothesis,prediction,value,n,holds,note
+H1,old promotion gone in after >= 0.95,1.0,1950,True,
+H2,price-change rate: scheduled >= 0.80,0.9174358974358975,1950,True,
+H2,price-change rate: not scheduled <= 0.15,0.135293278150421,14014,True,
+H5,new prices effective before the expiry >= 0.15,0.011794871794871795,1950,False,
+H5,new prices effective Wed 04:00-11:00 ET >= 0.50,0.9061538461538462,1950,True,
+H3,change rate before->after >= 3 x control->before,42.0694172181526,15964,True,"event 0.2308 (n=15964), control 0.0055 (n=34081)"
+H4,probe_pre: scheduled promotions still present >= 0.90,1.0,979,True,
+H4,probe_post: scheduled promotions gone >= 0.90,1.0,975,True,
+H6a,H6a_same_effective_minute: within zone > across zone (one-sided p < 0.05),0.09295318371381876,20958,True,"within 0.100, across 0.007, p = 0.0082"
+H6b,H6b_same_new_price: within zone > across zone (one-sided p < 0.05),0.2160565325281366,20958,True,"within 0.963, across 0.747, p = 0.0002"
