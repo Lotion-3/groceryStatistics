@@ -121,6 +121,36 @@ def select() -> pd.DataFrame:
     return s
 
 
+DAILY_LIMIT = 10_000          # Kroger Products API calls per day
+DAILY_GUARD = 8_500           # stop starting new stores above this estimate
+CALLS_PER_ITEM = 1.4          # full search + short-term fallback (measured about 1.36)
+
+
+def calls_today() -> int:
+    """Estimated Kroger calls in the current day: raw responses saved since local
+    midnight and since UTC midnight (whichever window is larger), times the calls
+    per saved response. Kroger does not say which day boundary it uses."""
+    import glob
+    import os
+    import time
+    from datetime import datetime, timezone
+    now = time.time()
+    local0 = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+    utc0 = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+    ts = [os.path.getmtime(f) for f in glob.glob(str(ROOT / "data" / "raw" / "*" / "kroger" / "*" / "*.json.gz"))
+          if now - os.path.getmtime(f) < 86400]
+    return int(max(sum(t >= local0 for t in ts), sum(t >= utc0 for t in ts)) * CALLS_PER_ITEM)
+
+
+def wait_for_quota(per_store: int = 58) -> None:
+    """Sleep until the next day boundary while today's estimated calls plus one more
+    store would pass DAILY_GUARD (DECISIONS #56)."""
+    import time
+    while (c := calls_today()) + per_store * CALLS_PER_ITEM > DAILY_GUARD:
+        print(f"  daily quota guard: about {c} Kroger calls today (guard {DAILY_GUARD}); waiting 30 min", flush=True)
+        time.sleep(1800)
+
+
 def run(snapshot_id: int = 2) -> None:
     from collectors import kroger as K
     from collectors.common import upsert_store
@@ -138,6 +168,7 @@ def run(snapshot_id: int = 2) -> None:
         return
     sess = K.Session()
     for i, s in enumerate(sample.itertuples(), 1):
+        wait_for_quota(len(items))
         z = zip_info(s.zip)
         store = {"chain": "kroger", "store_id": str(s.location_id), "name": f"{s.banner} {s.name}",
                  "lat": float(s.lat), "lon": float(s.lon), "zip": s.zip, "state": z["state"] or s.state,
