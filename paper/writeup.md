@@ -145,12 +145,12 @@ that distance alone creates in a naive comparison).
 | Variogram range | no plateau | no plateau | ≈ 850 km | no plateau* |
 | Zones | 10; largest 79 stores, 27 states | 5 (not robust) | 18 regional | 28, division-aligned |
 | Nearby stores in the same zone vs permuted | 50% vs 20% | 78% vs 25% | 50% vs 6% | 48% vs 5% |
-| Split-half replication (ARI) | 0.52–0.54 | 0.41–0.53 | 0.96 | 0.83–0.98* |
+| Split-half replication (ARI) | 0.52–0.54 | 0.41–0.53 | 0.96 | 0.90–0.98* |
 
 All spatial-coherence p = 0.001. *Kroger, 191 stores (banner sample in progress). Its
 variogram had a plateau at about 240 km on the first 121 stores; with distant divisions
-added it keeps rising (local zones within a nationwide gradient). Robustness checks were
-run on 160 stores (25 zones).
+added it keeps rising (local zones within a nationwide gradient). Robustness checks
+on 191 stores: split-half ARI 0.90–0.98; γ = 0.5 vs 1 ARI 0.95.
 
 ![Figure 1](../figures/fig_e1_price_list_variogram.png)
 *Figure 1. Price-list variogram: share of shared products priced differently, by distance
@@ -167,7 +167,7 @@ between stores. Bands are 95% store-bootstrap intervals.*
   replicate almost perfectly: split-half ARI 0.96, and ARI 0.99 across priors.
 - **Kroger** is the most local at short range (Figure 3). Stores within 100 km differ on
   8% of shared products within a banner and 72% across banners. The zones replicate
-  (split-half ARI 0.83–0.98).
+  (split-half ARI 0.90–0.98).
 
   **They follow Kroger's operating divisions even more closely than its banners.** The
   location id starts with a 3-digit division number. At 191 stores (16 banners, 20
@@ -196,15 +196,14 @@ regional zones.*
 model never sees banners, yet most zones fall inside one banner (and more inside one
 division).*
 
-**Departures and extremes** (M2, Figure 4; Kroger 160 stores and Walmart 41; 8,002 prices,
-70% at list; R-hat ≤ 1.006, no divergences).
-- **Kroger:** departure sizes are almost entirely regional (spatial share 0.996, 90%
-  interval 0.985–1.000; length-scale about 92 km).
-- **Walmart:** spatial share 0.51 (0.35–0.68).
-- **Departure size:** +3.0% on average at Kroger and about 0 at Walmart.
-- **Fit:** PSIS-LOO does not separate the spatial model from the model without $f$, and the
-  extreme departures are heavier than the fitted $t_{\nu \approx 2.2}$ (99th percentile 0.34
-  observed vs 0.30 replicated).
+**Departures and extremes** (M2, Figure 4). The model is fitted to Kroger (191 stores),
+Meijer (71) and Walmart (41): 12,108 prices, 78% at list. It converges (4 × 2,000 draws,
+R-hat ≤ 1.005, no divergences).
+- **Spatial share of store-level departure size:** Kroger 0.93 (90% interval 0.89–0.96);
+  Walmart 0.49 (0.32–0.65); Meijer 0.13 (0.06–0.23). Kroger's departures are regional,
+  while Meijer's are store-specific. Length-scale about 120 km.
+- **Fit:** PSIS-LOO favours the spatial model by 80 ± 16 elpd. Departures are very
+  heavy-tailed ($t_{\nu \approx 1.3}$).
 - **Extremes:** the upper tail is mostly geographic. A Honolulu Walmart charges \$6.28
   for milk against a chain median of \$2.97. Without Hawaii and Alaska, Walmart's
   generalised-Pareto shape is about 0 ($\hat\xi = -0.04$, 95% CI −0.40 to 0.14).
@@ -454,8 +453,8 @@ Pairs sharing a store are dependent, so bands come from a store bootstrap.
   permuted labels.
 
 **Prior sensitivity of the zones.**
-- Kroger (160 stores): $\gamma = 0.5$ vs 1 gives ARI 0.92; $\gamma = 5$ merges zones
-  (25 → 14).
+- Kroger (191 stores): $gamma = 0.5$ vs 1 gives ARI 0.95; $gamma = 5$ merges zones
+  (27 → 17).
 - ALDI: 7–11 zones across $\gamma$. With 91% of prices at list and 0.6% unique to one
   store, each store carries little information.
 - Walmart: 4–6 zones.

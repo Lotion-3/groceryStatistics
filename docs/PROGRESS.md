@@ -709,3 +709,10 @@ simulation was not rerun because it is slow.
   - **Module B at 2,000 draws** on the current Kroger stores (CPU only).
   - Not started: the Kroger banner resume, which shares the 10,000/day key with the event
     passes. It resumes after the late pass as planned.
+- **Parallel analysis results (20:04):**
+  - Kroger zone robustness on 191 stores: split-half ARI 0.90–0.98; prior γ = 0.5 vs 1
+    ARI 0.95; γ = 5 merges 27 → 17.
+  - Module B now includes Meijer (303 stores: Kroger 191, Meijer 71, Walmart 41; 12,108
+    prices). M2 R-hat 1.005, ESS ≥ 1,205. Spatial share: Kroger 0.93, Walmart 0.49,
+    Meijer 0.13. LOO favours M2 by 80 ± 16 (now decisive). ν ≈ 1.3; ℓ ≈ 120 km.
+  - Write-up updated.
