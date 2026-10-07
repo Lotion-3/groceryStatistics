@@ -1,0 +1,3 @@
+chain,stores,split,products_per_half,zones_half1,zones_half2,ari_half1_vs_half2,ari_half1_vs_full,ari_half2_vs_full
+walmart,83,0,602,2,10,0.0903620795802863,0.07223014478269471,0.7467835279513764
+walmart,83,1,602,11,12,0.41051026464035695,0.6043757423278356,0.5090240204174138

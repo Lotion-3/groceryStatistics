@@ -73,8 +73,8 @@ We use regular prices to the cent, and only rows the retailer ties to the reques
 | Costco | 175 | 100% | Instacart |
 | Kroger family | 192 | 96% | official API; banner sample in progress (about 270) |
 | Meijer | 83 | 100% | Michigan core (its locator blocks automated use) |
-| Walmart | 42 | 99% | stopped at a captcha |
-| Target | 16 | 16 matched items | short budgeted sessions |
+| Walmart | 84 | 99% | all 250 anchors (extended Oct 6–7) |
+| Target | 28 | 16 matched items | short budgeted sessions (ongoing) |
 
 **Timestamps and panels.** Kroger's API gives every price an *effective* and a scheduled
 *expiration* timestamp; Meijer gives a sale's end date. The pre-registered event panels
@@ -137,15 +137,15 @@ that distance alone creates in a naive comparison).
 
 ## 4. Results: space
 
-| | ALDI (204) | Walmart (41) | Costco (174) | Kroger (191) |
+| | ALDI (204) | Walmart (83) | Costco (174) | Kroger (191) |
 |---|---|---|---|---|
-| Prices at list | 91% | 91% | 76% | 65% |
-| Departures upward (median) | 19% (−7.9%) | 76% (+4.8%) | 50% (+0.3%) | 66% (+4.5%) |
-| $\delta$: stores < 50 km apart → > 2,000 km apart | 6.5% → 20% | 5.3% → 21% | 8.9% → 36% | 20% → 63% |
+| Prices at list | 91% | 92% | 76% | 65% |
+| Departures upward (median) | 19% (−7.9%) | 75% (+4.9%) | 50% (+0.3%) | 66% (+4.5%) |
+| $\delta$: stores < 50 km apart → > 2,000 km apart | 6.5% → 20% | 5.0% → 17% | 8.9% → 36% | 20% → 63% |
 | Variogram range | no plateau | no plateau | ≈ 850 km | no plateau* |
-| Zones | 10; largest 79 stores, 27 states | 5 (not robust) | 18 regional | 28, division-aligned |
-| Nearby stores in the same zone vs permuted | 50% vs 20% | 78% vs 25% | 50% vs 6% | 48% vs 5% |
-| Split-half replication (ARI) | 0.52–0.54 | 0.41–0.53 | 0.96 | 0.90–0.98* |
+| Zones | 10; largest 79 stores, 27 states | 12 (not robust) | 18 regional | 28, division-aligned |
+| Nearby stores in the same zone vs permuted | 50% vs 20% | 59% vs 10% | 50% vs 6% | 48% vs 5% |
+| Split-half replication (ARI) | 0.52–0.54 | 0.09–0.41 | 0.96 | 0.90–0.98* |
 
 All spatial-coherence p = 0.001. *Kroger, 191 stores (banner sample in progress). Its
 variogram had a plateau at about 240 km on the first 121 stores; with distant divisions
@@ -160,9 +160,11 @@ between stores. Bands are 95% store-bootstrap intervals.*
 - **ALDI** runs one national list over most of the country, with regional zones
   (California, the Mid-Atlantic, Texas, Arizona/Nevada) (Figure 2). Its departures are
   mostly markdowns.
-- **Walmart** has no identical store lists. Dissimilarity rises slowly with distance, with
-  distinct West Coast and Mountain groups. Departures are mostly upward. Its specific zone
-  map does not replicate at 41 stores, but the gradient does.
+- **Walmart** has no identical store lists. Dissimilarity rises slowly and steadily with
+  distance (5% for nearby stores, 17% across the country), and departures are mostly
+  upward. Doubling the sample to 83 stores did **not** make discrete zones appear: the zone
+  map still does not replicate (split-half ARI 0.09–0.41). Walmart prices on a gradient,
+  not in zones.
 - **Costco on Instacart** forms about 18 regional zones on a scale of about 850 km. They
   replicate almost perfectly: split-half ARI 0.96, and ARI 0.99 across priors.
 - **Kroger** is the most local at short range (Figure 3). Stores within 100 km differ on

@@ -1,7 +1,7 @@
 chain,stores,nugget,sill,range_km,plateau_reached,note,pairs_fitted
 aldi,204,0.08178476431604641,,,False,"no plateau within observed distances: dissimilarity keeps rising (gradient, not zones of a fixed size); sill/range not identified",20706
-walmart,41,0.05417421498906504,,,False,"no plateau within observed distances: dissimilarity keeps rising (gradient, not zones of a fixed size); sill/range not identified",820
+walmart,83,0.04890159429228767,,,False,"no plateau within observed distances: dissimilarity keeps rising (gradient, not zones of a fixed size); sill/range not identified",3403
 costco,174,0.09085085798118665,0.37228634916590664,848.0150331619792,True,,15051
 kroger,191,0.3695956148881003,,,False,"no plateau within observed distances: dissimilarity keeps rising (gradient, not zones of a fixed size); sill/range not identified",18145
 meijer,71,0.0009700783893565072,0.04863421851333133,44.23654968057621,True,,2485
-target,16,0.370844990070563,,,False,"no plateau within observed distances: dissimilarity keeps rising (gradient, not zones of a fixed size); sill/range not identified",120
+target,28,0.38665684407710904,,,False,"no plateau within observed distances: dissimilarity keeps rising (gradient, not zones of a fixed size); sill/range not identified",378

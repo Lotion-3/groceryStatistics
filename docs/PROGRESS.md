@@ -777,3 +777,11 @@ simulation was not rerun because it is slow.
   about 9,570, under 9,800. No delay needed.
 - Kroger after pass waits for 10:00 (or the owner's return); Meijer after at 07:00;
   Walmart panel visit at 08:00.
+- **Walmart at 83 stores (Module E + zone sensitivity, 06:07):**
+  - 92% at list; departures 75% up (median +4.9%); δ 5% → 17% with distance; no
+    variogram plateau.
+  - 12 zones, coherent in space (59% vs 10%) but **not replicable** (split-half ARI
+    0.09–0.41; prior γ 0.5–5 gives 15–5 zones).
+  - Doubling the sample confirms Walmart prices on a gradient, not in zones.
+  - Write-up updated (results table, architecture text, coverage table: Walmart 84,
+    Target 28).

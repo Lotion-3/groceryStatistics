@@ -1,0 +1,4 @@
+chain,stores,gamma,zones_ge2,zones_post_mean,ari_vs_gamma1,start_agreement_ari
+walmart,83,0.5,15,14.44,0.8734645475421203,0.8712916527815543
+walmart,83,1.0,13,12.03,1.0,0.8676749547554028
+walmart,83,5.0,5,5.5,0.3742922993119154,0.5689417992162885
