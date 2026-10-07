@@ -111,7 +111,7 @@ All seven predictions are reported whether they hold or not, with n and prelimin
 labels. Missed passes (API errors, hard stops) are reported. Units not observed in both
 passes of a comparison are dropped and counted.
 
-## Addendum 1 (2026-10-04, about 02:10 Eastern; after commit af68714, before any event data)
+## Addendum 1 (2026-10-04, about 02:10 Eastern; after commit abce80e, before any event data)
 
 **Added estimand: the promotion cohort observed when it starts.**
 

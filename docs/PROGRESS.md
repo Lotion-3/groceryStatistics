@@ -257,7 +257,7 @@ compares Walmart's pick with a UPC proposed independently from Meijer/Kroger sea
   prices carry 9999-12-31. 9,326 promotions expire at the same instant nationwide:
   2026-10-07T03:59:59Z, which is **Tue Oct 6, 23:59 Eastern**. Earlier messages said
   "Tue Oct 7"; Oct 7 is the Wednesday.
-- **Pre-registration** (`docs/PREREGISTRATION_EVENT.md`, committed af68714 at 01:38
+- **Pre-registration** (`docs/PREREGISTRATION_EVENT.md`, committed abce80e at 01:38
   Eastern): predictions H1–H7, frozen zones, panel, probe list and Module H code. Module H
   is tested on synthetic data. Addendum 1 (about 02:10, uncommitted) adds the "cohort
   observed when it starts" length estimand.
@@ -825,3 +825,10 @@ simulation was not rerun because it is slow.
 - **Resets:** control→before 0.9% of units; before→after (28 stores) 2.7%.
 - **Meijer (final):** M1 fails, M2 and M3 hold, M4 fails (see above).
 - The Walmart 14:00 visit started 14:07.
+
+**Wed 2026-10-07, history rewrite (owner request).** The Claude co-author trailer was
+removed from all 128 commits (`git filter-branch --msg-filter`; author and commit dates
+preserved). Commit hashes changed, so references were updated. The pre-registration commit
+**af68714 is now abce80e** (still dated 2026-10-04 01:38 Eastern). The pre-rewrite history
+is kept on branch `backup/before-attribution-rewrite`. Future commits carry no attribution
+trailer.

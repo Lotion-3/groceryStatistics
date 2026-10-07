@@ -319,7 +319,7 @@ length from one snapshot under four estimators.*
 scheduled to expire at one instant nationwide: Tuesday Oct 6, 23:59 Eastern.
 
 Before any event data existed, we committed (`docs/PREREGISTRATION_EVENT.md`, commit
-af68714) the frozen zones, the 60 panel stores, analysis code tested on synthetic data,
+abce80e) the frozen zones, the 60 panel stores, analysis code tested on synthetic data,
 and seven predictions:
 - the expiry is enforced, at the instant;
 - the expiration date predicts which prices change;
