@@ -741,3 +741,21 @@ simulation was not rerun because it is slow.
 - **Meijer before** finished 19:35 (15 stores, 936 scheduled). **Walmart 20:00 visit** fine
   (10 stores).
 - `event_snapshots()` = {control: 6, before: 10, probe_pre: 14}.
+
+**Wed 2026-10-07, 00:47 post-expiry check (PRELIMINARY, partial data: probes only)**
+- **Probe pre** (snapshot 14, 22:30–22:49) and **probe post** (snapshot 15, 00:15–00:32)
+  both finished; 12/12 stores; no 401/429. Probe early waits for 05:00.
+- **H4 peek** (scheduled units from the before pass, matched in the probes):
+  - probe pre: 979 units at 12 stores, **100% of the scheduled promotions still
+    present**;
+  - probe post: 975 units, **100% gone**, and 93.6% show a different shelf price.
+  - Among the gone: 90.1% back at the regular price, 9.9% renewed as a new promotion
+    record.
+  - If the final probes confirm this, H4 holds on both arms: the expiry is enforced at
+    the instant.
+- **H5 definitional caveat (noticed with event data, so post hoc).** Many reverted
+  prices carry their *old* regular-price effective date (e.g. Sep 23, Sep 30), not a new
+  one. Only some got fresh records (Tue 23:39, Wed 00:03). H5 classifies "new prices" by
+  effective time, so reverted records dated in September count as "before the expiry".
+  H5 will be reported exactly as pre-registered, plus a clearly labelled post-hoc
+  refinement that excludes reverted (old-dated) records.
