@@ -161,6 +161,20 @@ def analyse(passes: dict[str, pd.DataFrame], zones: pd.Series, banner: pd.Series
         morning = rate((et.dt.date == pd.Timestamp("2026-10-07").date()) & et.dt.hour.between(4, 10))
         add("H5", "new prices effective before the expiry >= 0.15", early["rate"], early["n"], early["rate"] >= 0.15)
         add("H5", "new prices effective Wed 04:00-11:00 ET >= 0.50", morning["rate"], morning["n"], morning["rate"] >= 0.50)
+        # POST HOC (noticed in the probe data, Addendum 10): many expired promotions revert to
+        # their old regular-price record, which keeps its September effective date. Restrict
+        # to fresh records (effective after the before-pass record and within the event
+        # window, Tue 12:00 to Thu 00:00 ET). Reported as an estimate, not a test.
+        fresh = newp[(newp["eff_b"] > newp["eff_a"]) & newp["eff_b"].between(
+            pd.Timestamp("2026-10-06T16:00Z"), pd.Timestamp("2026-10-08T04:00Z"))]
+        fet = fresh["eff_b"] - pd.Timedelta(hours=4)
+        est.append({"estimate": "POST HOC: share of changed scheduled units with a fresh record", "value": float(len(fresh) / max(1, len(newp))),
+                    "ci_lo": np.nan, "ci_hi": np.nan, "n": int(len(newp))})
+        est.append({"estimate": "POST HOC H5a: fresh records effective before the expiry", "value": float((fresh["eff_b"] < EXPIRY).mean()) if len(fresh) else np.nan,
+                    "ci_lo": np.nan, "ci_hi": np.nan, "n": int(len(fresh))})
+        est.append({"estimate": "POST HOC H5b: fresh records effective Wed 04:00-11:00 ET",
+                    "value": float(((fet.dt.date == pd.Timestamp("2026-10-07").date()) & fet.dt.hour.between(4, 10)).mean()) if len(fresh) else np.nan,
+                    "ci_lo": np.nan, "ci_hi": np.nan, "n": int(len(fresh))})
         gone = sch[sch["old_promo_gone"]]
         ren = gone["promo_b"]
         lo, hi = cluster_ci(ren, gone["store_pk"], rng)

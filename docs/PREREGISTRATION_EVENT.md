@@ -249,3 +249,16 @@ The owner is away with the laptop from 09:10 on Wed Oct 7.
   moved earlier: a pass starting about 05:30 would reach some stores before their morning
   price batch (04:00–10:00 local) and undercount changes.
 - Pass start and end times are reported.
+
+## Addendum 10 (2026-10-07, about 01:50 Eastern; after the probes, before the Kroger after pass): post-hoc H5 refinement
+
+The probe data showed that many expired promotions revert to their **old** regular-price
+record, which keeps its September effective date. H5 classifies new prices by effective
+time, so these records count as "before the expiry". H5 is reported exactly as
+pre-registered. Module H **also** reports, labelled POST HOC and as estimates rather than
+tests:
+- the share of changed scheduled units that got a fresh record (effective after the
+  before-pass record, between Tue 12:00 and Thu 00:00 Eastern);
+- H5a and H5b computed on those fresh records only.
+
+This refinement was defined after seeing probe data and is not confirmatory.
