@@ -785,3 +785,22 @@ simulation was not rerun because it is slow.
   - Doubling the sample confirms Walmart prices on a gradient, not in zones.
   - Write-up updated (results table, architecture text, coverage table: Walmart 84,
     Target 28).
+
+**Wed 2026-10-07, 08:37 pre-departure check**
+- **Meijer after pass** (moved to 07:00): 07:00–07:39, 15/15 stores, 16,637
+  store-products, no errors.
+- **Pre-registered Meijer predictions (Addendum 4), reported as they came out:**
+  - M1 (≥ 80% of scheduled sale prices change): **0.37, FAILS** (n = 860);
+  - M2 (≤ 15% of other prices change): 0.025, holds (n = 15,632);
+  - M3 (event change rate ≥ 3× control): **54×**, holds (0.0434 vs 0.0008);
+  - M4 (≥ 90% of products with one new price across stores): **0.65, FAILS** (n = 66).
+- Exploratory reading of M1: of 860 scheduled units, 541 kept their price, and 499 of
+  those were **renewed to 2026-10-13** (another week at the same sale price). Of the 319
+  that changed, 158 reverted to regular (good-through 2099). Meijer extends most expiring
+  sales rather than ending them, which the prediction did not anticipate.
+- **Walmart 08:00 visit** (first after the Tue-night ad-week boundary): all 10 stores.
+  Module I: overnight **1/4,158** changes, intraday 1/3,632. No ad-week repricing at
+  Walmart.
+- Probe early done (05:16); Walmart extension finished at 84 stores.
+- **While the laptop is away:** the Kroger after pass starts automatically when it is back
+  online (window until Thu 09:45); the late pass is Thu 10:00.
