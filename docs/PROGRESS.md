@@ -725,3 +725,9 @@ simulation was not rerun because it is slow.
   - Banner quota guard added (DECISIONS #56).
   - Outreach drafts (one-pager, four emails) in `docs/outreach/`, uncommitted, for the
     owner to decide.
+- **21:26, more stores** (DECISIONS #57):
+  - Walmart extension in snapshot 2 started (stops before the 08:00 panel visit; budget
+    2,400).
+  - Target scheduler: a 64-query run every 6 h (first 21:26).
+  - Same 5 s pacing and the unchanged session policy. The proactive retire-at-45 idea
+    was dropped (it would be evasion).
