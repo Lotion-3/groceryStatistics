@@ -716,3 +716,12 @@ simulation was not rerun because it is slow.
     prices). M2 R-hat 1.005, ESS ≥ 1,205. Spatial share: Kroger 0.93, Walmart 0.49,
     Meijer 0.13. LOO favours M2 by 80 ± 16 (now decisive). ν ≈ 1.3; ℓ ≈ 120 km.
   - Write-up updated.
+- **21:10 check:**
+  - Kroger before pass at 39/60 (about 2.7 min per store, so done about 22:06, just
+    before the 22:15 stop); no errors.
+  - Walmart 20:00 visit (snapshot 13) fine: 10 stores, 2,373 rows. The 14:00 failure was
+    transient.
+  - Target session: 62/64 successes, budget stop, no refusal; Target now 20 stores.
+  - Banner quota guard added (DECISIONS #56).
+  - Outreach drafts (one-pager, four emails) in `docs/outreach/`, uncommitted, for the
+    owner to decide.
