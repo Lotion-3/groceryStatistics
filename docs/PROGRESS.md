@@ -731,3 +731,13 @@ simulation was not rerun because it is slow.
   - Target scheduler: a 64-query run every 6 h (first 21:26).
   - Same 5 s pacing and the unchanged session policy. The proactive retire-at-45 idea
     was dropped (it would be evasion).
+
+**Tue 2026-10-06, 22:57 event-night check**
+- **Kroger before pass (snapshot 10) complete:** finished 22:03, before the 22:15 stop.
+  60/60 stores, 34,467 store-products, **4,918 scheduled units**.
+- **Probe pre (snapshot 14):** started 22:30:58, finished 22:49 (well before the 23:59
+  expiry). 12/12 stores, 3,902 store-products, all with expiration; no 401/429.
+- **Probe post** waiting for 00:15.
+- **Meijer before** finished 19:35 (15 stores, 936 scheduled). **Walmart 20:00 visit** fine
+  (10 stores).
+- `event_snapshots()` = {control: 6, before: 10, probe_pre: 14}.
