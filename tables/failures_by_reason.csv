@@ -30,7 +30,7 @@ snapshot_id,chain,reason_category,n
 2,costco,no Instacart Costco shop for zip=88103,1
 2,costco,no Instacart Costco shop for zip=88230,1
 2,costco,no Instacart Costco shop for zip=93265,1
-2,kroger,empty,295
+2,kroger,empty,577
 2,kroger,no Kroger-family store within 15 mi of zip=08822,2
 2,kroger,no Kroger-family store within 15 mi of zip=79068,2
 2,kroger,no Kroger-family store within 15 mi of zip=95671,2
@@ -231,6 +231,7 @@ snapshot_id,chain,reason_category,n
 2,kroger_ce,no Kroger-family store within 15 mi of zip=96001,1
 2,kroger_ce,no Kroger-family store within 15 mi of zip=96725,1
 2,kroger_ce,store lookup zip=91011,1
+2,meijer,empty,58
 2,meijer,BLOCKED (chain stopped for this run) explicit,1
 2,meijer,no Meijer within 50 km of zip=01527,1
 2,meijer,no Meijer within 50 km of zip=02131,1
@@ -280,10 +281,14 @@ snapshot_id,chain,reason_category,n
 2,meijer,no Meijer within 50 km of zip=96001,1
 2,meijer,no Meijer within 50 km of zip=96725,1
 2,meijer,no Meijer within 50 km of zip=97062,1
-2,target,budget,5
-2,target,session-replace,3
-2,target,soft,3
+2,target,budget,9
+2,target,soft,9
+2,target,session-replace,7
+2,target,STOPPED for this run (not a block),1
+2,walmart,empty,3
 2,walmart,BLOCKED (chain stopped for this run) explicit,1
-2,walmart,empty,1
+2,walmart,budget,1
+2,walmart,scope zip=02072,1
 2,walmart,scope zip=02131,1
 2,walmart,scope zip=16329,1
+2,walmart,scope zip=19102,1

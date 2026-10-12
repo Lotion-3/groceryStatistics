@@ -832,3 +832,22 @@ preserved). Commit hashes changed, so references were updated. The pre-registrat
 **af68714 is now abce80e** (still dated 2026-10-04 01:38 Eastern). The pre-rewrite history
 is kept on branch `backup/before-attribution-rewrite`. Future commits carry no attribution
 trailer.
+
+**Wed 2026-10-07, 19:50: FINAL Module H (Kroger after pass 60/60, finished 16:37)**
+- **Kroger: 9/10 hold.** H1 1.000; H2 0.899 / 0.144; H3 46×; H4 1.00 / 1.00;
+  H5a 0.170 (holds); H5b 0.766; **H6a fails** (0.085 vs 0.014, p = 0.06); H6b holds
+  (p = 0.0002). H7 waits for the Thu 10:00 late pass.
+- The provisional cut changed: H5a went from fail to hold, and H6a from hold to fail.
+  H5a is driven entirely by Harris Teeter (097): 73% early there, 0 elsewhere (post hoc,
+  results note in the pre-registration).
+- Estimates: renewal 0.42 (0.39–0.45); new cohort mean planned length 18.7 days
+  (18.3–19.2), 59% 3-week; resets before→after 5.1% of units.
+- Module I (8 Walmart visits, 10 stores): 2/5,435 intraday and 1/4,377 overnight changes;
+  P(stay off list) = 0.9996.
+- Write-up §5.4, §5.5 and the abstract are updated with the final numbers and Figure 6.
+- An empty `data/grocery.db` was created by a mistyped check (the real DB is
+  `data/grocery.sqlite`). It is safe to delete; it is not used.
+
+### 2026-10-08 early: full rerun with all collected data
+- `run_all.py` rerun finished cleanly. Write-up numbers refreshed from the new tables: Module B now has four chains (Kroger 191, Meijer 71, Walmart 83, Target 39; 15,317 prices), spatial shares Kroger 0.88, Target 0.46, Walmart 0.39, Meijer 0.12; LOO gap 80 ± 13; t df about 1.5; Walmart GPD shape without HI/AK 0.03 (-0.22 to 0.19); Kroger demographic out-of-sample R2 0.39 (191 stores, was 0.11 at 108); Walmart panel 9 visits, 3 changes in 11,725 transitions.
+- Not re-derived: the "gap vs Walmart" cross-chain medians in section 4 (Target +0.5%, Meijer +5.6%, Kroger +9.7%) come from an earlier computation that is not in tables/; the current `module_a_cross_chain.csv` (median deviation from the cross-chain median) has different UPC sets. Check before sending.

@@ -11,6 +11,30 @@ Costco (Instacart), Kroger (official API), Walmart, and partly Target and Meijer
 `docs/PREREGISTRATION_EVENT.md`. Plan and first results: `docs/STUDY_PLAN.md`. Day-by-day log:
 `docs/PROGRESS.md`. Every design choice: `docs/DECISIONS.md`.
 
+## Key findings (preliminary; full write-up in [`paper/writeup.md`](paper/writeup.md))
+
+- **Prices are a point mass plus structured departures.** 91% of prices at ALDI and
+  Walmart, and 65% at Kroger, sit exactly at the chain's list price.
+- **Four pricing architectures,** recovered from prices alone by a Dirichlet-process zone
+  model, a price-list variogram and a two-part Bayesian spatial model:
+  - ALDI: a national list with regional zones.
+  - Walmart: a slow gradient.
+  - Costco (Instacart): regional zones.
+  - Kroger: local zones nested in its operating divisions (95% purity; split-half ARI
+    0.90–0.98).
+- **Timestamps independently confirm the zones.** Same-zone Kroger stores start a price
+  record in the same minute 4× as often as other stores (0.25 vs 0.06, p < 0.001). Each
+  zone is updated as an overnight batch that walks its store list in store-number order.
+- **Pre-registered event** (nationwide Kroger promotion expiry, Oct 6, 2026; 60 stores,
+  34,177 store-products): **9 of 10 predictions hold.** The expiry was enforced within 16
+  minutes, and the event night had 46× the control night's change rate. Zones did not
+  significantly share the new effective minute (p = 0.06).
+- **Walmart barely moves:** 3 price changes in 11,725 store-product transitions over 9
+  repeat visits.
+
+Every number states its sample size, and every method was checked on simulated data
+first (`simulation/`). Nothing is causal. See [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md).
+
 ## Layout
 
 ```
@@ -114,7 +138,8 @@ scripts\final_rerun.ps1                                   # final analysis rerun
 - **Rate limits.** One request at a time per site:
   - Instacart: ≥ 2 s apart.
   - Walmart and Target: ≥ 5 s, after both pushed back at 2 s.
-  - Kroger: ≥ 9 s.
+  - Kroger (official API): ≥ 9 s for the cross-section; 0.5–1 s for the event panel, kept
+    under the published 10,000 calls/day with a daily guard (DECISIONS #56).
 
   Chains run in parallel only because they are different sites, and per-run query budgets
   keep sessions short.

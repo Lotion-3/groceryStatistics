@@ -1,25 +1,35 @@
 estimate,value,ci_lo,ci_hi,n
-POST HOC: share of changed scheduled units with a fresh record,1.0,,,1950
-POST HOC H5a: fresh records effective before the expiry,0.011794871794871795,,,1950
-POST HOC H5b: fresh records effective Wed 04:00-11:00 ET,0.9061538461538462,,,1950
-"renewal share (promotion again, new effective date)",0.38461538461538464,0.34068799368088465,0.42937725601350824,1950
-discount depth: expired promotions,0.1916654656511376,,,1950
-discount depth: renewals,0.23581238947270428,,,750
-"stock LOW/OUT share, scheduled, before",0.2517948717948718,,,1950
-"stock LOW/OUT share, scheduled, after",0.23487179487179488,,,1950
-"stock LOW/OUT share, other, before",0.19808762665905524,,,14014
-"stock LOW/OUT share, other, after",0.18345939774511202,,,14014
-"renewal share, banner HART",0.5737704918032787,,,183
+POST HOC: share of changed scheduled units with a fresh record,1.0,,,4889
+POST HOC H5a: fresh records effective before the expiry,0.16976886888934342,,,4889
+POST HOC H5b: fresh records effective Wed 04:00-11:00 ET,0.7658007772550623,,,4889
+"renewal share (promotion again, new effective date)",0.42196768255266925,0.3903076040054992,0.45424057120025013,4889
+discount depth: expired promotions,0.20947160652843022,,,4889
+discount depth: renewals,0.2659343787373738,,,2063
+"stock LOW/OUT share, scheduled, before",0.24953978318674574,,,4889
+"stock LOW/OUT share, scheduled, after",0.23951728369809777,,,4889
+"stock LOW/OUT share, other, before",0.19318492215241737,,,29288
+"stock LOW/OUT share, other, after",0.18065419284348538,,,29288
+"renewal share, banner DILLONS",0.3142857142857143,,,70
+"renewal share, banner FOOD4LESS",0.3007518796992481,,,266
+"renewal share, banner FOODSCO",0.302158273381295,,,139
+"renewal share, banner FRED",0.4244604316546763,,,278
+"renewal share, banner FRYS",0.5124716553287982,,,441
+"renewal share, banner HART",0.5643044619422573,,,1143
+"renewal share, banner KINGSOOPERS",0.44755244755244755,,,143
 "renewal share, banner KROGER",0.29736842105263156,,,1140
+"renewal share, banner MARIANOS",0.27986348122866894,,,293
+"renewal share, banner PICK",0.36619718309859156,,,71
 "renewal share, banner RALPHS",0.4880382775119617,,,627
-new cohort: mean planned promotion length (days),18.878700281813444,18.413639401218656,19.50817139166283,2541
-new cohort: share 1 wk,0.209366391184573,,,2541
-new cohort: share 2 wk,0.049586776859504134,,,2541
-new cohort: share 3 wk,0.6666666666666666,,,2541
-new cohort: share 4 wk,0.03699330972058245,,,2541
-new cohort: share 5 wk,0.014561196379378197,,,2541
-new cohort: share 6 wk,0.014167650531286895,,,2541
-new cohort: share 7 wk,0.0007870916961826052,,,2541
-new cohort: share 16 wk,0.0059031877213695395,,,2541
-new cohort: share 17 wk,0.0019677292404565133,,,2541
+"renewal share, banner SMITHS",0.4064748201438849,,,278
+new cohort: mean planned promotion length (days),18.716096953812126,18.276080609904124,19.192634869205065,6106
+new cohort: share 1 wk,0.24353095316082543,,,6106
+new cohort: share 2 wk,0.0725515886013757,,,6106
+new cohort: share 3 wk,0.5936783491647559,,,6106
+new cohort: share 4 wk,0.051261054700294795,,,6106
+new cohort: share 5 wk,0.013101867016049788,,,6106
+new cohort: share 6 wk,0.013429413691451031,,,6106
+new cohort: share 7 wk,0.00032754667540124465,,,6106
+new cohort: share 12 wk,0.0011464133639043563,,,6106
+new cohort: share 16 wk,0.010153946937438586,,,6106
+new cohort: share 17 wk,0.0008188666885031117,,,6106
 probe_early: scheduled promotions gone,1.0,,,974

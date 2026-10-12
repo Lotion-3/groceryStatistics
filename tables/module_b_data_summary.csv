@@ -1,2 +1,2 @@
 rows,stores,products,chains,share_at_list,rows_off_list,share_off_list_upward,shared_upcs,chain_term,excluded_HI_AK_stores
-12108,303,118,"kroger,meijer,walmart",0.7843574496200859,2611,0.7192646495595557,2,chain effect omitted: 2 UPCs shared across chains (< 3),1
+15317,384,159,"kroger,meijer,target,walmart",0.7997649670300973,3067,0.7179654385392892,1,chain effect omitted: 1 UPCs shared across chains (< 3),1

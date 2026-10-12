@@ -1,6 +1,6 @@
-"""Refusal rules (DECISIONS #43, #46), with fake fetches: no network.
-
-A block counts only when a FRESH session is refused on its first request."""
+"""Refusal rules (DECISIONS #46-47), with fake fetches and fake sessions: no
+network. A block counts only when a FRESH session is refused on its first
+request; a session refused after it had worked is replaced, within limits."""
 import pytest
 
 from collectors import session_stash as SS
@@ -14,23 +14,33 @@ def run(tmp_path, monkeypatch):
     con = connect(tmp_path / "t.sqlite")
     load_items(con)
     r = S.Run(con, 1, ["target"])
-    recorded, blocks = [], []
-    monkeypatch.setattr(r, "record", lambda chain, store, pk, it, body, meta: recorded.append(it["item_id"]) or 1)
-    monkeypatch.setattr(r, "fail", lambda *a, **k: None)
+    log = {"recorded": [], "blocks": [], "stops": [], "fresh": 0}
+    mints = {"today": 0}
+
+    def fresh(chain):
+        log["fresh"] += 1
+        return {"cookies": f"fresh-{log['fresh']}"}
+
+    def fail(chain, store_pk, item_id, reason, raw_path=None):
+        if reason.startswith("STOPPED"):
+            log["stops"].append(reason)
+
+    monkeypatch.setattr(r, "record", lambda chain, store, pk, it, body, meta: log["recorded"].append(it["item_id"]) or 1)
+    monkeypatch.setattr(r, "fail", fail)
     monkeypatch.setattr(SS, "ip_changed", lambda: False)
-    monkeypatch.setattr(SS, "has_spare", lambda chain: True)
-    monkeypatch.setattr(SS, "load_spare", lambda chain: {"cookies": "spare"})
-    monkeypatch.setattr(SS, "record_block", lambda chain, msg: blocks.append(msg))
-    monkeypatch.setattr(SS, "record_rest", lambda chain, msg: blocks.append("REST " + msg))
-    return r, recorded, blocks
+    monkeypatch.setattr(SS, "fresh_session", fresh)
+    monkeypatch.setattr(SS, "record_mint", lambda chain, why: None)
+    monkeypatch.setattr(SS, "mints_today", lambda chain: mints["today"])
+    monkeypatch.setattr(SS, "REPLACE_DELAY_S", 0)
+    monkeypatch.setattr(SS, "record_block", lambda chain, msg: log["blocks"].append(msg))
+    return r, log, mints
 
 
-ITEMS = [{"item_id": f"i{k}", "search_term": "x"} for k in range(4)]
+ITEMS = [{"item_id": f"i{k}", "search_term": "x"} for k in range(5)]
 STORE = {"store_id": "1"}
 
 
 def fetcher(script):
-    """script: list of 'ok' / 'block' outcomes, one per request."""
     calls = iter(script)
 
     def fetch(it):
@@ -40,28 +50,34 @@ def fetcher(script):
     return fetch
 
 
-def test_spare_rescues_a_bad_cookie(run):
-    r, recorded, blocks = run
-    r._query_items("target", STORE, 1, ITEMS, fetcher(["ok", "block", "ok", "ok", "ok"]))
-    assert recorded == ["i0", "i1", "i2", "i3"] and not blocks and "target" in r.active
-    assert r.sessions["tsess"] == {"cookies": "spare"}
-
-
-def test_two_sessions_in_a_row_is_an_ip_block(run):
-    r, recorded, blocks = run
-    r._query_items("target", STORE, 1, ITEMS, fetcher(["ok", "block", "block"]))
-    assert recorded == ["i0"] and len(blocks) == 1 and "target" not in r.active
-
-
 def test_fresh_session_refused_on_first_request_is_a_block(run):
-    r, recorded, blocks = run
+    r, log, _ = run
     r._query_items("target", STORE, 1, ITEMS, fetcher(["block"]))
-    assert recorded == [] and len(blocks) == 1 and not blocks[0].startswith("REST")
-    assert "target" not in r.switched                 # no switch: it is a block
+    assert log["recorded"] == [] and len(log["blocks"]) == 1 and log["fresh"] == 0
 
 
-def test_spare_worked_then_refused_is_a_rest_not_a_block(run):
-    r, recorded, blocks = run
-    r._query_items("target", STORE, 1, ITEMS, fetcher(["ok", "block", "ok", "block"]))
-    assert recorded == ["i0", "i1"] and len(blocks) == 1 and blocks[0].startswith("REST")
-    assert "target" not in r.active
+def test_session_that_worked_is_replaced_and_collection_continues(run):
+    r, log, _ = run
+    r._query_items("target", STORE, 1, ITEMS, fetcher(["ok", "block", "ok", "ok", "ok", "ok"]))
+    assert log["recorded"] == ["i0", "i1", "i2", "i3", "i4"] and not log["blocks"] and not log["stops"]
+    assert r.sessions["tsess"] == {"cookies": "fresh-1"} and r.replacements["target"] == 1
+
+
+def test_replacement_refused_on_first_request_is_a_block(run):
+    r, log, _ = run
+    r._query_items("target", STORE, 1, ITEMS, fetcher(["ok", "block", "block"]))
+    assert log["recorded"] == ["i0"] and len(log["blocks"]) == 1 and "target" not in r.active
+
+
+def test_per_run_limit_stops_without_a_block(run):
+    r, log, _ = run
+    r._query_items("target", STORE, 1, ITEMS, fetcher(["ok", "block", "ok", "block", "ok", "block"]))
+    assert log["recorded"] == ["i0", "i1", "i2"] and not log["blocks"] and len(log["stops"]) == 1
+    assert r.replacements["target"] == SS.MAX_REPLACEMENTS_PER_RUN and "target" not in r.active
+
+
+def test_daily_limit_stops_without_a_block(run):
+    r, log, mints = run
+    mints["today"] = SS.MAX_FRESH_PER_DAY
+    r._query_items("target", STORE, 1, ITEMS, fetcher(["ok", "block"]))
+    assert log["recorded"] == ["i0"] and not log["blocks"] and len(log["stops"]) == 1 and log["fresh"] == 0

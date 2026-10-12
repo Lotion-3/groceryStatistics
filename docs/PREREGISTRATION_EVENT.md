@@ -262,3 +262,17 @@ tests:
 - H5a and H5b computed on those fresh records only.
 
 This refinement was defined after seeing probe data and is not confirmatory.
+
+## Results note (2026-10-07, 19:50 Eastern; after the complete Kroger after pass)
+
+Not an addendum to the plan: a record of what was found, written after the data.
+- Final Kroger result (60/60 stores): 9 of 10 testable predictions hold. **H6a fails**
+  (p = 0.06; it was p = 0.008 at 28 stores). **H5a holds** (0.170; it was 0.012 at 28
+  stores). H7 awaits the Thursday late pass. Meijer: M2 and M3 hold, M1 and M4 fail.
+- **POST HOC decomposition of H5a, exploratory:** every new price effective before the
+  expiry is at Harris Teeter (division 097, 8 stores; 73% of its new prices, dated
+  Tue 22:00–24:00 ET). The other 20 divisions show exactly 0. H5a is reported as
+  pre-registered (holds). The write-up states that it holds only because of this one
+  division.
+- The 28-store numbers were reported to the owner as provisional on Wed 14:07 and are
+  kept in `docs/PROGRESS.md`.

@@ -1,13 +1,8 @@
 # How Retailers Price Across Space and Time: National Lists, Pricing Zones and Overnight Batches
 
-*Preliminary draft, 2026-10-06. Numbers come from snapshot 2 (one cross-section, Oct 2–5,
-2026) and from the retailers' own price timestamps. Every result states its sample size.
-Nothing here is causal. A pre-registered event study (§5.4) is in progress. Details of
-data checks and methods are in the Appendix. A Kroger banner sample is being added to
-snapshot 2 (121 → 192 so far, about 270 planned), so Kroger sample sizes differ between
-sections. Each
-result states its own n, and all Kroger numbers will be rerun once the sample is
-complete.*
+*Preliminary draft, 2026-10-07. One cross-section (Oct 2–5, 2026), the retailers' own price
+timestamps, and event panels (Oct 5–8). Every result states its sample size; nothing here
+is causal. Data checks and method details are in the Appendix.*
 
 ## Abstract
 
@@ -17,24 +12,25 @@ chains (up to 250 sampled locations; retailer websites, Instacart-built storefro
 Kroger's official API).
 
 Most prices sit **exactly** at the chain's list price (91% at ALDI and Walmart, 65% at
-Kroger), so dispersion is a point mass plus structured departures. Using a price-list
-variogram, a Dirichlet-process mixture that recovers pricing zones from prices alone, and
-a two-part Bayesian spatial model, we find four architectures:
-- **ALDI:** a national list with regional zones;
-- **Walmart:** a slow gradient;
-- **Costco on Instacart:** regional zones about 850 km across;
-- **Kroger:** local zones nested in its operating divisions (95% purity), although the
-  model never sees banners or divisions.
+Kroger), so dispersion is a point mass plus structured departures. A price-list variogram,
+a Dirichlet-process mixture that finds pricing zones from prices alone, and a two-part
+Bayesian spatial model reveal four architectures:
+- ALDI: a national list with regional zones;
+- Walmart: a slow gradient;
+- Costco on Instacart: regional zones;
+- Kroger: local zones nested in its operating divisions (95% purity), which the model
+  never sees.
 
-Meijer, in its Michigan core, has almost one list and one sale calendar.
+Kroger's price timestamps independently confirm the zones: same-zone stores start a price
+record in the same minute 4× as often as other stores, beyond distance. Each zone is
+updated as an overnight batch that walks its store list in store-number order.
 
-Kroger's price-record timestamps independently confirm that zones are units of its pricing
-system. Same-zone stores start a record on the same day for 90% of shared products (68%
-across zones) and in the same minute for 25% (6%). The effect holds for promotions, holds
-beyond distance in a hierarchical model, and stores clustered on timing alone recover the
-zones. Each zone is updated as a batch that walks its store list in store-number order,
-almost never in the afternoon. A pre-registered event study of a scheduled nationwide
-promotion expiry is in progress. Every method was first checked on simulated data.
+A pre-registered event study followed a nationwide promotion expiry (60 Kroger stores,
+34,177 store-products). Nine of ten predictions held: the expiry was enforced within 16
+minutes, and the event night had 46× the control night's change rate. One failed: zones
+did not significantly share the new effective minute (p = 0.06). Walmart, revisited 9
+times, changed 3 prices in 11,725 transitions. Every method was first checked on simulated
+data.
 
 ## 1. Question
 
@@ -59,8 +55,7 @@ items, collected three ways:
 - Kroger's official API, covering its banners (Kroger, Ralphs, Harris Teeter, Fry's,
   King Soopers, Dillons and others).
 
-The items are 37 groceries, 15 non-grocery items and 6 perishables; cross-chain matches use
-UPCs confirmed from two retailers' catalogues (Appendix A). The core sample is 250
+Cross-chain matches use UPCs confirmed from two retailers' catalogues (Appendix A). The core sample is 250
 locations drawn from Target's 1,893 stores, stratified by Census region × RUCA urbanicity.
 Each other chain contributes the store it assigns to, or has nearest to, each location.
 Kroger and Meijer were then extended with samples designed for their footprints.
@@ -71,25 +66,18 @@ We use regular prices to the cent, and only rows the retailer ties to the reques
 |---|---|---|---|
 | ALDI | 205 | 100% | Instacart-built site |
 | Costco | 175 | 100% | Instacart |
-| Kroger family | 192 | 96% | official API; banner sample in progress (about 270) |
+| Kroger family | 192 | 96% | official API; 16 banners, 20 divisions |
 | Meijer | 83 | 100% | Michigan core (its locator blocks automated use) |
 | Walmart | 84 | 99% | all 250 anchors (extended Oct 6–7) |
-| Target | 28 | 16 matched items | short budgeted sessions (ongoing) |
+| Target | 35 | 16 matched items | short budgeted sessions |
 
 **Timestamps and panels.** Kroger's API gives every price an *effective* and a scheduled
 *expiration* timestamp; Meijer gives a sale's end date. The pre-registered event panels
 (Kroger, 60 stores × 7 passes; Meijer, 15 stores × 3) and a Walmart repeat-visit panel (10
 stores × 3 visits a day) cover Oct 5–8.
 
-**Do requests reach the intended stores?**
-- For every chain, the retailer's own attribution gives as many distinct pricing
-  locations as stores requested.
-- No two stores more than 1,000 km apart share a price list.
-- Dissimilarity rises with distance in every chain.
-- One Instacart fallback shop was found and excluded (Appendix A).
-
-Collection is rate-limited (one request at a time per site, ≥ 5 s apart; 9 s for Kroger).
-Every raw response is archived, and every failure is logged.
+Requests reach the intended stores (Appendix A). Collection is rate-limited (one request
+at a time per site), every raw response is archived, and every failure is logged.
 
 ## 3. Methods
 
@@ -124,16 +112,13 @@ record began.
 - *Co-timing:* we compare same-zone and different-zone store pairs (same banner) on how
   many shared products began on the same day or minute. Zone labels are permuted within
   banner, so banners alone earn no credit.
-- *Dyadic binomial model:* adds distance and store effects.
-- *Timing-only clustering:* compared with the price zones by ARI.
-- *Event study:* the scheduled expiry is pre-registered (§5.4).
+- *Dyadic binomial model* (adds distance and store effects), *timing-only clustering*
+  (compared with the price zones by ARI), and the pre-registered *event study* (§5.4).
 
-**Simulation checks** (Appendix B), all run before the real results: tail-estimator
-coverage 84–97%; exact zone recovery at a 3% product difference and one zone when there
-are none; 13 of 16 two-part-model parameters inside their 90% intervals; the
-promotion-length estimators (§5.3); the dyadic co-timing model (unbiased, 90% intervals
-covering 80–90% in 10 replicates per scenario, and it removes the spurious zone effect
-that distance alone creates in a naive comparison).
+**Simulation checks** (Appendix B), all run before the real results: the zone model
+recovers zones exactly at a 3% product difference and finds one zone when there are none;
+the dyadic model is unbiased and removes the spurious zone effect that distance alone
+creates; tail-estimator coverage is 84–97%.
 
 ## 4. Results: space
 
@@ -147,10 +132,9 @@ that distance alone creates in a naive comparison).
 | Nearby stores in the same zone vs permuted | 50% vs 20% | 59% vs 10% | 50% vs 6% | 48% vs 5% |
 | Split-half replication (ARI) | 0.52–0.54 | 0.09–0.41 | 0.96 | 0.90–0.98* |
 
-All spatial-coherence p = 0.001. *Kroger, 191 stores (banner sample in progress). Its
-variogram had a plateau at about 240 km on the first 121 stores; with distant divisions
-added it keeps rising (local zones within a nationwide gradient). Robustness checks
-on 191 stores: split-half ARI 0.90–0.98; γ = 0.5 vs 1 ARI 0.95.
+All spatial-coherence p = 0.001. *Kroger's variogram had a plateau at about 240 km on its
+first 121 stores; with distant divisions added it keeps rising (local zones within a
+nationwide gradient). Prior sensitivity at 191 stores: γ = 0.5 vs 1, ARI 0.95.
 
 ![Figure 1](../figures/fig_e1_price_list_variogram.png)
 *Figure 1. Price-list variogram: share of shared products priced differently, by distance
@@ -160,16 +144,13 @@ between stores. Bands are 95% store-bootstrap intervals.*
 - **ALDI** runs one national list over most of the country, with regional zones
   (California, the Mid-Atlantic, Texas, Arizona/Nevada) (Figure 2). Its departures are
   mostly markdowns.
-- **Walmart** has no identical store lists. Dissimilarity rises slowly and steadily with
-  distance (5% for nearby stores, 17% across the country), and departures are mostly
-  upward. Doubling the sample to 83 stores did **not** make discrete zones appear: the zone
-  map still does not replicate (split-half ARI 0.09–0.41). Walmart prices on a gradient,
-  not in zones.
-- **Costco on Instacart** forms about 18 regional zones on a scale of about 850 km. They
-  replicate almost perfectly: split-half ARI 0.96, and ARI 0.99 across priors.
-- **Kroger** is the most local at short range (Figure 3). Stores within 100 km differ on
-  8% of shared products within a banner and 72% across banners. The zones replicate
-  (split-half ARI 0.90–0.98).
+- **Walmart** has no identical store lists; dissimilarity rises steadily with distance.
+  Doubling the sample to 83 stores did **not** make zones appear (split-half ARI
+  0.09–0.41): Walmart prices on a gradient.
+- **Costco on Instacart** forms about 18 regional zones about 850 km across, which
+  replicate almost perfectly (ARI 0.96; 0.99 across priors).
+- **Kroger** is the most local (Figure 3). Stores within 100 km differ on 8% of shared
+  products within a banner and 72% across banners.
 
   **They follow Kroger's operating divisions even more closely than its banners.** The
   location id starts with a 3-digit division number. At 191 stores (16 banners, 20
@@ -183,11 +164,8 @@ between stores. Bands are 95% store-bootstrap intervals.*
   The "Kroger" banner spans 9 divisions and is split along them, while banners that share
   a division share zones (Food 4 Less and Foods Co; Dillons, Baker's and Gerbes). Prices
   alone recover the organisational pricing units.
-- **Meijer** (71 stores, its Michigan core) is the most uniform chain.
-  - 97% of prices sit at list.
-  - Nearby stores differ on 0.1% of products, rising to only 4.9%.
-  - Its 7 zones barely beat chance in space and do not replicate (split-half ARI
-    0.28–0.69).
+- **Meijer** (71 stores, Michigan core) is nearly uniform: 97% of prices at list, nearby
+  stores differing on 0.1% of products, and no replicable zones (ARI 0.28–0.69).
 
 ![Figure 2](../figures/fig_e3_zones_aldi.png)
 *Figure 2. ALDI's price-list zones (Dirichlet-process mixture): one national list plus
@@ -199,68 +177,46 @@ model never sees banners, yet most zones fall inside one banner (and more inside
 division).*
 
 **Departures and extremes** (M2, Figure 4). The model is fitted to Kroger (191 stores),
-Meijer (71) and Walmart (41): 12,108 prices, 78% at list. It converges (4 × 2,000 draws,
-R-hat ≤ 1.005, no divergences).
-- **Spatial share of store-level departure size:** Kroger 0.93 (90% interval 0.89–0.96);
-  Walmart 0.49 (0.32–0.65); Meijer 0.13 (0.06–0.23). Kroger's departures are regional,
-  while Meijer's are store-specific. Length-scale about 120 km.
-- **Fit:** PSIS-LOO favours the spatial model by 80 ± 16 elpd. Departures are very
-  heavy-tailed ($t_{\nu \approx 1.3}$).
+Meijer (71), Walmart (83) and Target (39): 15,317 prices, 80% at list. It converges
+(4 × 2,000 draws, R-hat ≤ 1.007, bulk ESS ≥ 430, no divergences).
+- **Spatial share of store-level departure size:** Kroger 0.88 (90% interval 0.83–0.92);
+  Target 0.46 (0.33–0.61); Walmart 0.39 (0.27–0.50); Meijer 0.12 (0.05–0.20). Kroger's
+  departures are regional, while Meijer's are store-specific. Length-scale about 150 km.
+- **Fit:** PSIS-LOO favours the spatial model by 80 ± 13 elpd. Departures are very
+  heavy-tailed ($t_{\nu \approx 1.5}$).
 - **Extremes:** the upper tail is mostly geographic. A Honolulu Walmart charges \$6.28
   for milk against a chain median of \$2.97. Without Hawaii and Alaska, Walmart's
-  generalised-Pareto shape is about 0 ($\hat\xi = -0.04$, 95% CI −0.40 to 0.14).
+  generalised-Pareto shape is about 0 ($\hat\xi = 0.03$, 95% CI −0.22 to 0.19).
 
 ![Figure 4](../figures/fig_b1_spatial_surface.png)
 *Figure 4. Posterior mean of the spatial field $f$ in the two-part model: where off-list
 prices are higher.*
 
-**What predicts price levels? Not demographics.** We tried about 130 neighbourhood,
-urbanicity and competition predictors, with state-blocked cross-validation. Out-of-sample
-R² with the best shrinkage model:
-- ALDI: about 0 (184 stores);
-- Kroger: 0.11 (108 stores);
-- Costco: 0.19 (163 stores; horseshoe).
+**Not demographics.** About 130 neighbourhood, urbanicity and competition predictors, with
+lasso, elastic net and a horseshoe under state-blocked cross-validation, give
+out-of-sample R² of about 0 (ALDI, 184 stores), 0.39 (Kroger, 191) and 0.19 (Costco, 163).
+Kroger's higher figure is probably the zone design showing through: its divisions
+follow geography that demographics proxy. Elsewhere location matters through the zone
+design, not local demographics, consistent with DellaVigna and Gentzkow.
 
-The only clear Kroger coefficient is North Carolina (+2.3%), which is in effect the Harris
-Teeter banner. Price levels show no urban–rural difference in any chain. Location matters
-through the retailer's zone design, not local demographics, consistent with DellaVigna and
-Gentzkow.
-
-**Across chains.** On identical UPCs, medians vs Walmart:
-- Target +0.5% (10 UPCs, 16 stores);
-- Meijer +5.6% (17 UPCs, 71 stores; the same as with 3 stores, as a uniform list implies);
-- Kroger +9.7% (16 UPCs, 191 stores; IQR +5.4 to +16.6).
-
-One chain is cheapest on nearly every item, so splitting a 12-item basket across 2–3
-nearby stores saves a median of **0.05%**. The test covers 88 locations, and the exact
-integer program and the greedy heuristic agree everywhere. Cross-chain gaps are level
-differences, so the violations of the law of one price leave almost no basket arbitrage.
+**Across chains,** on identical UPCs, medians vs Walmart are Target +0.5% (10 UPCs, 16
+stores), Meijer +5.6% (17, 71) and Kroger +9.7% (16, 191). One chain is cheapest on nearly
+every item, so splitting a 12-item basket across 2–3 nearby stores saves a median of
+**0.05%** (88 locations; the integer program and a greedy heuristic agree): violations of
+the law of one price leave almost no basket arbitrage.
 
 ## 5. Results: time (Kroger, n = 109,362 dated price records, 191 stores)
 
 *What a timestamp measures.* Kroger's effective timestamp marks when the current price
-**record** began. Comparing the same store-products on Oct 2–4 and Oct 5 (60 stores), 7.8%
-of regular-price records (0.9% of promotions) got a new timestamp with an **identical**
-price.
-These re-entries come in store-level batches. So:
-- the co-timing below describes the pricing system's **update batches**;
-- regular-price "ages" are record ages, and true spells are longer;
-- promotions are rarely affected.
+**record** began. Over 1–3 days, 7.8% of regular-price records (0.9% of promotions) got a
+new timestamp at an **identical** price, in store-level batches. So co-timing describes
+the system's **update batches**; the event study (§5.4) observes actual price changes.
 
-The event study (§5.4) observes actual price changes.
-
-**5.1 When price records start.**
-- **Weekly calendar.** 89% of promotions and 54% of regular prices start on a Wednesday,
-  the start of Kroger's ad week. 78% of promotions end on a Tuesday night, and 90% run a
-  whole number of weeks.
-- **Time of day.** By store-local time, 66% of price starts fall 03:00–08:00 and 20% fall
-  08:00–12:00. **Only 2.3% of regular prices and 0.4% of promotions** start between noon
-  and 21:00.
-
-Records start in overnight and morning batches. 99.6% of promotions, which rarely reset,
-start outside noon–21:00. We see no sign of the demand-driven ("surge")
-intraday repricing feared with electronic shelf labels (Figure 5a). The Walmart repeat
-visits agree: 1 price change in 5,790 transitions (§5.5).
+**5.1 When price records start.** 89% of promotions and 54% of regular prices start on a
+Wednesday, the start of Kroger's ad week, and 90% of promotions run a whole number of
+weeks. By store-local time, 66% of starts fall 03:00–08:00; **only 2.3% of regular prices
+and 0.4% of promotions** start between noon and 21:00 (Figure 5a). There is no sign of
+intraday ("surge") repricing.
 
 **5.2 Zones change prices together.** Zones were estimated from price *levels* only, so
 timestamps are an independent test of whether they are real units. The table uses
@@ -275,98 +231,92 @@ same-banner store pairs (1,535); p-values come from permuting zone labels within
 | Hierarchical binomial model, odds ratio for same zone, day / minute | 1.59 / 1.75 | 1 | 90% intervals 1.50–1.69 and 1.38–2.21 |
 | Stores clustered by co-timing alone, agreement with price zones (ARI) | 0.70 | 0.60 (permuted) | p = 0.001 |
 
-The model controls for log distance, store effects (pairs sharing a store are dependent)
-and pair-level overdispersion. NUTS: R-hat ≤ 1.006, no divergences. The zone effect is not
-a by-product of sharing a price, of being close, or of record re-entries (it holds for
-promotions): **prices and timestamps identify the same pricing units.**
+The model controls for log distance, store effects and pair-level overdispersion (NUTS:
+R-hat ≤ 1.006, no divergences), so **prices and timestamps identify the same pricing
+units.** Two exploratory findings: within a division (1,354 pairs) the same-minute share
+is 0.28 within zone vs 0.16 across (p = 0.0005), and each batch **walks the store list in
+store-number order** (Kendall's W median 0.62 vs about 0.003 under the null in all 24
+zones tested; Spearman 0.92 on average). Meijer, by contrast, runs one sale calendar
+(71 stores): 99.7% of store pairs end a sale on the same date.
 
-Two exploratory findings sharpen this:
-- **Division sets the day, zone sets the batch.**
-  - Within the same division (1,354 pairs), the same-day share is 0.92 vs 0.87, and the
-    same-minute share is 0.28 vs 0.16 (both p = 0.0005).
-  - A division shares a calendar, but each zone is pushed as its own batch.
-- **Each batch walks the store list in store-number order.** For products repriced on one
-  day at every store of a zone, the order in which stores receive them agrees across
-  products in all 24 zones tested.
-  - Kendall's W median 0.62, vs about 0.003 under the null; median spread 9 minutes.
-  - A store's position correlates with its store number at Spearman 0.92 on average,
-    and exactly 1 in 13 of 21 zones. Location explains little (median |ρ| ≤ 0.40).
-
-**Meijer, by contrast, runs one sale calendar** (71 stores; Meijer reports when each
-store's sale price ends).
-- For a given product, 99.7% of store pairs end the sale on the same date, and zones add
-  nothing.
-- 83% of sales end on a Tuesday, and 6,953 store-products end on Oct 6–7: the same night
-  as Kroger's mass expiry (§5.4).
-
-**5.3 How long do promotions last? One snapshot, four answers.** A snapshot sees only
-promotions still running, so long promotions are over-represented (the inspection
-paradox). Each correction relies on a different invariance, and they disagree (Figure 5b):
-- naive mean 29.3 days;
-- renewal theory from ages 18.4;
-- length-bias correction $1/\mathbb{E}[1/L]$: 12.6;
-- Lynden-Bell's product-limit estimator for left-truncated data: 9.4.
-
-A simulation shows they agree under stationarity, and split in exactly this order when
-one week's cohort has a different length mix (Appendix B). One snapshot cannot separate
-cohort size from cohort mix. The event below sees a whole cohort when it starts.
+**5.3 How long do promotions last? One snapshot, four answers.** A snapshot over-represents long
+promotions (the inspection paradox). Corrections resting on different invariances disagree (Figure 5b): naive mean 29.3 days;
+renewal theory from ages 18.4; length-bias correction $1/\mathbb{E}[1/L]$ 12.6;
+Lynden-Bell's estimator for left truncation 9.4. A simulation shows they agree under
+stationarity and split in this order when one week's cohort differs (Appendix B).
 
 ![Figure 5](../figures/fig_g2_timing_lengths.png)
 *Figure 5. (a) Store-local time at which Kroger price records take effect. (b) Mean promotion
 length from one snapshot under four estimators.*
 
-**5.4 A pre-registered event (in progress).** 9,326 snapshot-2 promotions at 113 stores are
+**5.4 A pre-registered event.** 9,326 snapshot-2 promotions at 113 stores are
 scheduled to expire at one instant nationwide: Tuesday Oct 6, 23:59 Eastern.
 
 Before any event data existed, we committed (`docs/PREREGISTRATION_EVENT.md`, commit
-abce80e) the frozen zones, the 60 panel stores, analysis code tested on synthetic data,
-and seven predictions:
-- the expiry is enforced, at the instant;
-- the expiration date predicts which prices change;
-- the event night has at least 3 times the control night's change rate;
-- new prices arrive in two batches;
-- zones switch together;
-- prices then settle.
+abce80e) the frozen zones, 60 panel stores, analysis code and seven predictions; a
+15-store Meijer arm (M1–M4) followed, also before its data. Passes: control (Mon), before
+(Tue), probes (Tue 22:30, Wed 00:15, Wed 05:00), after (Wed) and late (Thu). 34,177
+store-products, 4,889 scheduled to expire.
 
-Meijer's sales end the same night, so a 15-store Meijer arm (M1–M4) was pre-registered
-before its data. Later addenda (all before event data) record a control-pass rerun, the
-reporting code, and exploratory additions.
+| | Pre-registered prediction | Value | n | Holds |
+|---|---|---|---|---|
+| H1 | Old promotion gone in the after pass, ≥ 0.95 | 1.000 | 4,889 | yes |
+| H2 | Price changed: scheduled units ≥ 0.80 / other units ≤ 0.15 | 0.899 / 0.144 | 4,889 / 29,288 | yes / yes |
+| H3 | Event-night change rate ≥ 3 × control night | 46 × | 34,177 | yes |
+| H4 | Promotions present at Tue 22:30 / gone at Wed 00:15, ≥ 0.90 each | 1.000 / 1.000 | 979 / 975 | yes / yes |
+| H5 | New prices effective before the expiry ≥ 0.15 / Wed 04:00–11:00 ET ≥ 0.50 | 0.170 / 0.766 | 4,889 | yes / yes |
+| H6a | Same-zone pairs share the new effective minute more often (p < 0.05) | 0.085 vs 0.014 | 33,246 | **no** (p = 0.06) |
+| H6b | Same-zone pairs share the new price more often (p < 0.05) | 0.93 vs 0.75 | 33,246 | yes (p = 0.0002) |
+| H7 | Prices settle: after→late change rate ≤ control→before rate | [late pass, Thu] | | pending |
+| M1 | Meijer: scheduled sales change price ≥ 0.80 | 0.371 | 860 | **no** |
+| M2 | Meijer: other units change ≤ 0.15 | 0.025 | 15,632 | yes |
+| M3 | Meijer: event night ≥ 3 × control | 54 × | 16,492 | yes |
+| M4 | Meijer: one new price per product across stores ≥ 0.90 | 0.652 | 66 | **no** |
 
-[result: Module H predictions table (`tables/module_h_predictions.md`) and Figure 6.]
+**Kroger: 9 of 10 hold; Meijer: 2 of 4.** What the failures and passes teach:
+- **The expiry is enforced to the minute:** every scheduled promotion was live at 22:30
+  and gone 16 minutes after the expiry.
+- **H5a passes only because of one division** (exploratory, found after the data). Harris
+  Teeter (8 stores) dated 73% of its new prices Tue 22:00–24:00 ET; the other 20 divisions
+  dated none.
+- **H6a fails.** Same-zone stores share the new effective minute six times as often, but
+  p = 0.06 (it was 0.008 at 28 stores, so the effect is not robust). They do agree on the
+  **new price** (H6b): at the event, zones set prices more clearly than timing.
+- **42% of expiring promotions were renewed** (cluster bootstrap 0.39–0.45; 0.28 at
+  Mariano's to 0.56 at Harris Teeter). The new cohort's planned mean length is **18.7
+  days** (18.3–19.2), matching the renewal-theory estimate from one snapshot (18.4) and
+  not the truncation-corrected ones (§5.3).
+- **Meijer extends instead of ending:** only 37% of its scheduled sales changed price, and
+  65% of changed products moved to one new price across stores (predicted 90%). Its single
+  calendar is a calendar of dates, not of prices.
 
-**5.5 Walmart repeat visits (in progress).** Walmart publishes no price dates, so we
-revisit 10 stores (17 confirmed items) three times a day from Monday to Thursday. Each
-visit reaches the same 6–7 stores before Walmart's per-session limit (about 105 requests).
-- **First 6 visits** (Mon 08:00 to Tue 20:00; 10 stores; the Tue 14:00 visit failed at
-  store scoping):
-  - **1 of 3,632** store-product transitions within a day changed price, and **0 of
-    2,158 overnight**;
-  - all 5,631 transitions from an off-list price stayed off list;
-  - delivery-slot lead time follows the clock, not the store: 3–5 h during the day,
-    10–12 h in the evening (the next slot is the following morning). Store explains none
-    of its variance.
-- **Still to measure:** change rates across the Tuesday-night ad-week boundary, and the
-  persistence of local departures over several days (a two-state Markov chain).
+![Figure 6](../figures/fig_h1_event.png)
+*Figure 6. The event. Price-change rates per pass for scheduled and other units (Kroger,
+60 stores; Meijer, 15), and when the new Kroger prices took effect. PRELIMINARY.*
 
-[result: Module I tables.]
+**5.5 Walmart repeat visits.** Walmart publishes no price dates, so we revisited 10 stores
+(17 confirmed items) up to three times a day from Monday to Wednesday (9 visits so far;
+each reaches 6–10 stores before Walmart's per-session limit).
+- **Prices almost never move.** 2 of 7,294 store-product transitions within a day changed
+  price, and 1 of 4,431 overnight, including across the Tuesday-night ad-week boundary that
+  repriced 90% of Kroger's scheduled units.
+- **Local departures persist.** 24% of store-products sit off the list price. Of 11,698
+  transitions, an off-list price stayed off list with probability 0.9996.
+
+Walmart's departures are standing local prices, consistent with the slow gradient in §4.
 
 ## 6. Limitations
 
-- **Mostly cross-sectional.** Nothing is causal. Timing comes from Kroger's reported
-  timestamps, and an effective date can reset when an unchanged price is re-entered (7.8%
-  of regular-price records in 1–3 days, measured). The event panel observes actual
-  changes.
-- **Website prices,** not shelf audits. Costco's local structure may partly be
-  Instacart's.
-- **Partial chains.** Walmart (41 stores) and Target (16) limited automated access at low
-  volume; they are spread across strata by design, but small. Meijer (83) is a regional
-  sample of its Michigan core.
-- **Sampling.** Locations come from Target's footprint, which over-represents urban areas
-  for the other chains. Items are hand-picked national brands.
+- **Mostly cross-sectional; nothing causal.** Kroger effective dates can reset when an
+  unchanged price is re-entered (measured, 7.8% of regular-price records in 1–3 days); the
+  event panel observes actual changes. One event, one week.
+- **Website prices,** not shelf audits; Costco's local structure may partly be Instacart's.
+- **Partial chains and sampling.** Target (35 stores) limited automated access at low
+  volume; Walmart's spatial model used 41 stores; Meijer is its Michigan core. Locations
+  come from Target's footprint (urban-leaning) and are mostly ZIP centroids; items are
+  hand-picked national brands.
 - **Zone model.** Products are treated as independent within a zone, so posterior
-  certainty about the number of zones is overstated. The replication checks address this.
-- **Locations** are mostly ZIP centroids. Timestamp results are for Kroger (with Meijer
-  sale ends); Walmart timing comes only from repeat visits.
+  certainty about the number of zones is overstated; replication checks address this.
 
 ## 7. Reproducibility
 

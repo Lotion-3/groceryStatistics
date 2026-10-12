@@ -1,24 +1,25 @@
-"""Session handling per chain and network (public IP) -- the simple policy
-(DECISIONS #44, the owner's rules):
+"""Session handling per chain and network (public IP) (DECISIONS #44-47).
 
-  * Every run starts with a FRESH session: stored session files are cleared so
-    the collector starts one the normal way. A fresh SPARE is also made at the
-    start of the run, before anything has been refused.
-  * The first session is used for as long as it works. If it is refused (an
-    explicit challenge, or a 6-failure streak), the runner switches ONCE to the
-    spare. If the spare's first request also fails, two sessions in a row have
-    been refused: stop and PAUSE the chain -- no session is made, swapped or
-    reused during the pause. The pause escalates with repeated blocks
-    (GS_BLOCK_PAUSE_SCHEDULE, default 3,6,12,24 hours: 1st block 3 h, 2nd in a
-    row 6 h, ...), and a clean run (successes, no block) resets it.
-  * No session is ever created after a refusal (the owner's rule).
+  * Every run starts with a FRESH session (stored session files are cleared;
+    the collector makes one the normal way).
+  * A BLOCK is counted only when a fresh session is refused on its FIRST
+    request. Then the chain stops and pauses; the pause escalates with
+    repeated blocks (GS_BLOCK_PAUSE_SCHEDULE, default 3,6,12,24 h) and a clean
+    run resets it. Nothing is made, swapped or reused during a pause.
+  * A session refused AFTER it had worked is treated as a session fault (the
+    owner's basketBuddy testing: cookies sometimes fail at random, and a fresh
+    one then works for weeks). After a short wait (GS_REPLACE_DELAY_S, default
+    300 s) a fresh session replaces it -- at most GS_MAX_REPLACEMENTS_PER_RUN
+    (2) per run and GS_MAX_FRESH_PER_DAY (8) fresh sessions per chain per day.
+    Past either limit the chain stops for the run (not a block).
+  * Request volume is governed independently of sessions: per-domain pacing,
+    the 6-failure circuit breaker and the per-run budget.
   * Every session that completes at least one successful request is ARCHIVED
-    in data/sessions/<chain>/<network>/<timestamp>/ (kept for the record; not
-    reused).
+    in data/sessions/<chain>/<network>/<timestamp>/ (for the record).
   * If the machine changed networks mid-run, the chain stops without a pause.
-  * The spare applies to Target, Costco (Instacart) and ALDI, whose sessions
-    can be swapped in place. Walmart (per-store browser scoping) and
-    Meijer/Kroger (no cookie session) stop at the first refusal.
+  * Replacement applies to Target, Costco (Instacart) and ALDI, whose sessions
+    can be replaced in place. Walmart (per-store browser scoping) and
+    Meijer/Kroger (no cookie session) stop at a refusal.
 
 Everything lives in data/sessions/ (gitignored). The production Supabase pool
 is never read or written.
@@ -36,10 +37,10 @@ from typing import Optional
 from collectors.common import ROOT, VENDOR, ChainBlocked
 
 STASH = ROOT / "data" / "sessions"
-# A BLOCK (DECISIONS #46) is counted only when a FRESH session is refused on
-# its first request. A session refused after it had worked has aged out: the
-# run stops for that chain and it rests briefly, without counting a block.
-REST_HOURS = float(os.environ.get("GS_REFUSAL_REST_HOURS", "1"))
+REPLACE_DELAY_S = float(os.environ.get("GS_REPLACE_DELAY_S", "300"))
+MAX_REPLACEMENTS_PER_RUN = int(os.environ.get("GS_MAX_REPLACEMENTS_PER_RUN", "2"))
+MAX_FRESH_PER_DAY = int(os.environ.get("GS_MAX_FRESH_PER_DAY", "8"))
+SWAPPABLE = ("target", "costco", "aldi")
 # Pause after the 1st, 2nd, 3rd, ... block in a row (hours); last value repeats.
 PAUSE_SCHEDULE = [float(x) for x in os.environ.get("GS_BLOCK_PAUSE_SCHEDULE", "3,6,12,24").split(",") if x.strip()]
 
@@ -98,18 +99,6 @@ def record_block(chain: str, reason: str) -> None:
     _blocks_path().write_text(json.dumps(b, indent=1), encoding="utf-8")
 
 
-def record_rest(chain: str, reason: str) -> None:
-    """A refusal that is not a block: rest REST_HOURS before the next run, so a
-    new session is not made straight after a refusal. The block streak is kept."""
-    STASH.mkdir(parents=True, exist_ok=True)
-    b = _read_blocks()
-    e = b.get(chain) or {"streak": 0}
-    e.update({"rest_until": time.time() + REST_HOURS * 3600, "rest_reason": reason[:300],
-              "rest_iso": datetime.now(timezone.utc).isoformat(timespec="seconds")})
-    b[chain] = e
-    _blocks_path().write_text(json.dumps(b, indent=1), encoding="utf-8")
-
-
 def mark_clean(chain: str) -> None:
     """A run with successful requests and no block: reset the streak (the
     next block gets the shortest pause). Past pauses already over are kept as
@@ -126,18 +115,35 @@ def pause_hours(streak: int) -> float:
 
 
 def cooldown_left_hours(chain: str) -> float:
-    """Hours left of the longer of: the pause after a counted block, or the
-    short rest after a refusal that was not a block."""
+    """Hours left of the pause after a counted block (0 if none)."""
     b = _read_blocks().get(chain)
-    if not b:
+    if not b or not b.get("streak") or "at" not in b:
         return 0.0
-    now = time.time()
-    pause = 0.0
-    if b.get("streak") and "at" in b:
-        hours = float(b.get("pause_hours") or pause_hours(int(b["streak"])))
-        pause = hours - (now - float(b["at"])) / 3600.0
-    rest = (float(b.get("rest_until", 0)) - now) / 3600.0
-    return max(0.0, pause, rest)
+    hours = float(b.get("pause_hours") or pause_hours(int(b["streak"])))
+    return max(0.0, hours - (time.time() - float(b["at"])) / 3600.0)
+
+
+def _mints_path() -> Path:
+    return STASH / "mints.json"
+
+
+def record_mint(chain: str, why: str) -> None:
+    STASH.mkdir(parents=True, exist_ok=True)
+    try:
+        m = json.loads(_mints_path().read_text(encoding="utf-8"))
+    except Exception:
+        m = {}
+    m.setdefault(chain, []).append({"at": time.time(), "ip": public_ip(), "why": why})
+    _mints_path().write_text(json.dumps(m, indent=1), encoding="utf-8")
+
+
+def mints_today(chain: str) -> int:
+    """Fresh sessions made for this chain in the last 24 h."""
+    try:
+        m = json.loads(_mints_path().read_text(encoding="utf-8"))
+    except Exception:
+        return 0
+    return sum(1 for e in m.get(chain, []) if time.time() - float(e["at"]) < 86400)
 
 def save(chain: str) -> None:
     """Archive the session now in use (it has just had a successful request):
@@ -171,88 +177,37 @@ def start_fresh(chain: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Spare session (DECISIONS #43): one per chain per network, made in advance.
-# Owner's rule from basketBuddy testing: a genuine block hits the IP, not the
-# cookie, so one failing session can be bad luck. On a challenge the runner
-# may switch ONCE to this network's spare; if that also fails (two sessions
-# in a row), it is the IP: stop and cool down. Spares are only ever created
-# before any block (never during a cooldown), and only for chains whose
-# session can be swapped in place: Target, Costco (Instacart), ALDI.
+# Replacing a session that failed after it had worked
 # ---------------------------------------------------------------------------
 
-SPARE_CHAINS = ("target", "costco", "aldi")
-
-
-def _spare_dir(chain: str, ip: Optional[str] = None) -> Path:
-    return _dir(chain, ip or public_ip()) / "spare"
-
-
-def has_spare(chain: str) -> bool:
-    d = _spare_dir(chain)
-    return chain in SPARE_CHAINS and any((d / f.name).exists() for f in FILES[chain])
-
-
-def make_spare(chain: str) -> str:
-    """Make a FRESH spare for this run through the collector's normal session
-    start (replacing any unused spare). Called at run start only, before any
-    refusal; refused during a pause."""
-    if chain not in SPARE_CHAINS:
-        return "n/a"
-    if cooldown_left_hours(chain) > 0:
-        raise ChainBlocked("cooldown: no spare session is created after a block")
-    d = _spare_dir(chain)
-    if d.exists():
-        shutil.rmtree(d)
-    d.mkdir(parents=True, exist_ok=True)
-    now = time.time()
+def fresh_session(chain: str):
+    """Make a new session through the collector's normal session start, put
+    it where the collector reads it, and return the object the wrapper uses.
+    Refused during a pause. The caller enforces the replacement limits."""
+    left = cooldown_left_hours(chain)
+    if left > 0:
+        raise ChainBlocked(f"cooldown: paused after a block; {left:.1f} h left")
     if chain == "target":
         import target_pricing as tp
         sess = tp._warm_http_session()
-        (d / FILES["target"][0].name).write_text(
-            json.dumps({"cookies": sess["cookies"], "ua": sess["ua"], "saved_at": now}), encoding="utf-8")
-    elif chain == "costco":
+        tp._save_http_session(sess)
+        tp._http_session = sess
+        return sess
+    if chain == "costco":
         import instacart_pricing as ic
         cookies, qp, zone = ic._bootstrap("costco")
-        (d / FILES["costco"][0].name).write_text(json.dumps(
-            {"cookies": cookies, "qp": qp, "zone_id": zone, "expires_at": now + ic.SESSION_TTL}), encoding="utf-8")
-    elif chain == "aldi":
+        ic._save_disk_session(cookies, qp, zone)
+        ic._mem_cache, ic._session = {}, None
+        return ic._get_session("costco")         # loads the session just saved
+    if chain == "aldi":
         from collectors import aldi  # noqa: F401  (puts vendor/aldi on sys.path)
         import aldi_pricing as ap
         cookies, qp, zone, shop = ap._bootstrap()
-        ttl = ap.SESSION_TTL if ap.SESSION_TTL != float("inf") else 30 * 24 * 3600
-        (d / FILES["aldi"][0].name).write_text(json.dumps(
-            {"cookies": cookies, "qp": qp, "zone_id": zone, "shop_id": shop, "expires_at": now + ttl}),
-            encoding="utf-8")
-    return "created"
-
-
-def load_spare(chain: str):
-    """Put this network's spare in place as the primary session and load it
-    into the collector's memory WITHOUT any fallback that would create a new
-    session. The spare is consumed (it becomes the primary). Returns the
-    session object the wrapper uses, or None if there is no spare."""
-    if not has_spare(chain):
-        return None
-    d = _spare_dir(chain)
-    for f in FILES[chain]:
-        if (d / f.name).exists():
-            shutil.copy2(d / f.name, f)
-            (d / f.name).unlink()
-    if chain == "target":
-        import target_pricing as tp
-        sess = tp._load_http_session()          # disk only: no validation, no warm-up
-        tp._http_session = sess
-        return sess
-    data = json.loads(FILES[chain][0].read_text(encoding="utf-8"))
-    if chain == "costco":
-        import instacart_pricing as ic
-        ic._mem_cache, ic._session = data, None  # non-empty cache: _get_session builds, never bootstraps
-        return ic._get_session("costco")
-    from collectors import aldi  # noqa: F401
-    import aldi_pricing as ap
-    ap._mem_cache, ap._session = data, None
-    s, zone, _shop = ap._get_session()
-    return s, zone
+        ap._save_disk_session(cookies, qp, zone, shop)
+        ap._mem_cache, ap._session = {}, None
+        s_, zone_, _shop = ap._get_session()
+        return s_, zone_
+    raise ValueError(f"sessions for {chain} cannot be replaced in place")
 
 
 def ip_changed() -> bool:
@@ -267,9 +222,9 @@ def summary() -> dict:
         nets = {}
         for net in (STASH / chain).glob("*"):
             if net.is_dir():
-                nets[net.name] = {"archived_sessions": sum(1 for e in net.glob("*") if (e / "meta.json").exists()),
-                                  "spare_ready": any((net / "spare" / f.name).exists() for f in FILES[chain])}
-        out[chain] = {"networks": nets, "cooldown_h_left": round(cooldown_left_hours(chain), 1)}
+                nets[net.name] = {"archived_sessions": sum(1 for e in net.glob("*") if (e / "meta.json").exists())}
+        out[chain] = {"networks": nets, "cooldown_h_left": round(cooldown_left_hours(chain), 1),
+                      "fresh_sessions_last_24h": mints_today(chain)}
     return out
 
 

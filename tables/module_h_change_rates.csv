@@ -1,8 +1,8 @@
 transition,units,n,change_rate,chain
 control->before,scheduled,4886,0.0,kroger
 control->before,other,29195,0.006405206370953931,kroger
-before->after,scheduled,1950,0.9174358974358975,kroger
-before->after,other,14014,0.135293278150421,kroger
+before->after,scheduled,4889,0.8985477602781755,kroger
+before->after,other,29288,0.14374487844851133,kroger
 control->before,scheduled,924,0.003246753246753247,meijer
 control->before,other,15144,0.0006603275224511358,meijer
 before->after,scheduled,860,0.37093023255813956,meijer

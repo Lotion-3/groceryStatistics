@@ -61,65 +61,127 @@ costco,2,log_km_walmart,log km to nearest Walmart,-0.19608150470219438,175
 costco,2,log_km_target,log km to nearest Target,0.06621137483206449,175
 costco,2,log_km_trader_joes,log km to nearest Trader Joe's,0.05756381549484998,175
 costco,2,rivals_10km,other-chain stores within 10 km,0.07275932011899092,175
-kroger,1,log_income,log median household income,0.49210100024555076,120
-kroger,1,log_density,log population density (per sq mi),0.2453334351928053,120
-kroger,1,median_age,median age,0.271306456373955,120
-kroger,1,log_home_value,log median home value,0.48562831729415035,120
-kroger,1,log_rent,log median gross rent,0.4748252901881313,120
-kroger,1,poverty_rate,poverty rate,-0.40176123647750756,120
-kroger,1,college_share,share with bachelor's or higher,0.45565396148058374,120
-kroger,1,transit_share,share commuting by transit,0.1454289110431743,120
-kroger,1,no_vehicle_share,share of households with no vehicle,-0.17116148892568497,120
-kroger,1,suburban,RUCA suburban (vs urban),-0.0654877137505732,120
-kroger,1,rural,RUCA rural (vs urban),-0.03312907872087821,120
-kroger,1,log_km_walmart,log km to nearest Walmart,0.3609556219181887,120
-kroger,1,log_km_target,log km to nearest Target,-0.014584346135148273,120
-kroger,1,log_km_costco,log km to nearest Costco,-0.18733939856934506,120
-kroger,1,log_km_trader_joes,log km to nearest Trader Joe's,-0.46798388776998395,120
-kroger,1,rivals_10km,other-chain stores within 10 km,0.2808561292507314,120
-kroger,2,log_income,log median household income,-0.3291275941521631,120
-kroger,2,log_density,log population density (per sq mi),-0.22919686991643323,120
-kroger,2,median_age,median age,-0.22379266519176683,120
-kroger,2,log_home_value,log median home value,-0.3776935511040332,120
-kroger,2,log_rent,log median gross rent,-0.4325268467317536,120
-kroger,2,poverty_rate,poverty rate,0.2594490232815621,120
-kroger,2,college_share,share with bachelor's or higher,-0.15828209994138023,120
-kroger,2,transit_share,share commuting by transit,0.03528937852860063,120
-kroger,2,no_vehicle_share,share of households with no vehicle,0.2319748454320557,120
-kroger,2,suburban,RUCA suburban (vs urban),0.006933993220648927,120
-kroger,2,rural,RUCA rural (vs urban),0.036210853485611066,120
-kroger,2,log_km_walmart,log km to nearest Walmart,-0.16509479824987844,120
-kroger,2,log_km_target,log km to nearest Target,-0.0023751649420098615,120
-kroger,2,log_km_costco,log km to nearest Costco,0.2653239808320022,120
-kroger,2,log_km_trader_joes,log km to nearest Trader Joe's,0.3028404750329884,120
-kroger,2,rivals_10km,other-chain stores within 10 km,-0.24637424515243955,120
-walmart,1,log_income,log median household income,0.23150474029657242,42
-walmart,1,log_density,log population density (per sq mi),-0.0021878291872619725,42
-walmart,1,median_age,median age,0.12909238291982558,42
-walmart,1,log_home_value,log median home value,0.47842469955399564,42
-walmart,1,log_rent,log median gross rent,0.369515011850647,42
-walmart,1,poverty_rate,poverty rate,0.019042217000243094,42
-walmart,1,college_share,share with bachelor's or higher,0.018231909893849773,42
-walmart,1,transit_share,share commuting by transit,0.3215428875051244,42
-walmart,1,no_vehicle_share,share of households with no vehicle,0.03800340328984685,42
-walmart,1,suburban,RUCA suburban (vs urban),,42
-walmart,1,rural,RUCA rural (vs urban),0.12286267628511165,42
-walmart,1,log_km_target,log km to nearest Target,-0.26213434891824006,42
-walmart,1,log_km_costco,log km to nearest Costco,-0.1728385057936958,42
-walmart,1,log_km_trader_joes,log km to nearest Trader Joe's,-0.0749534073413824,42
-walmart,1,rivals_10km,other-chain stores within 10 km,0.2030705985189356,42
-walmart,2,log_income,log median household income,0.289684790535613,42
-walmart,2,log_density,log population density (per sq mi),0.25046592658617617,42
-walmart,2,median_age,median age,-0.004457050257746647,42
-walmart,2,log_home_value,log median home value,0.40063206548017516,42
-walmart,2,log_rent,log median gross rent,0.4202422919862841,42
-walmart,2,poverty_rate,poverty rate,-0.15371525808281342,42
-walmart,2,college_share,share with bachelor's or higher,0.020824892634308406,42
-walmart,2,transit_share,share commuting by transit,0.3150601679989727,42
-walmart,2,no_vehicle_share,share of households with no vehicle,-0.17073170731707318,42
-walmart,2,suburban,RUCA suburban (vs urban),,42
-walmart,2,rural,RUCA rural (vs urban),-0.16307227943296637,42
-walmart,2,log_km_target,log km to nearest Target,-0.25970342759906007,42
-walmart,2,log_km_costco,log km to nearest Costco,-0.4165788833968074,42
-walmart,2,log_km_trader_joes,log km to nearest Trader Joe's,-0.3225832590551819,42
-walmart,2,rivals_10km,other-chain stores within 10 km,0.43533769272854544,42
+kroger,1,log_income,log median household income,0.42190028311166927,185
+kroger,1,log_density,log population density (per sq mi),0.0934376889384196,185
+kroger,1,median_age,median age,0.24072898255964933,185
+kroger,1,log_home_value,log median home value,0.40408458005186654,185
+kroger,1,log_rent,log median gross rent,0.3707222145653613,185
+kroger,1,poverty_rate,poverty rate,-0.3116652357098589,185
+kroger,1,college_share,share with bachelor's or higher,0.50469467551396,185
+kroger,1,transit_share,share commuting by transit,0.10375705357507778,185
+kroger,1,no_vehicle_share,share of households with no vehicle,-0.22297055261467083,185
+kroger,1,suburban,RUCA suburban (vs urban),-0.04494039576425177,185
+kroger,1,rural,RUCA rural (vs urban),-0.06391772001880858,185
+kroger,1,log_km_walmart,log km to nearest Walmart,0.18296139547542,185
+kroger,1,log_km_target,log km to nearest Target,-0.11023948129291303,185
+kroger,1,log_km_costco,log km to nearest Costco,-0.0530713895146267,185
+kroger,1,log_km_trader_joes,log km to nearest Trader Joe's,-0.27162377432991835,185
+kroger,1,rivals_10km,other-chain stores within 10 km,0.17051062226447408,185
+kroger,2,log_income,log median household income,-0.2906492614222243,185
+kroger,2,log_density,log population density (per sq mi),-0.06418078196577456,185
+kroger,2,median_age,median age,-0.18327378564740676,185
+kroger,2,log_home_value,log median home value,-0.2644278015271691,185
+kroger,2,log_rent,log median gross rent,-0.24880322696577328,185
+kroger,2,poverty_rate,poverty rate,0.3417636590039404,185
+kroger,2,college_share,share with bachelor's or higher,-0.26605751498714036,185
+kroger,2,transit_share,share commuting by transit,0.045106317779998434,185
+kroger,2,no_vehicle_share,share of households with no vehicle,0.26641951862992047,185
+kroger,2,suburban,RUCA suburban (vs urban),0.004993377307139086,185
+kroger,2,rural,RUCA rural (vs urban),-0.06059399857783052,185
+kroger,2,log_km_walmart,log km to nearest Walmart,-0.11970747859021201,185
+kroger,2,log_km_target,log km to nearest Target,-0.04075001018728393,185
+kroger,2,log_km_costco,log km to nearest Costco,0.13941770537296866,185
+kroger,2,log_km_trader_joes,log km to nearest Trader Joe's,0.20128710178461506,185
+kroger,2,rivals_10km,other-chain stores within 10 km,-0.18220829933463212,185
+meijer,1,log_income,log median household income,0.11710261569416498,71
+meijer,1,log_density,log population density (per sq mi),0.22588866532528504,71
+meijer,1,median_age,median age,0.2230775070430895,71
+meijer,1,log_home_value,log median home value,0.1221663313212609,71
+meijer,1,log_rent,log median gross rent,0.26013397394144855,71
+meijer,1,poverty_rate,poverty rate,-0.07085848423876591,71
+meijer,1,college_share,share with bachelor's or higher,0.10184439973172367,71
+meijer,1,transit_share,share commuting by transit,0.014834069965915539,71
+meijer,1,no_vehicle_share,share of households with no vehicle,-0.028001341381623072,71
+meijer,1,suburban,RUCA suburban (vs urban),0.03322965241861511,71
+meijer,1,rural,RUCA rural (vs urban),-0.1490280831849844,71
+meijer,1,log_km_walmart,log km to nearest Walmart,0.2014755197853789,71
+meijer,1,log_km_target,log km to nearest Target,-0.21931589537223337,71
+meijer,1,log_km_costco,log km to nearest Costco,-0.2871562709590878,71
+meijer,1,log_km_trader_joes,log km to nearest Trader Joe's,-0.25496311200536553,71
+meijer,1,rivals_10km,other-chain stores within 10 km,0.2301224631861862,71
+meijer,2,log_income,log median household income,0.1136485580147552,71
+meijer,2,log_density,log population density (per sq mi),0.29782025486250835,71
+meijer,2,median_age,median age,0.15886432297543127,71
+meijer,2,log_home_value,log median home value,0.14557344064386316,71
+meijer,2,log_rent,log median gross rent,0.2977103717500592,71
+meijer,2,poverty_rate,poverty rate,-0.06680080482897383,71
+meijer,2,college_share,share with bachelor's or higher,-0.003923541247484909,71
+meijer,2,transit_share,share commuting by transit,-0.041071200517874995,71
+meijer,2,no_vehicle_share,share of households with no vehicle,-0.051710261569416494,71
+meijer,2,suburban,RUCA suburban (vs urban),-0.04153706552326889,71
+meijer,2,rural,RUCA rural (vs urban),-0.24061825930908942,71
+meijer,2,log_km_walmart,log km to nearest Walmart,0.29312541918175716,71
+meijer,2,log_km_target,log km to nearest Target,-0.23370221327967805,71
+meijer,2,log_km_costco,log km to nearest Costco,-0.31532528504359486,71
+meijer,2,log_km_trader_joes,log km to nearest Trader Joe's,-0.20925553319919513,71
+meijer,2,rivals_10km,other-chain stores within 10 km,0.2026784077972002,71
+target,1,log_income,log median household income,0.30296010296010295,36
+target,1,log_density,log population density (per sq mi),0.006882591093117409,39
+target,1,median_age,median age,0.013024681711256293,38
+target,1,log_home_value,log median home value,0.04581724581724582,36
+target,1,log_rent,log median gross rent,0.028011204481792715,35
+target,1,poverty_rate,poverty rate,-0.04172593646277856,37
+target,1,college_share,share with bachelor's or higher,0.039118065433854904,37
+target,1,transit_share,share commuting by transit,-0.010427005665908363,38
+target,1,no_vehicle_share,share of households with no vehicle,-0.06377808084228374,37
+target,1,suburban,RUCA suburban (vs urban),0.26504440762199816,39
+target,1,rural,RUCA rural (vs urban),0.10259783520851541,39
+target,1,log_km_walmart,log km to nearest Walmart,0.07591093117408908,39
+target,1,log_km_costco,log km to nearest Costco,0.1354251012145749,39
+target,1,log_km_trader_joes,log km to nearest Trader Joe's,-0.10080971659919029,39
+target,1,rivals_10km,other-chain stores within 10 km,-0.08288098243776179,39
+target,2,log_income,log median household income,-0.1631917631917632,36
+target,2,log_density,log population density (per sq mi),-0.33947368421052637,39
+target,2,median_age,median age,-0.12597822394668903,38
+target,2,log_home_value,log median home value,-0.02110682110682111,36
+target,2,log_rent,log median gross rent,-0.31176470588235294,35
+target,2,poverty_rate,poverty rate,0.009720246562351825,37
+target,2,college_share,share with bachelor's or higher,0.08345187292555711,37
+target,2,transit_share,share commuting by transit,-0.2222598576154151,38
+target,2,no_vehicle_share,share of households with no vehicle,-0.35682532218452423,37
+target,2,suburban,RUCA suburban (vs urban),0.13679711361135388,39
+target,2,rural,RUCA rural (vs urban),-0.12824729401064427,39
+target,2,log_km_walmart,log km to nearest Walmart,0.06072874493927126,39
+target,2,log_km_costco,log km to nearest Costco,0.0771255060728745,39
+target,2,log_km_trader_joes,log km to nearest Trader Joe's,0.3232793522267207,39
+target,2,rivals_10km,other-chain stores within 10 km,-0.2551674034953478,39
+walmart,1,log_income,log median household income,0.14724480578139115,82
+walmart,1,log_density,log population density (per sq mi),-0.03472970472676614,82
+walmart,1,median_age,median age,0.1509692733728477,82
+walmart,1,log_home_value,log median home value,0.3094998394699753,82
+walmart,1,log_rent,log median gross rent,0.2314988653925472,82
+walmart,1,poverty_rate,poverty rate,-0.04282713509866023,82
+walmart,1,college_share,share with bachelor's or higher,0.0054091705575690305,82
+walmart,1,transit_share,share commuting by transit,0.12004876473898735,82
+walmart,1,no_vehicle_share,share of households with no vehicle,0.03440319543757687,82
+walmart,1,suburban,RUCA suburban (vs urban),-0.11970346954351249,82
+walmart,1,rural,RUCA rural (vs urban),0.07929448854858627,82
+walmart,1,log_km_target,log km to nearest Target,-0.037102338894874895,82
+walmart,1,log_km_costco,log km to nearest Costco,-0.003515416680271221,82
+walmart,1,log_km_trader_joes,log km to nearest Trader Joe's,-0.042761833240822375,82
+walmart,1,rivals_10km,other-chain stores within 10 km,0.06958538106225517,82
+walmart,2,log_income,log median household income,-0.08943089430894309,82
+walmart,2,log_density,log population density (per sq mi),-0.024237872900817362,82
+walmart,2,median_age,median age,0.05664341013931504,82
+walmart,2,log_home_value,log median home value,-0.2522515658963891,82
+walmart,2,log_rent,log median gross rent,-0.19983783109885092,82
+walmart,2,poverty_rate,poverty rate,0.006105723707839488,82
+walmart,2,college_share,share with bachelor's or higher,0.04162993437163288,82
+walmart,2,transit_share,share commuting by transit,0.015206104301420375,82
+walmart,2,no_vehicle_share,share of households with no vehicle,0.14946506894787823,82
+walmart,2,suburban,RUCA suburban (vs urban),0.04459541022209288,82
+walmart,2,rural,RUCA rural (vs urban),0.023321908396643023,82
+walmart,2,log_km_target,log km to nearest Target,0.0024052850970276768,82
+walmart,2,log_km_costco,log km to nearest Costco,0.06161230287001665,82
+walmart,2,log_km_trader_joes,log km to nearest Trader Joe's,0.07071102839542452,82
+walmart,2,rivals_10km,other-chain stores within 10 km,-0.1507040070288233,82

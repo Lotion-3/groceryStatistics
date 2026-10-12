@@ -1,1 +1,1 @@
-n = 352,195 store-product prices; 542 stores; 3,740 products; snapshot(s) [2]. PRELIMINARY, cross-sectional.
+n = 512,200 store-product prices; 760 stores; 5,492 products; snapshot(s) [2]. PRELIMINARY, cross-sectional.

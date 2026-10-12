@@ -2,16 +2,16 @@
 
 | | Prediction | Value | n | Holds |
 |---|---|---|---|---|
-| H1 | old promotion gone in after >= 0.95 | 1.000 | 1,950 | yes |
-| H2 | price-change rate: scheduled >= 0.80 | 0.917 | 1,950 | yes |
-| H2 | price-change rate: not scheduled <= 0.15 | 0.135 | 14,014 | yes |
-| H5 | new prices effective before the expiry >= 0.15 | 0.012 | 1,950 | **no** |
-| H5 | new prices effective Wed 04:00-11:00 ET >= 0.50 | 0.906 | 1,950 | yes |
-| H3 | change rate before->after >= 3 x control->before | 42.069 | 15,964 | yes |
+| H1 | old promotion gone in after >= 0.95 | 1.000 | 4,889 | yes |
+| H2 | price-change rate: scheduled >= 0.80 | 0.899 | 4,889 | yes |
+| H2 | price-change rate: not scheduled <= 0.15 | 0.144 | 29,288 | yes |
+| H5 | new prices effective before the expiry >= 0.15 | 0.170 | 4,889 | yes |
+| H5 | new prices effective Wed 04:00-11:00 ET >= 0.50 | 0.766 | 4,889 | yes |
+| H3 | change rate before->after >= 3 x control->before | 45.876 | 34,177 | yes |
 | H4 | probe_pre: scheduled promotions still present >= 0.90 | 1.000 | 979 | yes |
 | H4 | probe_post: scheduled promotions gone >= 0.90 | 1.000 | 975 | yes |
-| H6a | H6a_same_effective_minute: within zone > across zone (one-sided p < 0.05) | 0.093 | 20,958 | yes |
-| H6b | H6b_same_new_price: within zone > across zone (one-sided p < 0.05) | 0.216 | 20,958 | yes |
+| H6a | H6a_same_effective_minute: within zone > across zone (one-sided p < 0.05) | 0.071 | 33,246 | **no** |
+| H6b | H6b_same_new_price: within zone > across zone (one-sided p < 0.05) | 0.184 | 33,246 | yes |
 
 **Meijer (Addendum 4, M1-M4; passes {'control': 7, 'before': 12, 'after': 17})**
 

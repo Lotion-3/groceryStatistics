@@ -38,6 +38,7 @@ from __future__ import annotations
 import argparse
 import csv
 import sys
+import time
 from pathlib import Path
 from typing import Callable, Optional
 
@@ -86,7 +87,7 @@ class Run:
         self.queries: dict[str, int] = {}
         self.prepared: set[str] = set()     # chains whose session/cooldown check ran
         self.saved: set[str] = set()        # chains whose session was stored in the stash
-        self.switched: set[str] = set()     # chains that already used their spare this run
+        self.replacements: dict = {}        # chain -> sessions replaced this run
         self.successes: dict = {}           # chain -> successful requests with the CURRENT session
         self.sessions: dict = {}
         self.costco_done: set[str] = set()
@@ -121,47 +122,60 @@ class Run:
                 SS.record_block(chain, msg)
         self.active.discard(chain)
 
-    SPARE_DOMAINS = {"target": ("cdui-orchestrations.target.com",), "costco": ("www.instacart.com",),
-                     "aldi": ("www.aldi.us",)}
     SESSION_KEYS = {"target": "tsess", "costco": "csess", "aldi": "asess"}
+    SESSION_DOMAINS = {"target": ("cdui-orchestrations.target.com",), "costco": ("www.instacart.com",),
+                       "aldi": ("www.aldi.us",)}
 
-    def try_spare(self, chain: str, store_pk, item_id, err: Exception) -> bool:
-        """Switch ONCE per run to this network's spare session (DECISIONS #43).
-        Not after a cooldown/session error, not if the machine changed network
-        (that is handled by block()), and never a newly created session."""
+    def replace_session(self, chain: str, store_pk, item_id, err) -> bool:
+        """A session refused AFTER it had worked: wait, then put a fresh one in
+        place, within the per-run and per-day limits (DECISIONS #47). Returns
+        True if a fresh session is in place; otherwise the chain has been
+        stopped (a limit reached, an IP change, or the fresh session could not
+        be made -- the last counted as a block)."""
         from collectors import session_stash as SS
         from collectors.common import PACER
-        msg = str(err)
-        if (chain in self.switched or chain not in SS.SPARE_CHAINS
-                or not msg.startswith(("explicit", "soft-streak")) or SS.ip_changed() or not SS.has_spare(chain)):
+        n = self.successes.get(chain, 0)
+        if chain not in SS.SWAPPABLE:
+            self.stop(chain, store_pk, item_id, f"refused after {n} successful requests; this chain's "
+                                                f"sessions cannot be replaced in place. {err}")
             return False
-        sess = SS.load_spare(chain)
-        if sess is None:
+        if SS.ip_changed():
+            self.block(chain, store_pk, item_id, err)          # logs the IP change, no pause
             return False
-        self.sessions[self.SESSION_KEYS[chain]] = sess
-        for d in self.SPARE_DOMAINS[chain]:
-            PACER.reset(d)
-        self.switched.add(chain)
-        self.successes[chain] = 0
-        self.saved.discard(chain)          # archive the spare too once it has worked
+        used = self.replacements.get(chain, 0)
+        if used >= SS.MAX_REPLACEMENTS_PER_RUN or SS.mints_today(chain) >= SS.MAX_FRESH_PER_DAY:
+            self.stop(chain, store_pk, item_id,
+                      f"refused after {n} successful requests; replacement limit reached "
+                      f"({used}/{SS.MAX_REPLACEMENTS_PER_RUN} this run, {SS.mints_today(chain)}/"
+                      f"{SS.MAX_FRESH_PER_DAY} fresh today). {err}")
+            return False
         self.fail(chain, store_pk, item_id,
-                  f"session-switch: primary session refused ({msg[:120]}); trying this network's spare once")
+                  f"session-replace: refused after {n} successful requests ({str(err)[:100]}); "
+                  f"fresh session #{used + 1} in {SS.REPLACE_DELAY_S:g} s")
+        time.sleep(SS.REPLACE_DELAY_S)
+        try:
+            sess = SS.fresh_session(chain)
+        except Exception as e:
+            self.block(chain, store_pk, item_id,
+                       f"explicit:fresh session could not be made ({repr(e)[:120]}): counted as a block")
+            return False
+        SS.record_mint(chain, "replacement")
+        self.sessions[self.SESSION_KEYS[chain]] = sess
+        for d in self.SESSION_DOMAINS[chain]:
+            PACER.reset(d)
+        self.replacements[chain] = used + 1
+        self.successes[chain] = 0
+        self.saved.discard(chain)          # archive the new session once it has worked
         return True
 
-    def rest(self, chain: str, store_pk, item_id, err) -> None:
-        """A session refused AFTER it had worked, with no spare left: stop the
-        chain for this run and rest briefly. Not counted as a block (#46)."""
-        from collectors import session_stash as SS
-        n = self.successes.get(chain, 0)
-        self.fail(chain, store_pk, item_id,
-                  f"REFUSED after {n} successful requests (not counted as a block); chain stopped, "
-                  f"resting {SS.REST_HOURS:g} h. {err}")
-        SS.record_rest(chain, str(err))
+    def stop(self, chain: str, store_pk, item_id, why: str) -> None:
+        """Stop the chain for this run WITHOUT counting a block."""
+        self.fail(chain, store_pk, item_id, f"STOPPED for this run (not a block): {why}")
         self.active.discard(chain)
 
     def session_ready(self, chain: str) -> bool:
-        """Once per chain per run: respect a pause, start a FRESH session (the
-        collector makes it normally) and make a fresh spare (DECISIONS #44)."""
+        """Once per chain per run: respect a pause and start a FRESH session
+        (the collector makes it normally) (DECISIONS #44)."""
         if chain in self.prepared:
             return chain in self.active
         from collectors import session_stash as SS
@@ -172,13 +186,9 @@ class Run:
             self.fail(chain, None, None, f"{e} (chain skipped this run)")
             self.active.discard(chain)
             return False
-        spare = "n/a"
-        if chain in SS.SPARE_CHAINS:
-            try:
-                spare = SS.make_spare(chain)
-            except Exception as e:     # a spare is optional: never stop the run over it
-                spare = f"unavailable ({repr(e)[:80]})"
-        print(f"  [{chain}] session: {how}; spare: {spare} (network {SS.public_ip()})", flush=True)
+        if how == "fresh":
+            SS.record_mint(chain, "run start")
+        print(f"  [{chain}] session: {how} (network {SS.public_ip()})", flush=True)
         return True
 
     def record(self, chain: str, store: dict, store_pk: int, item: dict, body: str, meta: dict) -> int:
@@ -225,14 +235,14 @@ class Run:
                     # A fresh session refused on its first request: a BLOCK (#46).
                     return self.block(chain, store_pk, it["item_id"],
                                       f"{e} (fresh session refused on its first request: counted as a block)")
-                # The session had worked: it aged out. Not a block.
-                if not self.try_spare(chain, store_pk, it["item_id"], e):
-                    return self.rest(chain, store_pk, it["item_id"], e)
-                try:                       # the spare is fresh: refused on its first request = a block
+                # The session had worked: a session fault, not a block (#47).
+                if not self.replace_session(chain, store_pk, it["item_id"], e):
+                    return
+                try:                       # the new session is fresh: refused on its first request = a block
                     body = with_backoff(fetch, it)
                 except ChainBlocked as e2:
                     return self.block(chain, store_pk, it["item_id"],
-                                      f"{e2} (fresh spare refused on its first request: counted as a block)")
+                                      f"{e2} (fresh replacement refused on its first request: counted as a block)")
                 except TransientError as e2:
                     self.fail(chain, store_pk, it["item_id"], str(e2))
                     continue

@@ -1,4 +1,4 @@
-"""Simple session policy (DECISIONS #44), on temporary files only."""
+"""Session policy (DECISIONS #44-47), on temporary files only."""
 import pytest
 
 from collectors import session_stash as SS
@@ -34,12 +34,22 @@ def test_every_successful_session_is_archived_per_network(stash):
     assert nets["1_1_1_1"]["archived_sessions"] == 2 and nets["2_2_2_2"]["archived_sessions"] == 1
 
 
-def test_pause_blocks_fresh_sessions_and_spares(stash):
+def test_pause_blocks_fresh_starts_and_replacements(stash):
     SS.record_block("target", "explicit:px-captcha marker")
     with pytest.raises(ChainBlocked, match="cooldown"):
         SS.start_fresh("target")
     with pytest.raises(ChainBlocked, match="cooldown"):
-        SS.make_spare("target")
+        SS.fresh_session("target")
+
+
+def test_fresh_sessions_are_counted_per_day(stash, monkeypatch):
+    clock = {"t": 3_000_000.0}
+    monkeypatch.setattr(SS.time, "time", lambda: clock["t"])
+    for _ in range(3):
+        SS.record_mint("target", "test")
+    assert SS.mints_today("target") == 3
+    clock["t"] += 86401
+    assert SS.mints_today("target") == 0
 
 
 def test_pause_escalates_and_resets_after_a_clean_run(stash, monkeypatch):
@@ -61,14 +71,3 @@ def test_clean_run_does_not_cut_an_active_pause(stash, monkeypatch):
     SS.record_block("target", "explicit:a")
     SS.mark_clean("target")
     assert SS.cooldown_left_hours("target") > 2.9
-
-
-def test_rest_pauses_briefly_without_counting_a_block(stash, monkeypatch):
-    clock = {"t": 2_000_000.0}
-    monkeypatch.setattr(SS.time, "time", lambda: clock["t"])
-    SS.record_rest("target", "explicit:aged out")
-    assert SS.cooldown_left_hours("target") == pytest.approx(SS.REST_HOURS)
-    clock["t"] += SS.REST_HOURS * 3600 + 1
-    assert SS.cooldown_left_hours("target") == 0.0
-    SS.record_block("target", "explicit:first try")       # still the 1st block: 3 h
-    assert SS.cooldown_left_hours("target") == pytest.approx(3.0)

@@ -1,5 +1,7 @@
 chain,stores,stores_complete_covariates,predictors_main,predictors_full,states,horseshoe_rhat_max,horseshoe_ess_bulk_min,horseshoe_divergences
 aldi,204,184,16,145,32,,,
 costco,175,163,15,126,38,,,
-kroger,121,121,16,133,28,,,
-walmart,42,42,14,109,21,,,
+kroger,191,191,16,141,31,,,
+meijer,71,71,16,123,5,,,
+target,39,35,14,95,25,,,
+walmart,84,84,15,115,39,,,
